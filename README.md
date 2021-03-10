@@ -1,1 +1,1 @@
-# Repository Ray Tracing Lab
+# Ray-Tracing Lab Project
