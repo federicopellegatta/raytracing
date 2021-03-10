@@ -12,6 +12,7 @@ public:
   Color operator*(Color);
 
   bool is_close(Color);
+  void print();
 
 private:
   bool are_close(float, float);
