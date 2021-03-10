@@ -14,8 +14,14 @@ add_executable(raytracer
     src/raytracer.cpp
 )
 
+# This program runs the automatic tests on the "Color" class
 add_executable(colorTest
   test/colors.cpp
+)
+
+# Our project will be able to build a library
+add_library(trace
+    src/colors.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
@@ -24,21 +30,11 @@ target_include_directories(trace PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
-# Our project will be able to build a library
-add_library(trace
-    src/colors.cpp
-)
-
 # Target commands tells which dependencies targer exec have
 target_link_libraries(
     raytracer PUBLIC trace 
 )
 
-# This program runs the automatic tests on the "Color" class
-add_executable(colorTest
-  test/colors.cpp
-  )
-  
 # The test program too needs to be linked to "trace"
 target_link_libraries(colorTest PUBLIC trace)
 
