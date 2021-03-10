@@ -1,4 +1,4 @@
 *~
 *.o
-hello_world
+.vscode/
 build/
