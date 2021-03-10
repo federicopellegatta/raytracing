@@ -29,6 +29,6 @@ bool Color::is_close(Color a) {
 }
 
 bool Color::are_close(float a, float b) {
-  float eps = 1e-10;
+  float eps = 1e-10; // TODO: Which value makes sense?
   return abs(a - b) < eps;
 }
