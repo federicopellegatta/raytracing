@@ -24,10 +24,12 @@ target_include_directories(trace PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
+# Our project will be able to build a library
 add_library(trace
     src/colors.cpp
 )
 
+# Target commands tells which dependencies targer exec have
 target_link_libraries(
     raytracer PUBLIC trace 
 )
@@ -36,6 +38,7 @@ target_link_libraries(
 add_executable(colorTest
   test/colors.cpp
   )
+  
 # The test program too needs to be linked to "trace"
 target_link_libraries(colorTest PUBLIC trace)
 
