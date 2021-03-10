@@ -1,5 +1,4 @@
-// include/colors.h
-
+// Color header file
 struct Color {
 public:
   float r, b, g;
@@ -12,8 +11,8 @@ public:
   Color operator*(Color, float);
   Color operator*(Color, Color);
 
-  bool are_close(Color, Color);
+  bool is_close(Color);
 
 private:
-  bool are_close(float a, float b, float epsilon);
+  bool are_close(float, float);
 };
