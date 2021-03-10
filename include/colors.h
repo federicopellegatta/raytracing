@@ -6,10 +6,10 @@ public:
   Color(float, float, float);
   ~Color();
 
-  Color operator+(Color, Color);
-  Color operator*(float, Color);
-  Color operator*(Color, float);
-  Color operator*(Color, Color);
+  Color operator+(Color);
+  Color operator*(float);
+  // Color operator*(Color, float);
+  Color operator*(Color);
 
   bool is_close(Color);
 
