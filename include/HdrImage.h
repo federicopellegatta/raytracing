@@ -7,7 +7,8 @@
 using namespace std;
 
 struct HdrImage {
-  unsigned int width, height;
+  unsigned int width;
+  unsigned int height;
   vector<Color> pixels;
 
   HdrImage(unsigned int, unsigned int);
@@ -19,6 +20,6 @@ struct HdrImage {
   void write_pfm(ostringstream &stream, float value);
 
 private:
-  void _valid_coordinates(unsigned int, unsigned int);
-  void _pixel_offset(unsigned int, unsigned int);
+  bool _valid_coordinates(unsigned int, unsigned int);
+  unsigned int _pixel_offset(unsigned int, unsigned int);
 };
