@@ -8,7 +8,7 @@ int main() {
 
   Color c3(6.0, 9.0, 12.0);
   Color c4(3.0, 6.0, 9.0);
-  Color c5(5.0, 14.0, 27.1);
+  Color c5(5.0, 14.0, 27.0);
 
   return (c3.is_close(c1 + c2) && c4.is_close(c1 * a) && c5.is_close(c1 * c2))
              ? EXIT_SUCCESS
