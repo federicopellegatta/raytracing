@@ -20,3 +20,13 @@ bool HdrImage::valid_coordinates(unsigned int x, unsigned int y) {
 unsigned int HdrImage::pixel_offset(unsigned int x, unsigned int y) {
   return y * height + x;
 }
+
+void HdrImage::set_pixel(unsigned int x, unsigned int y, Color color) {
+  if (valid_coordinates(x, y)) {
+    pixels[pixel_offset(x, y)] = color;
+  }
+}
+
+Color HdrImage::get_pixel(unsigned int x, unsigned int y) {
+  return pixels[pixel_offset(x, y)];
+}

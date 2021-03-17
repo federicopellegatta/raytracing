@@ -19,7 +19,6 @@ struct HdrImage {
   void write_pfm(ofstream &stream, float value);
   void write_pfm(ostringstream &stream, float value);
 
-private:
-  bool _valid_coordinates(unsigned int, unsigned int);
-  unsigned int _pixel_offset(unsigned int, unsigned int);
+  bool valid_coordinates(unsigned int, unsigned int);
+  unsigned int pixel_offset(unsigned int, unsigned int);
 };
