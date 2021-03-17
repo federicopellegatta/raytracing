@@ -20,5 +20,5 @@ struct HdrImage {
 
 private:
   bool _valid_coordinates(unsigned int, unsigned int);
-  void _pixel_offset(unsigned int, unsigned int);
+  unsigned int _pixel_offset(unsigned int, unsigned int);
 };
