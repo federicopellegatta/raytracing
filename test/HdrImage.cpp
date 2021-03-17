@@ -6,6 +6,10 @@ int main() {
 
   HdrImage img(7, 4);
   bool test_set_get_pixel;
+  bool test_image_creation(HdrImage img);
+  bool test_coordinates(HdrImage img);
+  bool test_pixel_offset(HdrImage img);
+
   Color reference_color(1.0, 2.0, 3.0);
 
   // Testing if set and get pixel works properly
