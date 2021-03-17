@@ -19,9 +19,14 @@ add_executable(colorTest
   test/colors.cpp
 )
 
+add_executable(HdrImageTest
+  test/HdrImage.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
+    src/HdrImage.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
@@ -37,9 +42,13 @@ target_link_libraries(
 
 # The test program too needs to be linked to "trace"
 target_link_libraries(colorTest PUBLIC trace)
+target_link_libraries(HdrImageTest PUBLIC trace)
 
 add_test(NAME colorTest 
     COMMAND colorTest
+)
+add_test(NAME HdrImageTest
+    COMMAND HdrImageTest
 )
 
 # Force the compiler to use the C++17 standard
