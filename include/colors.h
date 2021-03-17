@@ -3,11 +3,7 @@ struct Color {
 public:
   float r, b, g;
 
-  Color() {
-    r = 0;
-    b = 0;
-    g = 0;
-  }
+  Color();
   Color(float, float, float);
   ~Color();
 

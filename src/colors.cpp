@@ -6,6 +6,11 @@
 
 using namespace std;
 
+Color::Color() {
+  r = 0;
+  g = 0;
+  b = 0;
+}
 Color::Color(float R, float G, float B) {
   r = R;
   g = G;
@@ -29,7 +34,7 @@ bool Color::is_close(Color a) {
 }
 
 bool Color::are_close(float a, float b) {
-  float eps = 1e-10; // TODO: Which value makes sense?
+  float eps = 1e-5; // TODO: Which value makes sense?
   return abs(a - b) < eps;
 }
 
