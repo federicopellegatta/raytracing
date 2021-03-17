@@ -19,7 +19,7 @@ bool test_pixel_offset(HdrImage img) {
 
 bool test_set_get_pixel(HdrImage img, Color color, unsigned int x,
                         unsigned int y) {
-  return (color.is_close(img.get_pixel(x, y)))
+  return (color.is_close(img.get_pixel(x, y)));
 }
 
 int main() {

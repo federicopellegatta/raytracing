@@ -24,6 +24,8 @@ unsigned int HdrImage::pixel_offset(unsigned int x, unsigned int y) {
 void HdrImage::set_pixel(unsigned int x, unsigned int y, Color color) {
   if (valid_coordinates(x, y)) {
     pixels[pixel_offset(x, y)] = color;
+  } else {
+    cout << "Couldn't set pixel because coordinates are not valid!" << endl;
   }
 }
 
