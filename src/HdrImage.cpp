@@ -1,8 +1,9 @@
 #include "../include/HdrImage.h"
+#include <iostream>
 
 using namespace std;
 
-HdrImage::HdrImage(unsigned int w, unsigned int h) {
+HdrImage::HdrImage(unsigned int w, unsigned int h) : pixels(w * h) {
   width = w;
   height = h;
 }
@@ -18,7 +19,7 @@ bool HdrImage::valid_coordinates(unsigned int x, unsigned int y) {
 }
 
 unsigned int HdrImage::pixel_offset(unsigned int x, unsigned int y) {
-  return y * height + x;
+  return y * width + x;
 }
 
 void HdrImage::set_pixel(unsigned int x, unsigned int y, Color color) {
