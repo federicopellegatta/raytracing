@@ -9,7 +9,7 @@ HdrImage::HdrImage(unsigned int w, unsigned int h) {
 
 HdrImage::~HdrImage(){};
 
-bool HdrImage::_valid_coordinates(unsigned int x, unsigned int y) {
+bool HdrImage::valid_coordinates(unsigned int x, unsigned int y) {
   if (x < width && y < height) {
     return true;
   } else {
@@ -17,12 +17,16 @@ bool HdrImage::_valid_coordinates(unsigned int x, unsigned int y) {
   }
 }
 
-unsigned int HdrImage::_pixel_offset(unsigned int x, unsigned int y) {
+unsigned int HdrImage::pixel_offset(unsigned int x, unsigned int y) {
   return y * height + x;
 }
 
 void HdrImage::set_pixel(unsigned int x, unsigned int y, Color color) {
-  if (_valid_coordinates(x, y)) {
-    pixels[_pixel_offset(x, y)] = color;
+  if (valid_coordinates(x, y)) {
+    pixels[pixel_offset(x, y)] = color;
   }
+}
+
+Color HdrImage::get_pixel(unsigned int x, unsigned int y) {
+  return pixels[pixel_offset(x, y)];
 }
