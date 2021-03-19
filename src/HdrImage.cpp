@@ -11,7 +11,7 @@ HdrImage::HdrImage(int w, int h) : pixels(w * h) {
 HdrImage::~HdrImage(){};
 
 bool HdrImage::valid_coordinates(int x, int y) {
-  if (x < width && y < height) {
+  if (x >= 0 && x < width && y >= 0 && y < height) {
     return true;
   } else {
     return false;
