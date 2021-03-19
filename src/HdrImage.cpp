@@ -3,14 +3,14 @@
 
 using namespace std;
 
-HdrImage::HdrImage(unsigned int w, unsigned int h) : pixels(w * h) {
+HdrImage::HdrImage(int w, int h) : pixels(w * h) {
   width = w;
   height = h;
 }
 
 HdrImage::~HdrImage(){};
 
-bool HdrImage::valid_coordinates(unsigned int x, unsigned int y) {
+bool HdrImage::valid_coordinates(int x, int y) {
   if (x < width && y < height) {
     return true;
   } else {
@@ -18,11 +18,9 @@ bool HdrImage::valid_coordinates(unsigned int x, unsigned int y) {
   }
 }
 
-unsigned int HdrImage::pixel_offset(unsigned int x, unsigned int y) {
-  return y * width + x;
-}
+int HdrImage::pixel_offset(int x, int y) { return y * width + x; }
 
-void HdrImage::set_pixel(unsigned int x, unsigned int y, Color color) {
+void HdrImage::set_pixel(int x, int y, Color color) {
   if (valid_coordinates(x, y)) {
     pixels[pixel_offset(x, y)] = color;
   } else {
@@ -30,6 +28,4 @@ void HdrImage::set_pixel(unsigned int x, unsigned int y, Color color) {
   }
 }
 
-Color HdrImage::get_pixel(unsigned int x, unsigned int y) {
-  return pixels[pixel_offset(x, y)];
-}
+Color HdrImage::get_pixel(int x, int y) { return pixels[pixel_offset(x, y)]; }

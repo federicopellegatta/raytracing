@@ -1,24 +1,25 @@
 #include "./colors.h"
 #include <cstdint>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <vector>
 
 using namespace std;
 
 struct HdrImage {
-  unsigned int width;
-  unsigned int height;
+  int width;
+  int height;
   vector<Color> pixels;
 
-  HdrImage(unsigned int, unsigned int);
+  HdrImage(int, int);
   ~HdrImage();
 
-  Color get_pixel(unsigned int, unsigned int);
-  void set_pixel(unsigned int, unsigned int, Color);
+  Color get_pixel(int, int);
+  void set_pixel(int, int, Color);
   void write_pfm(ofstream &stream, float value);
   void write_pfm(ostringstream &stream, float value);
 
-  bool valid_coordinates(unsigned int, unsigned int);
-  unsigned int pixel_offset(unsigned int, unsigned int);
+  bool valid_coordinates(int, int);
+  int pixel_offset(int, int);
 };
