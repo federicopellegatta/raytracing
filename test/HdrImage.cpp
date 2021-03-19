@@ -21,8 +21,7 @@ void test_pixel_offset(HdrImage img) {
   assert(img.pixel_offset(6, 3) == 7 * 4 - 1);
 }
 
-void test_set_get_pixel(HdrImage img, Color color, unsigned int x,
-                        unsigned int y) {
+void test_set_get_pixel(HdrImage img, Color color, int x, int y) {
   assert(color.is_close(img.get_pixel(x, y)));
 }
 
