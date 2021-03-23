@@ -2,13 +2,17 @@
 
 using namespace std;
 
+// Default constructor
 HdrImage::HdrImage(int w, int h) : pixels(w * h) {
   width = w;
   height = h;
 }
 
+// Default destructor
 HdrImage::~HdrImage(){};
 
+// Valid coordinates implementation
+// Check if x and y are positive integers, and are inside the matrix
 bool HdrImage::valid_coordinates(int x, int y) {
   if (x >= 0 && x < width && y >= 0 && y < height) {
     return true;
@@ -17,8 +21,11 @@ bool HdrImage::valid_coordinates(int x, int y) {
   }
 }
 
+// Converts matrix like position in 1D vector position (needed by vector<Colors>
+// pixels)
 int HdrImage::pixel_offset(int x, int y) { return y * width + x; }
 
+// Assign color to target pixel
 void HdrImage::set_pixel(int x, int y, Color color) {
   if (valid_coordinates(x, y)) {
     pixels[pixel_offset(x, y)] = color;
@@ -27,6 +34,7 @@ void HdrImage::set_pixel(int x, int y, Color color) {
   }
 }
 
+// Getter implementation
 Color HdrImage::get_pixel(int x, int y) { return pixels[pixel_offset(x, y)]; }
 
 void HdrImage::write_float(ofstream &stream, float value,

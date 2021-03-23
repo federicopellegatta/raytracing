@@ -34,7 +34,7 @@ void test_pfm_save(HdrImage img) { // SOLO little_endian
   img.set_pixel(1, 1, Color(4.0e2, 5.0e2, 6.0e2));
   img.set_pixel(2, 1, Color(7.0e2, 8.0e2, 9.0e2));
 
-  ofstream outputFile("my_le_img.pfm");
+  ofstream outputFile("../build/my_le_img.pfm");
 
   img.write_pfm(
       outputFile,
