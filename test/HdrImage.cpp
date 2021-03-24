@@ -34,12 +34,9 @@ void test_pfm_save(HdrImage img) { // SOLO little_endian
   img.set_pixel(1, 1, Color(4.0e2, 5.0e2, 6.0e2));
   img.set_pixel(2, 1, Color(7.0e2, 8.0e2, 9.0e2));
 
-  ofstream outputFile("../build/my_le_img.pfm");
+  ofstream outputFile("./my_le_img.pfm");
 
-  img.write_pfm(
-      outputFile,
-      Endianness::little_endian); // perchè non crea nessun file output quando
-                                  // eseguo ./HdrImageTest???
+  img.write_pfm(outputFile, Endianness::little_endian);
 
   // little_endian reference pfm and compare it with my image
   unsigned char reference_le_pfm[] = {
@@ -68,7 +65,7 @@ int main() {
   test_pixel_offset(img);
   test_set_get_pixel(img, reference_color, 3, 2);
 
-  void test_pfm_save(HdrImage img1);
+  test_pfm_save(img1);
 
   return 0;
 }
