@@ -4,10 +4,10 @@ Ray-Tracing is a C++ code that you can use to generate photorealistic images.
 ## Getting started
 Copy the source folder to your laptop, then compile the code using [`CMake`](https://cmake.org/) in a building directory. You can simply follow the instructions below.
 ``` sh
-$ git clone https://github.com/federicopellegatta/raytracing.git
-$ cd raytracing && mkdir build && cd build
-$ cmake ..
-$ make
+git clone https://github.com/federicopellegatta/raytracing.git
+cd raytracing && mkdir build && cd build
+cmake ..
+make
 ```
 You will find tests and executable files in `build` directory. 
 
