@@ -37,7 +37,7 @@ void HdrImage::set_pixel(int x, int y, Color color) {
 // Getter implementation
 Color HdrImage::get_pixel(int x, int y) { return pixels[pixel_offset(x, y)]; }
 
-void HdrImage::write_float(ofstream &stream, float value,
+void HdrImage::write_float(ostream &stream, float value,
                            Endianness endianness) {
   // Convert "value" in a sequence of 32 bit
   uint32_t double_word{*((uint32_t *)&value)};
@@ -71,10 +71,14 @@ float HdrImage::endianness(Endianness e) {
   }
 }
 
-void HdrImage::write_pfm(ofstream &stream, Endianness e) {
+void HdrImage::write_pfm(ostream &stream, Endianness e) {
   stringstream sstr;
 
-  sstr << "PF\n" << width << " " << height << "\n" << endianness(e);
+  // fixed and setprecision in order to have .0 in output
+  // see https://www.cplusplus.com/reference/iomanip/setprecision/
+  sstr << "PF\n"
+       << width << " " << height << "\n"
+       << fixed << setprecision(1) << endianness(e);
   string result{sstr.str()};
 
   stream << result << endl;
@@ -87,3 +91,21 @@ void HdrImage::write_pfm(ofstream &stream, Endianness e) {
     }
   }
 }
+/*
+void HdrImage::write_pfm(ostringstream &sstream, Endianness e) {
+  // stringstream sstr;
+
+  sstream << "PF\n" << width << " " << height << "\n" << endianness(e);
+  // string result{sstr.str()};
+
+  // sstream << result << endl;
+  for (int y = height - 1; y >= 0; y--) {
+    for (int x = 0; x < width; x++) {
+      Color color = get_pixel(x, y);
+      write_float(sstream, color.r, e);
+      write_float(sstream, color.g, e);
+      write_float(sstream, color.b, e);
+    }
+  }
+}
+*/

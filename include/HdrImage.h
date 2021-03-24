@@ -1,8 +1,12 @@
 #include "./colors.h"
+#include <algorithm>
 #include <cstdint>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <ostream>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 using namespace std;
@@ -30,10 +34,10 @@ struct HdrImage {
   float endianness(Endianness);
 
   // Write a float number as its 4 bytes #TODO: understand this!
-  void write_float(ofstream &, float, Endianness);
+  void write_float(ostream &, float, Endianness);
 
   // Methods to write to file on disk or to file on memory (overload needed for
   // tests)
-  void write_pfm(ofstream &, Endianness);
-  void write_pfm(ostringstream &, Endianness);
+  void write_pfm(ostream &, Endianness);
+  // void write_pfm(ostringstream &, Endianness);
 };
