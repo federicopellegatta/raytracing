@@ -109,3 +109,30 @@ Endianness parse_endianness(string str) {
     throw InvalidPfmFileFormat("Invalid endianness specification");
   }
 }
+
+int *parse_img_size(string str) {
+  string w = str.substr(0, str.find(" "));
+  string h = str.erase(0, w.size() + 1).substr(0, str.find(" "));
+  string rest = str.erase(0, w.size() + 1);
+
+  try {
+    if (rest == "") {
+      int width = stoi(w); // nota: stoi(1.1)=1    :(
+      int height = stoi(h);
+    } else {
+      throw InvalidPfmFileFormat(
+          "Invalid image dimension: more than 2 dimensions");
+    }
+
+    if (stoi(w) < 0 || stoi(h) < 0) {
+      throw InvalidPfmFileFormat(
+          "Invalid image dimension: width/height is negative integer");
+    }
+  } catch (invalid_argument) {
+    throw InvalidPfmFileFormat(
+        "Invalid image dimension: width/height not a integer");
+  }
+
+  static int dim[2] = {stoi(w), stoi(h)};
+  return dim;
+}

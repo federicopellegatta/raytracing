@@ -91,6 +91,24 @@ void test_pfm_parse_endianness() {
   }
 }
 
+void test_pfm_parse_img_size() {
+  int dim[2] = {3, 2};
+
+  for (int i = 0; i < 2; i++) {
+    assert(dim[i] == parse_img_size("3 2")[i]);
+  }
+
+  try {
+    parse_img_size("-1 3");
+  } catch (InvalidPfmFileFormat) {
+  }
+
+  try {
+    parse_endianness("1 4 c");
+  } catch (InvalidPfmFileFormat) {
+  };
+}
+
 int main() {
 
   HdrImage img(7, 4);
@@ -105,7 +123,10 @@ int main() {
   test_pixel_offset(img);
   test_set_get_pixel(img, reference_color, 3, 2);
 
-  test_pfm_save(img1);
+  // test_pfm_save(img1);
+
+  test_pfm_parse_endianness();
+  test_pfm_parse_img_size();
 
   return 0;
 }

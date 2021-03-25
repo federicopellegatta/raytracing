@@ -12,7 +12,6 @@
 
 using namespace std;
 
-// What does this mean?? #TODO: Understand this
 enum class Endianness { little_endian, big_endian };
 
 struct HdrImage {
@@ -39,8 +38,6 @@ struct HdrImage {
 
   // Methods to write to file on disk or to file on memory
   void write_pfm(ostream &, Endianness);
-
-  // Reading pfm files methods
 };
 
 class InvalidPfmFileFormat
@@ -48,4 +45,6 @@ class InvalidPfmFileFormat
   using runtime_error::runtime_error;
 };
 
+// Reading pfm files methods
 Endianness parse_endianness(string);
+int *parse_img_size(string);
