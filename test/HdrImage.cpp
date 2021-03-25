@@ -49,10 +49,16 @@ void test_pfm_save(HdrImage img) { // SOLO little_endian
   img.write_pfm(buffer, Endianness::little_endian);
   assert(buffer.str().size() == reference_le_pfm.size()); // controllo dim
 
-  for (int i = 0; i < reference_le_pfm.size(); i++) {
+  for (int i{}; i < reference_le_pfm.size(); i++) {
     // assert(buffer.str()[i] == reference_le_pfm[i]);
     if (buffer.str()[i] != reference_le_pfm[i]) {
-      cout << i << " " << buffer.str()[i] << " " << reference_le_pfm[i] << endl;
+      // Using printf() for better format manipulation
+      // See https://www.cplusplus.com/reference/cstdio/printf/
+
+      // Guardando l'output i caratteri sono fondamentalmente uguali,
+      // tranne per delle "f" davanti a quella del buffer.
+      // Secondo me è la conversione stringstream -> string che fa porcate
+      printf("%i %x %x \n", i, buffer.str()[i], reference_le_pfm[i]);
     }
   }
 
