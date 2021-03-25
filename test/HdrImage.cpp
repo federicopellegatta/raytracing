@@ -76,6 +76,21 @@ void test_pfm_save(HdrImage img) { // SOLO little_endian
   img.write_pfm(outputFile, Endianness::little_endian);
 }
 
+void test_pfm_parse_endianness() {
+  assert(parse_endianness("-1.0") == Endianness::little_endian);
+  assert(parse_endianness("1.0") == Endianness::big_endian);
+
+  try {
+    parse_endianness("2.0");
+  } catch (InvalidPfmFileFormat err) {
+  }
+
+  try {
+    parse_endianness("abc");
+  } catch (InvalidPfmFileFormat err) {
+  }
+}
+
 int main() {
 
   HdrImage img(7, 4);

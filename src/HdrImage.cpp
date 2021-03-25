@@ -91,21 +91,21 @@ void HdrImage::write_pfm(ostream &stream, Endianness e) {
     }
   }
 }
-/*
-void HdrImage::write_pfm(ostringstream &sstream, Endianness e) {
-  // stringstream sstr;
 
-  sstream << "PF\n" << width << " " << height << "\n" << endianness(e);
-  // string result{sstr.str()};
+// reading file pfm methodsstof()
+Endianness parse_endianness(string str) {
+  try {
+    float floatEndianness = stof(str);
+  } catch (invalid_argument) {
+    throw InvalidPfmFileFormat("Missing endianness specification");
+  }
 
-  // sstream << result << endl;
-  for (int y = height - 1; y >= 0; y--) {
-    for (int x = 0; x < width; x++) {
-      Color color = get_pixel(x, y);
-      write_float(sstream, color.r, e);
-      write_float(sstream, color.g, e);
-      write_float(sstream, color.b, e);
-    }
+  if (str == "-1.0") { // perchè se scrivo floatEndianness == -1.0 dice che non
+                       // ho definito floatEndianness?
+    return Endianness::little_endian;
+  } else if (str == "1.0") {
+    return Endianness::big_endian;
+  } else {
+    throw InvalidPfmFileFormat("Invalid endianness specification");
   }
 }
-*/

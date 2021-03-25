@@ -6,6 +6,7 @@
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -36,8 +37,15 @@ struct HdrImage {
   // Write a float number as its 4 bytes #TODO: understand this!
   void write_float(ostream &, float, Endianness);
 
-  // Methods to write to file on disk or to file on memory (overload needed for
-  // tests)
+  // Methods to write to file on disk or to file on memory
   void write_pfm(ostream &, Endianness);
-  // void write_pfm(ostringstream &, Endianness);
+
+  // Reading pfm files methods
 };
+
+class InvalidPfmFileFormat
+    : public runtime_error { // classe figlia di std::runtime_error
+  using runtime_error::runtime_error;
+};
+
+Endianness parse_endianness(string);
