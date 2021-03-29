@@ -113,6 +113,48 @@ float read_float(istream &stream, Endianness e) {
   return value;
 }
 
+// Read pfm file
+void HdrImage::read_pfm(istream &stream) {
+  if (!stream)
+    throw InvalidPfmFileFormat("File does not exist");
+
+  // seekg ref: https://www.cplusplus.com/reference/istream/istream/seekg/
+  // get length of file:
+  stream.seekg(0, stream.end);
+  int length = stream.tellg();
+  stream.seekg(0, stream.beg);
+
+  // check file format: is it a PFM file?
+  string magic;
+  getline(stream, magic);
+  if (magic != "PF")
+    throw InvalidPfmFileFormat("Invalid magic in PFM file");
+
+  // read img_size
+  string img_size;
+  getline(stream, img_size);
+  int width = parse_img_size(img_size)[0];
+  int height = parse_img_size(img_size)[1];
+
+  // read endianness
+  string e;
+  Endianness endianness;
+  getline(stream, e);
+  endianness = parse_endianness(e);
+
+  // TODO: check if img pixels are >= width*height
+
+  // Read the image
+  for (int y = height - 1; y >= 0; y--) {
+    for (int x = 0; x < width; x++) {
+      float r = read_float(stream, endianness);
+      float g = read_float(stream, endianness);
+      float b = read_float(stream, endianness);
+      set_pixel(x, y, Color{r, g, b});
+    }
+  }
+}
+
 // reading file pfm methodsstof()
 Endianness parse_endianness(string str) {
   try {
@@ -121,8 +163,8 @@ Endianness parse_endianness(string str) {
     throw InvalidPfmFileFormat("Missing endianness specification");
   }
 
-  if (str == "-1.0") { // perchè se scrivo floatEndianness == -1.0 dice che
-                       // non ho definito floatEndianness?
+  if (str == "-1.0") { // perchè se scrivo floatEndianness == -1.0 dice
+                       // che non ho definito floatEndianness?
     return Endianness::little_endian;
   } else if (str == "1.0") {
     return Endianness::big_endian;
