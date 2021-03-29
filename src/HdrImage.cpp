@@ -114,14 +114,14 @@ float read_float(istream &stream, Endianness e) {
 }
 
 // Read pfm file
-void HdrImage::read_pfm(istream &stream) {
+HdrImage HdrImage::read_pfm(istream &stream) {
   if (!stream)
     throw InvalidPfmFileFormat("File does not exist");
 
   // seekg ref: https://www.cplusplus.com/reference/istream/istream/seekg/
   // get length of file:
   stream.seekg(0, stream.end);
-  int length = stream.tellg();
+  int file_length = stream.tellg();
   stream.seekg(0, stream.beg);
 
   // check file format: is it a PFM file?
@@ -142,17 +142,22 @@ void HdrImage::read_pfm(istream &stream) {
   getline(stream, e);
   endianness = parse_endianness(e);
 
-  // TODO: check if img pixels are >= width*height
+  // check if img pixels are >= width*height
+  int header_len = stream.tellg();
+  if ((file_length - header_len) < (width * height * 3 * 4))
+    throw InvalidPfmFileFormat("Invalid file dimension");
 
+  HdrImage results = HdrImage(width = width, height = height);
   // Read the image
   for (int y = height - 1; y >= 0; y--) {
     for (int x = 0; x < width; x++) {
       float r = read_float(stream, endianness);
       float g = read_float(stream, endianness);
       float b = read_float(stream, endianness);
-      set_pixel(x, y, Color{r, g, b});
+      results.set_pixel(x, y, Color{r, g, b});
     }
   }
+  return results;
 }
 
 // reading file pfm methodsstof()

@@ -43,7 +43,7 @@ struct HdrImage {
   float read_float(istream &, Endianness);
 
   // Read a pfm file
-  void read_pfm(istream &stream);
+  HdrImage read_pfm(istream &stream);
 };
 
 class InvalidPfmFileFormat
