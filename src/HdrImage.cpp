@@ -92,6 +92,27 @@ void HdrImage::write_pfm(ostream &stream, Endianness e) {
   }
 }
 
+// read float number as its 4 bytes
+float read_float(istream &stream, Endianness e) {
+  uint8_t bytes[4];
+
+  for (int i{}; i < 4; i++)
+    stream >> noskipws >> bytes[i];
+
+  float value = 0.f;
+  if (e == Endianness::little_endian) {
+    for (int i{}; i < 4; ++i) {
+      // come converto ogni elemento di byte a valore?
+    }
+  }
+  if (e == Endianness::big_endian) {
+    for (int i{3}; i >= 0; --i) {
+      // come converto ogni elemento di byte a valore?
+    }
+  }
+  return value;
+}
+
 // reading file pfm methodsstof()
 Endianness parse_endianness(string str) {
   try {
@@ -100,8 +121,8 @@ Endianness parse_endianness(string str) {
     throw InvalidPfmFileFormat("Missing endianness specification");
   }
 
-  if (str == "-1.0") { // perchè se scrivo floatEndianness == -1.0 dice che non
-                       // ho definito floatEndianness?
+  if (str == "-1.0") { // perchè se scrivo floatEndianness == -1.0 dice che
+                       // non ho definito floatEndianness?
     return Endianness::little_endian;
   } else if (str == "1.0") {
     return Endianness::big_endian;
@@ -117,7 +138,7 @@ int *parse_img_size(string str) {
 
   try {
     if (rest == "") {
-      int width = stoi(w); // nota: stoi(1.1)=1    :(
+      int width = stoi(w); // nota: stoi(1.1)=1
       int height = stoi(h);
     } else {
       throw InvalidPfmFileFormat(
