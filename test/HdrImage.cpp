@@ -83,6 +83,7 @@ void test_pfm_parse_endianness() {
   try {
     parse_endianness("2.0");
   } catch (InvalidPfmFileFormat err) {
+    // printf("Caught exception: \n" err);
   }
 
   try {

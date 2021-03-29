@@ -147,52 +147,61 @@ HdrImage HdrImage::read_pfm(istream &stream) {
   if ((file_length - header_len) < (width * height * 3 * 4))
     throw InvalidPfmFileFormat("Invalid file dimension");
 
-  HdrImage results = HdrImage(width = width, height = height);
+  HdrImage results = HdrImage(width, height);
+  /*
   // Read the image
-  for (int y = height - 1; y >= 0; y--) {
-    for (int x = 0; x < width; x++) {
+  for (int y{height - 1}; y >= 0; y--) {
+    for (int x{}; x < width; x++) {
       float r = read_float(stream, endianness);
       float g = read_float(stream, endianness);
       float b = read_float(stream, endianness);
       results.set_pixel(x, y, Color{r, g, b});
     }
   }
+  */
   return results;
 }
 
 // reading file pfm methodsstof()
 Endianness parse_endianness(string str) {
+
+  float floatEndianness = 0.f;
   try {
-    float floatEndianness = stof(str);
+    floatEndianness = stof(str);
   } catch (invalid_argument) {
     throw InvalidPfmFileFormat("Missing endianness specification");
   }
 
-  if (str == "-1.0") { // perchè se scrivo floatEndianness == -1.0 dice
-                       // che non ho definito floatEndianness?
+  if (floatEndianness == -1.0) { // perchè se scrivo floatEndianness == -1.0
+                                 // dice che non ho definito floatEndianness?
+                                 // Simone:
+                                 // Perchè l'avevi solamente definito
+                                 // all'interno dello scope del try
     return Endianness::little_endian;
-  } else if (str == "1.0") {
+  } else if (floatEndianness == 1.0) {
     return Endianness::big_endian;
   } else {
     throw InvalidPfmFileFormat("Invalid endianness specification");
   }
 }
 
-int *parse_img_size(string str) {
+vector<int> parse_img_size(string str) {
   string w = str.substr(0, str.find(" "));
   string h = str.erase(0, w.size() + 1).substr(0, str.find(" "));
   string rest = str.erase(0, w.size() + 1);
 
+  int width = 0;
+  int height = 0;
   try {
     if (rest == "") {
-      int width = stoi(w); // nota: stoi(1.1)=1
-      int height = stoi(h);
+      width = stoi(w); // nota: stoi(1.1)=1
+      height = stoi(h);
     } else {
       throw InvalidPfmFileFormat(
           "Invalid image dimension: more than 2 dimensions");
     }
 
-    if (stoi(w) < 0 || stoi(h) < 0) {
+    if (width < 0 || height < 0) {
       throw InvalidPfmFileFormat(
           "Invalid image dimension: width/height is negative integer");
     }
@@ -201,6 +210,6 @@ int *parse_img_size(string str) {
         "Invalid image dimension: width/height not a integer");
   }
 
-  static int dim[2] = {stoi(w), stoi(h)};
+  vector<int> dim = {width, height};
   return dim;
 }
