@@ -20,7 +20,6 @@ struct HdrImage {
   int height;
   vector<Color> pixels;
 
-  // Default constructor and destructor
   HdrImage(int, int);
   ~HdrImage();
 
@@ -31,7 +30,6 @@ struct HdrImage {
   // Misc methods to check integrity
   bool valid_coordinates(int, int);
   int pixel_offset(int, int);
-  float endianness(Endianness);
 
   // Write a float number as its 4 bytes
   void write_float(ostream &, float, Endianness);

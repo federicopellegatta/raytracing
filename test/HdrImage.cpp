@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void test_image_creation(HdrImage img, unsigned int x, unsigned int y) {
+void test_image_creation(HdrImage img, int x, int y) {
   assert(img.width == x);
   assert(img.height == y);
 }

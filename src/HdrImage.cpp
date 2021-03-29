@@ -2,7 +2,6 @@
 
 using namespace std;
 
-// Default constructor
 HdrImage::HdrImage(int w, int h) : pixels(w * h) {
   width = w;
   height = h;
@@ -63,22 +62,21 @@ void HdrImage::write_float(ostream &stream, float value,
   }
 }
 
-float HdrImage::endianness(Endianness e) {
-  if (e == Endianness::little_endian) {
-    return -1.0;
-  } else {
-    return 1.0;
-  }
-}
-
 void HdrImage::write_pfm(ostream &stream, Endianness e) {
   stringstream sstr;
 
+  float float_endianness;
+  if (e == Endianness::little_endian) {
+    float_endianness = -1.f;
+  } else {
+    float_endianness = 1.f;
+  }
+
   // fixed and setprecision in order to have .0 in output
-  // see https://www.cplusplus.com/reference/iomanip/setprecision/
   sstr << "PF\n"
        << width << " " << height << "\n"
-       << fixed << setprecision(1) << endianness(e);
+       << fixed << setprecision(1) << float_endianness;
+
   string result{sstr.str()};
 
   stream << result << endl;
@@ -149,7 +147,7 @@ HdrImage HdrImage::read_pfm(istream &stream) {
     throw InvalidPfmFileFormat("Invalid file dimension");
 
   HdrImage results = HdrImage(width, height);
-  /*
+
   // Read the image
   for (int y{height - 1}; y >= 0; y--) {
     for (int x{}; x < width; x++) {
@@ -159,11 +157,11 @@ HdrImage HdrImage::read_pfm(istream &stream) {
       results.set_pixel(x, y, Color{r, g, b});
     }
   }
-  */
+
   return results;
 }
 
-// reading file pfm methodsstof()
+// reading file pfm method
 Endianness parse_endianness(string str) {
 
   float floatEndianness = 0.f;
@@ -173,11 +171,7 @@ Endianness parse_endianness(string str) {
     throw InvalidPfmFileFormat("Missing endianness specification");
   }
 
-  if (floatEndianness == -1.0) { // perchè se scrivo floatEndianness == -1.0
-                                 // dice che non ho definito floatEndianness?
-                                 // Simone:
-                                 // Perchè l'avevi solamente definito
-                                 // all'interno dello scope del try
+  if (floatEndianness == -1.0) {
     return Endianness::little_endian;
   } else if (floatEndianness == 1.0) {
     return Endianness::big_endian;
