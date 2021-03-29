@@ -53,4 +53,4 @@ class InvalidPfmFileFormat
 
 // Reading pfm files methods
 Endianness parse_endianness(string);
-int *parse_img_size(string);
+vector<int> parse_img_size(string);
