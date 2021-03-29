@@ -93,21 +93,22 @@ void HdrImage::write_pfm(ostream &stream, Endianness e) {
 }
 
 // read float number as its 4 bytes
-float read_float(istream &stream, Endianness e) {
+float HdrImage::read_float(istream &stream, Endianness e) {
   uint8_t bytes[4];
 
   for (int i{}; i < 4; i++)
     stream >> noskipws >> bytes[i];
 
   float value = 0.f;
+  uint8_t *f_ptr = (uint8_t *)&value;
   if (e == Endianness::little_endian) {
     for (int i{}; i < 4; ++i) {
-      // come converto ogni elemento di byte a valore?
+      f_ptr[i] = bytes[i];
     }
   }
   if (e == Endianness::big_endian) {
     for (int i{3}; i >= 0; --i) {
-      // come converto ogni elemento di byte a valore?
+      f_ptr[i] = bytes[3 - i];
     }
   }
   return value;
