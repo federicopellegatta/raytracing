@@ -83,12 +83,13 @@ void test_pfm_parse_endianness() {
   try {
     parse_endianness("2.0");
   } catch (InvalidPfmFileFormat err) {
-    // printf("Caught exception: \n" err);
+    printf("Caught exception: %s \n", err.what());
   }
 
   try {
     parse_endianness("abc");
   } catch (InvalidPfmFileFormat err) {
+    printf("Caught exception: %s \n", err.what());
   }
 }
 
@@ -101,13 +102,53 @@ void test_pfm_parse_img_size() {
 
   try {
     parse_img_size("-1 3");
-  } catch (InvalidPfmFileFormat) {
+  } catch (InvalidPfmFileFormat err) {
+    printf("Caught exception: %s \n", err.what());
   }
 
   try {
-    parse_endianness("1 4 c");
-  } catch (InvalidPfmFileFormat) {
+    parse_img_size("1 4 c");
+  } catch (InvalidPfmFileFormat err) {
+    printf("Caught exception: %s \n", err.what());
   };
+
+  try {
+    parse_img_size("1 c");
+  } catch (InvalidPfmFileFormat err) {
+    printf("Caught exception: %s \n", err.what());
+  }
+}
+
+void test_pfm_read() {
+  istringstream le_in("../build/reference_le_pfm");
+  istringstream be_in("../build/reference_be.pfm");
+
+  HdrImage img_le(le_in);
+  HdrImage img_be(be_in);
+
+  // Little endian image tests
+  assert(img_le.width == 3);
+  assert(img_le.height == 2);
+
+  assert(img_le.get_pixel(0, 0).is_close(Color(1.0e1, 2.0e1, 3.0e1)));
+  assert(img_le.get_pixel(1, 0).is_close(Color(4.0e1, 5.0e1, 6.0e1)));
+  assert(img_le.get_pixel(2, 0).is_close(Color(7.0e1, 8.0e1, 9.0e1)));
+  assert(img_le.get_pixel(0, 1).is_close(Color(1.0e2, 2.0e2, 3.0e2)));
+  assert(img_le.get_pixel(0, 0).is_close(Color(1.0e1, 2.0e1, 3.0e1)));
+  assert(img_le.get_pixel(1, 1).is_close(Color(4.0e2, 5.0e2, 6.0e2)));
+  assert(img_le.get_pixel(2, 1).is_close(Color(7.0e2, 8.0e2, 9.0e2)));
+
+  // Big endian image tests
+  assert(img_be.width == 3);
+  assert(img_be.height == 2);
+
+  assert(img_be.get_pixel(0, 0).is_close(Color(1.0e1, 2.0e1, 3.0e1)));
+  assert(img_be.get_pixel(1, 0).is_close(Color(4.0e1, 5.0e1, 6.0e1)));
+  assert(img_be.get_pixel(2, 0).is_close(Color(7.0e1, 8.0e1, 9.0e1)));
+  assert(img_be.get_pixel(0, 1).is_close(Color(1.0e2, 2.0e2, 3.0e2)));
+  assert(img_be.get_pixel(0, 0).is_close(Color(1.0e1, 2.0e1, 3.0e1)));
+  assert(img_be.get_pixel(1, 1).is_close(Color(4.0e2, 5.0e2, 6.0e2)));
+  assert(img_be.get_pixel(2, 1).is_close(Color(7.0e2, 8.0e2, 9.0e2)));
 }
 
 int main() {
@@ -128,6 +169,7 @@ int main() {
 
   test_pfm_parse_endianness();
   test_pfm_parse_img_size();
+  test_pfm_read();
 
   return 0;
 }

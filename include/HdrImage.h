@@ -1,6 +1,7 @@
 #include "./colors.h"
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -15,12 +16,19 @@ using namespace std;
 enum class Endianness { little_endian, big_endian };
 
 struct HdrImage {
+private:
+  // Read a pfm file
+  void read_pfm(istream &);
+
+public:
   // Variables needed
   int width;
   int height;
   vector<Color> pixels;
 
   HdrImage(int, int);
+  HdrImage(const string &);
+  HdrImage(istream &);
   ~HdrImage();
 
   // Getter and setter methods
@@ -39,13 +47,10 @@ struct HdrImage {
 
   // Read a float number as its 4 bytes
   float read_float(istream &, Endianness);
-
-  // Read a pfm file
-  HdrImage read_pfm(istream &stream);
 };
 
-class InvalidPfmFileFormat
-    : public runtime_error { // classe figlia di std::runtime_error
+// classe figlia di std::runtime_error
+class InvalidPfmFileFormat : public runtime_error {
   using runtime_error::runtime_error;
 };
 

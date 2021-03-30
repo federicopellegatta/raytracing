@@ -7,6 +7,13 @@ HdrImage::HdrImage(int w, int h) : pixels(w * h) {
   height = h;
 }
 
+HdrImage::HdrImage(const string &file_name) {
+  ifstream stream{file_name};
+  read_pfm(stream);
+}
+
+HdrImage::HdrImage(istream &stream) { read_pfm(stream); };
+
 // Default destructor
 HdrImage::~HdrImage(){};
 
@@ -91,29 +98,87 @@ void HdrImage::write_pfm(ostream &stream, Endianness e) {
 }
 
 // read float number as its 4 bytes
+// Simone: ho smanettato un po', e may be ha senso implementare questa cosa con
+// chiamate a funzioni già implementate (così evitiamo di dover fare i test,
+// giusto?) Le suddette funzioni sono:
+// - memcpy (https://www.cplusplus.com/reference/cstring/memcpy/)
+// - reverse (https://en.cppreference.com/w/cpp/algorithm/reverse)
 float HdrImage::read_float(istream &stream, Endianness e) {
-  uint8_t bytes[4];
+  // uint8_t bytes[4];
+  unsigned char bytes[4];
 
   for (int i{}; i < 4; i++)
     stream >> noskipws >> bytes[i];
 
   float value = 0.f;
-  uint8_t *f_ptr = (uint8_t *)&value;
+  // uint8_t *f_ptr = (uint8_t *)&value;
   if (e == Endianness::little_endian) {
-    for (int i{}; i < 4; ++i) {
+    /*for (int i{}; i < 4; ++i) {
       f_ptr[i] = bytes[i];
-    }
+    }*/
+    memcpy(&value, &bytes, sizeof(value));
   }
   if (e == Endianness::big_endian) {
+    /*
     for (int i{3}; i >= 0; --i) {
       f_ptr[i] = bytes[3 - i];
     }
+    */
+    reverse(begin(bytes), end(bytes));
+    memcpy(&value, &bytes, sizeof(value));
   }
   return value;
 }
 
-// Read pfm file
-HdrImage HdrImage::read_pfm(istream &stream) {
+// reading file pfm method
+Endianness parse_endianness(string str) {
+
+  float floatEndianness = 0.f;
+  try {
+    floatEndianness = stof(str);
+  } catch (invalid_argument) {
+    throw InvalidPfmFileFormat("Missing endianness specification");
+  }
+
+  if (floatEndianness == -1.0) {
+    return Endianness::little_endian;
+  } else if (floatEndianness == 1.0) {
+    return Endianness::big_endian;
+  } else {
+    throw InvalidPfmFileFormat("Invalid endianness specification");
+  }
+}
+
+vector<int> parse_img_size(string str) {
+  string w = str.substr(0, str.find(" "));
+  string h = str.erase(0, w.size() + 1).substr(0, str.find(" "));
+  string rest = str.erase(0, w.size() + 1);
+
+  int width = 0;
+  int height = 0;
+  try {
+    if (rest == "") {
+      width = stoi(w); // nota: stoi(1.1)=1
+      height = stoi(h);
+    } else {
+      throw InvalidPfmFileFormat(
+          "Invalid image dimension: more than 2 dimensions");
+    }
+
+    if (width < 0 || height < 0) {
+      throw InvalidPfmFileFormat(
+          "Invalid image dimension: width and/or height is negative integer");
+    }
+  } catch (invalid_argument) {
+    throw InvalidPfmFileFormat(
+        "Invalid image dimension: width and/or height not a integer");
+  }
+
+  vector<int> dim = {width, height};
+  return dim;
+}
+
+void HdrImage::read_pfm(istream &stream) {
   if (!stream)
     throw InvalidPfmFileFormat("File does not exist");
 
@@ -157,54 +222,4 @@ HdrImage HdrImage::read_pfm(istream &stream) {
       results.set_pixel(x, y, Color{r, g, b});
     }
   }
-
-  return results;
-}
-
-// reading file pfm method
-Endianness parse_endianness(string str) {
-
-  float floatEndianness = 0.f;
-  try {
-    floatEndianness = stof(str);
-  } catch (invalid_argument) {
-    throw InvalidPfmFileFormat("Missing endianness specification");
-  }
-
-  if (floatEndianness == -1.0) {
-    return Endianness::little_endian;
-  } else if (floatEndianness == 1.0) {
-    return Endianness::big_endian;
-  } else {
-    throw InvalidPfmFileFormat("Invalid endianness specification");
-  }
-}
-
-vector<int> parse_img_size(string str) {
-  string w = str.substr(0, str.find(" "));
-  string h = str.erase(0, w.size() + 1).substr(0, str.find(" "));
-  string rest = str.erase(0, w.size() + 1);
-
-  int width = 0;
-  int height = 0;
-  try {
-    if (rest == "") {
-      width = stoi(w); // nota: stoi(1.1)=1
-      height = stoi(h);
-    } else {
-      throw InvalidPfmFileFormat(
-          "Invalid image dimension: more than 2 dimensions");
-    }
-
-    if (width < 0 || height < 0) {
-      throw InvalidPfmFileFormat(
-          "Invalid image dimension: width/height is negative integer");
-    }
-  } catch (invalid_argument) {
-    throw InvalidPfmFileFormat(
-        "Invalid image dimension: width/height not a integer");
-  }
-
-  vector<int> dim = {width, height};
-  return dim;
 }
