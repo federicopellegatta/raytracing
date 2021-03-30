@@ -97,33 +97,17 @@ void HdrImage::write_pfm(ostream &stream, Endianness e) {
   }
 }
 
-// read float number as its 4 bytes
-// Simone: ho smanettato un po', e may be ha senso implementare questa cosa con
-// chiamate a funzioni già implementate (così evitiamo di dover fare i test,
-// giusto?) Le suddette funzioni sono:
-// - memcpy (https://www.cplusplus.com/reference/cstring/memcpy/)
-// - reverse (https://en.cppreference.com/w/cpp/algorithm/reverse)
 float HdrImage::read_float(istream &stream, Endianness e) {
-  // uint8_t bytes[4];
   unsigned char bytes[4];
 
   for (int i{}; i < 4; i++)
     stream >> noskipws >> bytes[i];
 
   float value = 0.f;
-  // uint8_t *f_ptr = (uint8_t *)&value;
-  if (e == Endianness::little_endian) {
-    /*for (int i{}; i < 4; ++i) {
-      f_ptr[i] = bytes[i];
-    }*/
+  if (e == Endianness::little_endian)
     memcpy(&value, &bytes, sizeof(value));
-  }
+
   if (e == Endianness::big_endian) {
-    /*
-    for (int i{3}; i >= 0; --i) {
-      f_ptr[i] = bytes[3 - i];
-    }
-    */
     reverse(begin(bytes), end(bytes));
     memcpy(&value, &bytes, sizeof(value));
   }
@@ -182,11 +166,12 @@ void HdrImage::read_pfm(istream &stream) {
   if (!stream)
     throw InvalidPfmFileFormat("File does not exist");
 
-  // seekg ref: https://www.cplusplus.com/reference/istream/istream/seekg/
   // get length of file:
   stream.seekg(0, stream.end);
-  int file_length = stream.tellg();
+  int file_len = stream.tellg();
   stream.seekg(0, stream.beg);
+  if (file_len == -1)
+    throw InvalidPfmFileFormat("The file is empty");
 
   // check file format: is it a PFM file?
   string magic;
@@ -197,8 +182,8 @@ void HdrImage::read_pfm(istream &stream) {
   // read img_size
   string img_size;
   getline(stream, img_size);
-  int width = parse_img_size(img_size)[0];
-  int height = parse_img_size(img_size)[1];
+  width = parse_img_size(img_size)[0];
+  height = parse_img_size(img_size)[1];
 
   // read endianness
   string e;
@@ -208,7 +193,7 @@ void HdrImage::read_pfm(istream &stream) {
 
   // check if img pixels are >= width*height
   int header_len = stream.tellg();
-  if ((file_length - header_len) < (width * height * 3 * 4))
+  if ((file_len - header_len) < (width * height * 3 * 4))
     throw InvalidPfmFileFormat("Invalid file dimension");
 
   HdrImage results = HdrImage(width, height);
@@ -222,4 +207,6 @@ void HdrImage::read_pfm(istream &stream) {
       results.set_pixel(x, y, Color{r, g, b});
     }
   }
+
+  pixels = results.pixels;
 }
