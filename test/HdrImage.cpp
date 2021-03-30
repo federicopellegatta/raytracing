@@ -83,13 +83,13 @@ void test_pfm_parse_endianness() {
   try {
     parse_endianness("2.0");
   } catch (InvalidPfmFileFormat err) {
-    printf("Caught exception: %s \n", err.what());
+    // printf("Caught exception: %s \n", err.what());
   }
 
   try {
     parse_endianness("abc");
   } catch (InvalidPfmFileFormat err) {
-    printf("Caught exception: %s \n", err.what());
+    // printf("Caught exception: %s \n", err.what());
   }
 }
 
@@ -103,25 +103,25 @@ void test_pfm_parse_img_size() {
   try {
     parse_img_size("-1 3");
   } catch (InvalidPfmFileFormat err) {
-    printf("Caught exception: %s \n", err.what());
+    // printf("Caught exception: %s \n", err.what());
   }
 
   try {
     parse_img_size("1 4 c");
   } catch (InvalidPfmFileFormat err) {
-    printf("Caught exception: %s \n", err.what());
+    // printf("Caught exception: %s \n", err.what());
   };
 
   try {
     parse_img_size("1 c");
   } catch (InvalidPfmFileFormat err) {
-    printf("Caught exception: %s \n", err.what());
+    // printf("Caught exception: %s \n", err.what());
   }
 }
 
 void test_pfm_read() {
-  istringstream le_in("../build/reference_le_pfm");
-  istringstream be_in("../build/reference_be.pfm");
+  ifstream le_in("../test/HdrImage_references/reference_le.pfm");
+  ifstream be_in("../test/HdrImage_references/reference_be.pfm");
 
   HdrImage img_le(le_in);
   HdrImage img_be(be_in);
@@ -165,7 +165,7 @@ int main() {
   test_pixel_offset(img);
   test_set_get_pixel(img, reference_color, 3, 2);
 
-  // test_pfm_save(img1);
+  // test_pfm_save(img1); <------------------------------------ Fix this!!!
 
   test_pfm_parse_endianness();
   test_pfm_parse_img_size();
