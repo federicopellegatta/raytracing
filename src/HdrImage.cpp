@@ -214,3 +214,11 @@ void HdrImage::read_pfm(istream &stream) {
 
   // pixels = results.pixels;
 }
+
+float HdrImage::average_luminosity(float delta) {
+  float cumsum = 0.f;
+  for (int i{}; i < pixels.size(); i++)
+    cumsum += log10(delta + pixels[i].luminosity());
+
+  return pow(10, cumsum / pixels.size());
+};

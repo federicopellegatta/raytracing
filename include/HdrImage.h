@@ -1,5 +1,6 @@
 #include "./colors.h"
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <fstream>
@@ -48,6 +49,9 @@ public:
 
   // Read a float number as its 4 bytes
   float read_float(istream &, Endianness);
+
+  float average_luminosity(float);
+  float average_luminosity() { return average_luminosity(1e-10); };
 };
 
 // classe figlia di std::runtime_error
