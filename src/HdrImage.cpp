@@ -215,6 +215,14 @@ void HdrImage::read_pfm(istream &stream) {
   // pixels = results.pixels;
 }
 
+float HdrImage::average_luminosity(float delta) {
+  float cumsum = 0.f;
+  for (int i{}; i < pixels.size(); i++)
+    cumsum += log10(delta + pixels[i].luminosity());
+
+  return pow(10, cumsum / pixels.size());
+};
+
 void HdrImage::normalize_pixels(float factor, float luminosity) {
   for (int i{}; i < pixels.size(); i++) {
     pixels[i] = pixels[i] * (factor / luminosity);
@@ -222,7 +230,7 @@ void HdrImage::normalize_pixels(float factor, float luminosity) {
 }
 // Implementation of NormalizeImage
 void HdrImage::NormalizeImage(float factor) {
-  float luminosity = Color::average_luminosity();
+  float luminosity = average_luminosity();
   normalize_pixels(factor, luminosity);
 }
 // Overload of NormalizeImage

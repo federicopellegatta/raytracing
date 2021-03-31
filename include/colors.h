@@ -24,3 +24,5 @@ public:
 private:
   bool are_close(float, float);
 };
+
+bool approx(float, float);
