@@ -43,3 +43,5 @@ void Color::print() {
 float Color::luminosity() {
   return float(max(max(r, g), b) + min(min(r, g), b)) / 2;
 }
+
+bool approx(float a, float b) { return abs(a - b) < 1e-3; }
