@@ -232,3 +232,19 @@ void HdrImage::clamp_image() {
     pixels[i].b = clamp(pixels[i].b);
   }
 }
+float HdrImage::average_luminosity() { return average_luminosity(1e-10); }
+
+void HdrImage::normalize_pixels(float factor, float luminosity) {
+  for (int i{}; i < pixels.size(); i++) {
+    pixels[i] = pixels[i] * (factor / luminosity);
+  }
+}
+// Implementation of NormalizeImage
+void HdrImage::NormalizeImage(float factor) {
+  float luminosity = average_luminosity();
+  normalize_pixels(factor, luminosity);
+}
+// Overload of NormalizeImage
+void HdrImage::NormalizeImage(float factor, float luminosity) {
+  normalize_pixels(factor, luminosity);
+}

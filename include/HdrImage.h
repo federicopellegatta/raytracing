@@ -20,7 +20,12 @@ struct HdrImage {
 private:
   // Read a pfm file
   void read_pfm(istream &);
+  // Allocate an image in memory,
+  // initializing width, height and pixels.size()
   void allocate_memory(int, int);
+  // Normalize the pixels
+  // Needed for NormalizeImage and its overload
+  void normalize_pixels(float, float);
 
 public:
   // Variables needed
@@ -51,8 +56,15 @@ public:
   float read_float(istream &, Endianness);
 
   float average_luminosity(float);
-  float average_luminosity() { return average_luminosity(1e-10); };
+  float average_luminosity();
 
+  // Normalize Image (needed for conversion to LDR)
+  // This accept only the factor, and calculates the luminosity
+  void NormalizeImage(float);
+  // Overload that accepts a luminosity parameter
+  void NormalizeImage(float, float);
+
+  // clamp luminosity spot
   void clamp_image();
 };
 
