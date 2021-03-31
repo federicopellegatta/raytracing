@@ -19,7 +19,12 @@ struct HdrImage {
 private:
   // Read a pfm file
   void read_pfm(istream &);
+  // Allocate an image in memory,
+  // initializing width, height and pixels.size()
   void allocate_memory(int, int);
+  // Normalize the pixels
+  // Needed for NormalizeImage and its overload
+  void normalize_pixels(float, float);
 
 public:
   // Variables needed
@@ -48,6 +53,12 @@ public:
 
   // Read a float number as its 4 bytes
   float read_float(istream &, Endianness);
+
+  // Normalize Image (needed for conversion to LDR)
+  // This accept only the factor, and calculates the luminosity
+  void NormalizeImage(float);
+  // Overload that accepts a luminosity parameter
+  void NormalizeImage(float, float);
 };
 
 // classe figlia di std::runtime_error

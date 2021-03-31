@@ -214,3 +214,18 @@ void HdrImage::read_pfm(istream &stream) {
 
   // pixels = results.pixels;
 }
+
+void HdrImage::normalize_pixels(float factor, float luminosity) {
+  for (int i{}; i < pixels.size(); i++) {
+    pixels[i] = pixels[i] * (factor / luminosity);
+  }
+}
+// Implementation of NormalizeImage
+void HdrImage::NormalizeImage(float factor) {
+  float luminosity = Color::average_luminosity();
+  normalize_pixels(factor, luminosity);
+}
+// Overload of NormalizeImage
+void HdrImage::NormalizeImage(float factor, float luminosity) {
+  normalize_pixels(factor, luminosity);
+}
