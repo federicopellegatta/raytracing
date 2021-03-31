@@ -222,3 +222,13 @@ float HdrImage::average_luminosity(float delta) {
 
   return pow(10, cumsum / pixels.size());
 };
+
+float clamp(float x) { return float(x / (1 + x)); }
+
+void HdrImage::clamp_image() {
+  for (int i{}; i < pixels.size(); i++) {
+    pixels[i].r = clamp(pixels[i].r);
+    pixels[i].g = clamp(pixels[i].g);
+    pixels[i].b = clamp(pixels[i].b);
+  }
+}

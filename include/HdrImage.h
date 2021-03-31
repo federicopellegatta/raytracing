@@ -52,6 +52,8 @@ public:
 
   float average_luminosity(float);
   float average_luminosity() { return average_luminosity(1e-10); };
+
+  void clamp_image();
 };
 
 // classe figlia di std::runtime_error
@@ -62,3 +64,5 @@ class InvalidPfmFileFormat : public runtime_error {
 // Reading pfm files methods
 Endianness parse_endianness(string);
 vector<int> parse_img_size(string);
+
+float clamp(float);
