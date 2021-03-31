@@ -134,6 +134,16 @@ void test_pfm_read() {
   assert(img_be.get_pixel(2, 1).is_close(Color(7.0e2, 8.0e2, 9.0e2)));
 }
 
+void test_average_luminosity() {
+  HdrImage img(2, 1);
+
+  img.set_pixel(0, 0, Color(5.0, 10.0, 15.0));       // Luminosity : 10.0
+  img.set_pixel(1, 0, Color(500.0, 1000.0, 1500.0)); // Luminosity : 1000.0
+
+  // print(img.average_luminosity(delta = 0.0))
+  assert(approx(100.0, img.average_luminosity(0.0)));
+}
+
 int main() {
 
   HdrImage img(7, 4);
@@ -153,6 +163,8 @@ int main() {
   test_pfm_parse_endianness();
   test_pfm_parse_img_size();
   test_pfm_read();
+
+  test_average_luminosity();
 
   return 0;
 }
