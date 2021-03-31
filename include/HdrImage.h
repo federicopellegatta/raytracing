@@ -19,6 +19,7 @@ struct HdrImage {
 private:
   // Read a pfm file
   void read_pfm(istream &);
+  void allocate_memory(int, int);
 
 public:
   // Variables needed

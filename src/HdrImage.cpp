@@ -2,10 +2,13 @@
 
 using namespace std;
 
-HdrImage::HdrImage(int w, int h) : pixels(w * h) {
+void HdrImage::allocate_memory(int w, int h) {
   width = w;
   height = h;
+  pixels.resize(w * h);
 }
+
+HdrImage::HdrImage(int w, int h) { allocate_memory(w, h); }
 
 HdrImage::HdrImage(const string &file_name) {
   ifstream stream{file_name};
@@ -196,17 +199,18 @@ void HdrImage::read_pfm(istream &stream) {
   if ((file_len - header_len) < (width * height * 3 * 4))
     throw InvalidPfmFileFormat("Invalid file dimension");
 
-  HdrImage results = HdrImage(width, height);
-
+  // HdrImage results = HdrImage(width, height);
+  allocate_memory(width, height);
   // Read the image
   for (int y{height - 1}; y >= 0; y--) {
     for (int x{}; x < width; x++) {
       float r = read_float(stream, endianness);
       float g = read_float(stream, endianness);
       float b = read_float(stream, endianness);
-      results.set_pixel(x, y, Color{r, g, b});
+      // results.set_pixel(x, y, Color{r, g, b});
+      set_pixel(x, y, Color(r, g, b));
     }
   }
 
-  pixels = results.pixels;
+  // pixels = results.pixels;
 }
