@@ -107,7 +107,8 @@ void test_pfm_read() {
 
   HdrImage img_le(le_in);
   HdrImage img_be(be_in);
-
+  // HdrImage img_le("../test/HdrImage_references/reference_le.pfm");
+  // HdrImage img_be("../test/HdrImage_references/reference_be.pfm");
   // Little endian image tests
   assert(img_le.width == 3);
   assert(img_le.height == 2);
@@ -148,7 +149,6 @@ int main() {
   test_set_get_pixel(img, reference_color, 3, 2);
 
   test_pfm_save(img1);
-  //< ------------------------------------Fix this !!!
 
   test_pfm_parse_endianness();
   test_pfm_parse_img_size();
