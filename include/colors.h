@@ -1,4 +1,5 @@
 // Color header file
+#include "fmtlib.h"
 #include <algorithm>
 
 struct Color {
