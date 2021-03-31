@@ -15,8 +15,8 @@ int main() {
   assert(c4.is_close(c1 * a));  // check product color by float
   assert(c5.is_close(c1 * c2)); // check product color by color
 
-  assert(approx(2.0, c1.luminosity()));
-  assert(approx(7.0, c2.luminosity()));
+  assert(are_close(2.0, c1.luminosity()));
+  assert(are_close(7.0, c2.luminosity()));
 
   return 0;
 }

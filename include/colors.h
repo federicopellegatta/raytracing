@@ -16,12 +16,10 @@ public:
   Color operator*(Color);
 
   bool is_close(Color);
+
   void print();
 
   float luminosity();
-
-private:
-  bool are_close(float, float);
 };
 
-bool approx(float, float);
+bool are_close(float, float);

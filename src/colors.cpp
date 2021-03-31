@@ -27,13 +27,7 @@ Color Color::operator*(float a) { return Color(a * r, a * g, a * b); }
 Color Color::operator*(Color a) { return Color(a.r * r, a.g * g, a.b * b); }
 
 bool Color::is_close(Color a) {
-  return Color::are_close(r, a.r) && Color::are_close(b, a.b) &&
-         Color::are_close(g, a.g);
-}
-
-bool Color::are_close(float a, float b) {
-  float eps = 1e-5; // TODO: Which value makes sense?
-  return abs(a - b) < eps;
+  return are_close(r, a.r) && are_close(b, a.b) && are_close(g, a.g);
 }
 
 void Color::print() {
@@ -44,4 +38,7 @@ float Color::luminosity() {
   return float(max(max(r, g), b) + min(min(r, g), b)) / 2;
 }
 
-bool approx(float a, float b) { return abs(a - b) < 1e-3; }
+bool are_close(float a, float b) {
+  float eps = 1e-5;
+  return abs(a - b) < eps;
+}
