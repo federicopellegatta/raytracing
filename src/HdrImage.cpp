@@ -223,6 +223,8 @@ float HdrImage::average_luminosity(float delta) {
   return pow(10, cumsum / pixels.size());
 };
 
+float HdrImage::average_luminosity() { return average_luminosity(1e-10); }
+
 void HdrImage::normalize_pixels(float factor, float luminosity) {
   for (int i{}; i < pixels.size(); i++) {
     pixels[i] = pixels[i] * (factor / luminosity);

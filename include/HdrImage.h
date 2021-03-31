@@ -56,7 +56,7 @@ public:
   float read_float(istream &, Endianness);
 
   float average_luminosity(float);
-  float average_luminosity() { return average_luminosity(1e-10); };
+  float average_luminosity();
   // Normalize Image (needed for conversion to LDR)
   // This accept only the factor, and calculates the luminosity
   void NormalizeImage(float);
