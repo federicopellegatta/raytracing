@@ -47,32 +47,15 @@ void test_pfm_save(HdrImage img) { // SOLO little_endian
   // write test on memory
   ostringstream buffer;
   img.write_pfm(buffer, Endianness::little_endian);
+
   assert(buffer.str().size() == reference_le_pfm.size()); // controllo dim
 
   for (int i{}; i < reference_le_pfm.size(); i++) {
-    // assert(buffer.str()[i] == reference_le_pfm[i]);
-    if (buffer.str()[i] != reference_le_pfm[i]) {
-      // Using printf() for better format manipulation
-      // See https://www.cplusplus.com/reference/cstdio/printf/
-
-      // Guardando l'output i caratteri sono fondamentalmente uguali,
-      // tranne per delle "f" davanti a quella del buffer.
-      // Secondo me è la conversione stringstream -> string che fa porcate
-      printf("%i %x %x \n", i, buffer.str()[i], reference_le_pfm[i]);
-    }
+    uint8_t byte = (uint8_t)buffer.str()[i];
+    assert(byte == reference_le_pfm[i]);
   }
 
-  pair<string::iterator, vector<unsigned char>::iterator> expected_pair(
-      buffer.str().end(), reference_le_pfm.end());
-  pair<string::iterator, vector<unsigned char>::iterator> result_pair;
-  result_pair = mismatch(buffer.str().begin(), buffer.str().end(),
-                         reference_le_pfm.begin());
-
-  cout << *buffer.str().end() << "\n" << *reference_le_pfm.end() << endl;
-  // cout << *(result_pair.first) << "\n" << *(result_pair.second) << endl;
-  // assert(expected_pair == result_pair);
   ofstream outputFile("./my_le_img.pfm");
-
   img.write_pfm(outputFile, Endianness::little_endian);
 }
 
@@ -111,7 +94,6 @@ void test_pfm_parse_img_size() {
   } catch (InvalidPfmFileFormat err) {
     // printf("Caught exception: %s \n", err.what());
   };
-
   try {
     parse_img_size("1 c");
   } catch (InvalidPfmFileFormat err) {
@@ -165,7 +147,8 @@ int main() {
   test_pixel_offset(img);
   test_set_get_pixel(img, reference_color, 3, 2);
 
-  // test_pfm_save(img1); <------------------------------------ Fix this!!!
+  test_pfm_save(img1);
+  //< ------------------------------------Fix this !!!
 
   test_pfm_parse_endianness();
   test_pfm_parse_img_size();
