@@ -1,4 +1,5 @@
 // Color header file
+#include "fmt/core.h"
 #include "fmtlib.h"
 #include <algorithm>
 
