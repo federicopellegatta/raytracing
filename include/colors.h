@@ -1,4 +1,6 @@
 // Color header file
+#include <algorithm>
+
 struct Color {
 public:
   float r, b, g;
@@ -14,6 +16,8 @@ public:
 
   bool is_close(Color);
   void print();
+
+  float luminosity();
 
 private:
   bool are_close(float, float);

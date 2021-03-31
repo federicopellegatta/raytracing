@@ -1,5 +1,3 @@
-// src/colors.cpp
-
 #include "../include/colors.h"
 #include <cstdlib>
 #include <iostream>
@@ -40,4 +38,8 @@ bool Color::are_close(float a, float b) {
 
 void Color::print() {
   std::cout << "r: " << r << ", g: " << g << ", b: " << b << std::endl;
+}
+
+float Color::luminosity() {
+  return float(max(max(r, g), b) + min(min(r, g), b)) / 2;
 }
