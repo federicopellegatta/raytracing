@@ -60,12 +60,15 @@ public:
 
   // Normalize Image (needed for conversion to LDR)
   // This accept only the factor, and calculates the luminosity
-  void NormalizeImage(float);
+  void normalize_image(float);
   // Overload that accepts a luminosity parameter
-  void NormalizeImage(float, float);
+  void normalize_image(float, float);
 
   // clamp luminosity spot
   void clamp_image();
+
+  // Convert PFM to a LDR format
+  void write_ldr_image(ostream &, string, float);
 };
 
 // classe figlia di std::runtime_error
