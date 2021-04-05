@@ -165,12 +165,12 @@ void test_normalize_image(bool test_overload) {
 
   // Test NormalizeImage
   if (test_overload == false) {
-    img.NormalizeImage(1000.0);
+    img.normalize_image(1000.0);
     assert(img.get_pixel(0, 0).is_close(Color(0.5e2, 1.0e2, 1.5e2)));
     assert(img.get_pixel(1, 0).is_close(Color(0.5e4, 1.0e4, 1.5e4)));
   } else {
     // Testing overload of NormalizeImage
-    img.NormalizeImage(1000.0, 100.0);
+    img.normalize_image(1000.0, 100.0);
     assert(img.get_pixel(0, 0).is_close(Color(0.5e2, 1.0e2, 1.5e2)));
     assert(img.get_pixel(1, 0).is_close(Color(0.5e4, 1.0e4, 1.5e4)));
   }

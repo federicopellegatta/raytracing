@@ -239,12 +239,15 @@ void HdrImage::normalize_pixels(float factor, float luminosity) {
     pixels[i] = pixels[i] * (factor / luminosity);
   }
 }
-// Implementation of NormalizeImage
-void HdrImage::NormalizeImage(float factor) {
+// Implementation of normalize_image
+void HdrImage::normalize_image(float factor) {
   float luminosity = average_luminosity();
   normalize_pixels(factor, luminosity);
 }
-// Overload of NormalizeImage
-void HdrImage::NormalizeImage(float factor, float luminosity) {
+// Overload of normalize_image
+void HdrImage::normalize_image(float factor, float luminosity) {
   normalize_pixels(factor, luminosity);
 }
+
+// Write LDR image
+void write_ldr_image(ostream &stream, string format, float gamma) {}
