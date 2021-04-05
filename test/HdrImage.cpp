@@ -157,21 +157,23 @@ void test_clamp_image() {
   }
 }
 
-void test_normalize_image() {
+void test_normalize_image(bool test_overload) {
   HdrImage img(2, 1);
 
   img.set_pixel(0, 0, Color(5.0, 10.0, 15.0));
   img.set_pixel(1, 0, Color(500.0, 1000.0, 1500.0));
 
   // Test NormalizeImage
-  img.NormalizeImage(1000.0);
-  assert(img.get_pixel(0, 0).is_close(Color(0.5e2, 1.0e2, 1.5e2)));
-  assert(img.get_pixel(1, 0).is_close(Color(0.5e4, 1.0e4, 1.5e4)));
-
-  // Testing overload of NormalizeImage
-  img.NormalizeImage(1000.0, 100.0);
-  assert(img.get_pixel(0, 0).is_close(Color(0.5e2, 1.0e2, 1.5e2)));
-  assert(img.get_pixel(1, 0).is_close(Color(0.5e4, 1.0e4, 1.5e4)));
+  if (test_overload == false) {
+    img.NormalizeImage(1000.0);
+    assert(img.get_pixel(0, 0).is_close(Color(0.5e2, 1.0e2, 1.5e2)));
+    assert(img.get_pixel(1, 0).is_close(Color(0.5e4, 1.0e4, 1.5e4)));
+  } else {
+    // Testing overload of NormalizeImage
+    img.NormalizeImage(1000.0, 100.0);
+    assert(img.get_pixel(0, 0).is_close(Color(0.5e2, 1.0e2, 1.5e2)));
+    assert(img.get_pixel(1, 0).is_close(Color(0.5e4, 1.0e4, 1.5e4)));
+  }
 }
 
 int main() {
@@ -195,7 +197,8 @@ int main() {
   test_pfm_read();
 
   test_average_luminosity();
-  test_normalize_image();
+  test_normalize_image(false);
+  test_normalize_image(true);
   test_clamp_image();
 
   return 0;
