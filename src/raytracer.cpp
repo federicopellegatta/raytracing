@@ -1,57 +1,61 @@
-#include <HdrImage.h>
+#include "HdrImage.h"
 #include <iostream>
 
 using namespace std;
 
-int main(int argc, char **argv) {
-
-  fmt::print("Hello world in Technicolor!\n");
-  fmt::print("The first argument of argv[] is: {} \n", argv[0]);
-
-  // Define default input parameters
-  string input_pfm_file_name = "";
+struct Parameters {
+  string input_pfm_filename = "";
   float factor = 0.2;
   float gamma = 1.0;
-  string output_png_file_name = "";
+  string output_png_filename = "";
+
+  void parse_line_arguments(int argc, char **argv) {
+    if (argc != 5) {
+      throw runtime_error(
+          "Usage: ./executable INPUT_PFM_FILE FACTOR GAMMA OUTPUT_PNG_FILE \n");
+    }
+
+    input_pfm_filename = argv[1];
+
+    try {
+      factor = atof(argv[2]);
+    } catch (invalid_argument) {
+      throw invalid_argument("FACTOR is not a floating point number");
+    }
+
+    try {
+      gamma = atof(argv[3]);
+    } catch (invalid_argument) {
+      throw invalid_argument("GAMMA is not a floating point number");
+    }
+
+    output_png_filename = argv[4];
+  }
+};
+
+int main(int argc, char **argv) {
+
+  Parameters parameters;
 
   // Read input from command-line
-  if (argc != 5) {
-    throw InvalidPfmFileFormat(
-        "Usage: main.cpp INPUT_PFM_FILE FACTOR GAMMA OUTPUT_PNG_FILE");
-    // return -1;
-  }
-
-  input_pfm_file_name = argv[1];
-  output_png_file_name = argv[4];
-
-  try {
-    factor = atof(argv[2]);
-  } catch (invalid_argument) {
-    throw InvalidPfmFileFormat("FACTOR is not a floating point");
-  }
-
-  try {
-    gamma = atof(argv[3]);
-  } catch (invalid_argument) {
-    throw InvalidPfmFileFormat("GAMMA is not a floating point");
-  }
+  parameters.parse_line_arguments(argc, argv);
 
   // Open input PFM file
-  ifstream in(input_pfm_file_name);
+  ifstream in(parameters.input_pfm_filename);
   HdrImage img(in);
-  cout << "File " << input_pfm_file_name << " has been read from disk." << endl;
+  fmt::print("File {} has been read from disk. \n",
+             parameters.input_pfm_filename);
   in.close();
 
   // Convert PFM to LDR format
-  img.normalize_image(factor);
+  img.normalize_image(parameters.factor);
   img.clamp_image();
 
   // Open output file
-  ofstream out(output_png_file_name);
+  ofstream out(parameters.output_png_filename);
   // img.write_ldr_image(out, "PNG", gamma);
-  cout << "File " << output_png_file_name << " has been written to disk."
-       << endl;
+  fmt::print("File {} has been written to disk. \n",
+             parameters.output_png_filename);
   out.close();
-
   return 0;
 }
