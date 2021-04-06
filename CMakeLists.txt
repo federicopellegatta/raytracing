@@ -46,11 +46,16 @@ target_include_directories(trace PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
+# This is needed for our trace library because it use libgd to 
+# convert Hdr Images to Ldr images. 
+# No need to specify include_dirs or compile options, cmake takes
+# care of it all
+target_link_libraries(trace PUBLIC PkgConfig::PKG_GDLIB)
+
 # Target commands tells which dependencies targer exec have
 target_link_libraries(
     raytracer PUBLIC 
     trace
-    PkgConfig::PKG_GDLIB
 )
 
 # The test program too needs to be linked to "trace"
