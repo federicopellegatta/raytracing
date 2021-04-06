@@ -253,4 +253,26 @@ void HdrImage::normalize_image(float factor, float luminosity) {
 }
 
 // Write LDR image
-void write_ldr_image(ostream &stream, string format, float gamma) {}
+void HdrImage::write_ldr_image(const char *output_filename, float gamma) {
+  gdImagePtr img;
+  FILE *output_file;
+  // int row, col;
+
+  img = gdImageCreateTrueColor(width, height);
+
+  for (int row{}; row < height; ++row) {
+    for (int col{}; col < width; ++col) {
+      Color cur_color = get_pixel(col, row);
+      int red, green, blue;
+      red = static_cast<int>(255 * pow(cur_color.r, 1 / gamma));
+      green = static_cast<int>(255 * pow(cur_color.g, 1 / gamma));
+      blue = static_cast<int>(255 * pow(cur_color.b, 1 / gamma));
+      gdImageSetPixel(img, col, row, gdImageColorExact(img, red, green, blue));
+    }
+  }
+
+  // Questo da errore, non ho ben capito perchè
+  /* output_file = fopen(output_filename, "wb"); */
+
+  // gdImagePng(img, output_file);
+}

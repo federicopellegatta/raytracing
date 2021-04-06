@@ -69,7 +69,7 @@ public:
   void clamp_image();
 
   // Convert PFM to a LDR format
-  void write_ldr_image(ostream &, string, float);
+  void write_ldr_image(const char *, float);
 };
 
 // classe figlia di std::runtime_error
