@@ -235,6 +235,9 @@ void HdrImage::clamp_image() {
 float HdrImage::average_luminosity() { return average_luminosity(1e-10); }
 
 void HdrImage::normalize_pixels(float factor, float luminosity) {
+  if (factor < 0)
+    throw InvalidPfmFileFormat("FACTOR must be a positive floating point");
+
   for (int i{}; i < pixels.size(); i++) {
     pixels[i] = pixels[i] * (factor / luminosity);
   }
