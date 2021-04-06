@@ -39,7 +39,7 @@ void HdrImage::set_pixel(int x, int y, Color color) {
   if (valid_coordinates(x, y)) {
     pixels[pixel_offset(x, y)] = color;
   } else {
-    cout << "Couldn't set pixel because coordinates are not valid!" << endl;
+    fmt::print("Couldn't set pixel because coordinates are not valid!\n");
   }
 }
 
@@ -167,7 +167,7 @@ vector<int> parse_img_size(string str) {
 
 void HdrImage::read_pfm(istream &stream) {
   if (!stream)
-    throw InvalidPfmFileFormat("File does not exist");
+    throw ios_base::failure("File does not exist");
 
   // get length of file:
   stream.seekg(0, stream.end);
@@ -236,7 +236,7 @@ float HdrImage::average_luminosity() { return average_luminosity(1e-10); }
 
 void HdrImage::normalize_pixels(float factor, float luminosity) {
   if (factor < 0)
-    throw InvalidPfmFileFormat("FACTOR must be a positive floating point");
+    throw invalid_argument("FACTOR must be a positive floating point");
 
   for (int i{}; i < pixels.size(); i++) {
     pixels[i] = pixels[i] * (factor / luminosity);
