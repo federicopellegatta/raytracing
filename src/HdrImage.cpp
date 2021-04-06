@@ -1,4 +1,4 @@
-#include "../include/HdrImage.h"
+#include "HdrImage.h"
 
 using namespace std;
 

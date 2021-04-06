@@ -1,5 +1,5 @@
-#include "./colors.h"
-/* #include "gd.h" */
+#include "colors.h"
+#include "gd.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
