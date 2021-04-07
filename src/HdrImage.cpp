@@ -256,7 +256,8 @@ void HdrImage::normalize_image(float factor, float luminosity) {
 void HdrImage::write_ldr_image(const char *output_filename, float gamma) {
   gdImagePtr img;
   FILE *output_file;
-  // int row, col;
+  if (!img)
+    throw runtime_error{"Error: Failed to create gdImage"};
 
   img = gdImageCreateTrueColor(width, height);
 
@@ -271,8 +272,8 @@ void HdrImage::write_ldr_image(const char *output_filename, float gamma) {
     }
   }
 
-  // Questo da errore, non ho ben capito perchè
-  /* output_file = fopen(output_filename, "wb"); */
-
-  // gdImagePng(img, output_file);
+  output_file = fopen(output_filename, "wb");
+  gdImagePng(img, output_file);
+  fclose(output_file);
+  gdImageDestroy(img);
 }
