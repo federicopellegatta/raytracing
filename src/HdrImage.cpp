@@ -256,8 +256,8 @@ void HdrImage::normalize_image(float factor, float luminosity) {
 void HdrImage::write_ldr_image(const char *output_filename, float gamma) {
   gdImagePtr img;
   FILE *output_file;
-  if (!img)
-    throw runtime_error{"Error: Failed to create gdImage"};
+  /*if (!img)
+    throw runtime_error{"Error: Failed to create gdImage"};*/
 
   img = gdImageCreateTrueColor(width, height);
 
@@ -273,6 +273,9 @@ void HdrImage::write_ldr_image(const char *output_filename, float gamma) {
   }
 
   output_file = fopen(output_filename, "wb");
+  if (!output_file) {
+    throw ios_base::failure("Failed to open output file.");
+  }
   gdImagePng(img, output_file);
   fclose(output_file);
   gdImageDestroy(img);
