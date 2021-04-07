@@ -6,7 +6,7 @@ Ray-Tracing is a C++ code that you can use to generate photorealistic images.
    - C++ Compiler
      - At least C++17
      - It can be installed via your distribution package manager or using `conda`
-   - [`CMake`](https://cmake.org/)
+   - [CMake](https://cmake.org/)
      - At least version 3.16.3
      - It can be installed via your distribution package manager or using `conda`
    - [GD library](https://github.com/libgd/libgd)
