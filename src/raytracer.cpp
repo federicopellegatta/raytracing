@@ -41,21 +41,21 @@ int main(int argc, char **argv) {
   parameters.parse_line_arguments(argc, argv);
 
   // Open input PFM file
-  ifstream in(parameters.input_pfm_filename);
-  HdrImage img(in);
+  // ifstream in(parameters.input_pfm_filename);
+  HdrImage img(parameters.input_pfm_filename);
   fmt::print("File {} has been read from disk. \n",
              parameters.input_pfm_filename);
-  in.close();
+  // in.close();
 
   // Run Tone-Mapping
   img.normalize_image(parameters.factor);
   img.clamp_image();
 
   // Open output file
-  ofstream out(parameters.output_png_filename);
+  // ofstream out(parameters.output_png_filename);
   img.write_ldr_image(parameters.output_png_filename.c_str(), parameters.gamma);
   fmt::print("File {} has been written to disk. \n",
              parameters.output_png_filename);
-  out.close();
+  // out.close();
   return 0;
 }
