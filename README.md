@@ -11,7 +11,7 @@ Ray-Tracing is a C++ code that you can use to generate photorealistic images.
    - [GD library](https://libgd.github.io/) (at least version 2.5.5)
    - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (at least version 0.29)
 
-All these dependencies can be install via your distribution package manager or using [`conda`](https://docs.conda.io/en/latest/). 
+All these dependencies can be installed via your distribution package manager or using [`conda`](https://docs.conda.io/en/latest/). 
   
 ### Download and building
 If all the dependencies have been met, follow the instructions below in order to clone and compile Ray-Tracing in your own directory.
