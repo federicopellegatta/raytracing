@@ -23,10 +23,10 @@ $ make
 You will find tests and executable files in `build` directory. 
 
 ## Usage
-Ray-Tracing can be used to convert images from HDR format to LDR. 
-    - for instance the following command convert from `ofm` to `png`
-    
-      $ ./raytracer /path/to/pfmfile normalize_factor gamma /path/to/pngfile
+Ray-Tracing can be used to convert images from HDR format to LDR.
+   - for instance the following command convert from `ofm` to `png`
+       
+    $ ./raytracer /path/to/pfmfile normalize_factor gamma /path/to/pngfile
       
 
 ## Contributing
