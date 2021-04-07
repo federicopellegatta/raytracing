@@ -1,22 +1,18 @@
 # Ray-Tracing
-![Operating Systems](https://img.shields.io/badge/OS-Linux-lightgrey)
+![Operating Systems](https://img.shields.io/badge/OS-Linux%20%7C%20MacOS-lightgrey)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
-<!--- (![Top Language](https://img.shields.io/github/languages/top/federicopellegatta/raytracing)) -->
-
 
 Ray-Tracing is a C++ code that you can use to generate photorealistic images.
 
 ## Installation
 ### Dependencies
-   - C++ Compiler
-     - At least C++17
-     - It can be installed via your distribution package manager or using `conda`
-   - [CMake](https://cmake.org/)
-     - At least version 3.16
-     - It can be installed via your distribution package manager or using `conda`
-   - [GD library](https://libgd.github.io/)
-     - At least version 2.5.5
-     - It can be installed via your distribution package manager or using `conda`
+   - C++ Compiler (at least C++17)
+   - [CMake](https://cmake.org/) (at least version 3.16)
+   - [GD library](https://libgd.github.io/) (at least version 2.5.5)
+   - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (at least version 0.29)
+
+All these dependencies can be install via your distribution package manager or using [`conda`](https://docs.conda.io/en/latest/). 
+  
 ### Download and building
 If all the dependencies have been met, follow the instructions below in order to clone and compile Ray-Tracing in your own directory.
 ```sh
@@ -28,10 +24,8 @@ $ make
 You will find tests and executable files in `build` directory. 
 
 ## Usage
-Ray-Tracing can be used to convert images from HDR to LDR format; for instance the following command convert from `pfm` to `png`
-    ```
-    $ ./raytracer /path/to/pfmfile normalize_factor gamma /path/to/pngfile
-    ```
+Ray-Tracing can also convert images from HDR to LDR format; for instance the following command convert from `pfm` to `png`: `$ ./raytracer /path/to/pfmfile normalize_factor gamma /path/to/pngfile`.
+   
       
 
 ## Contributing
