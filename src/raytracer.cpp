@@ -12,7 +12,7 @@ struct Parameters {
   void parse_line_arguments(int argc, char **argv) {
     if (argc != 5) {
       throw runtime_error(
-          "Usage: ./executable INPUT_PFM_FILE FACTOR GAMMA OUTPUT_PNG_FILE \n");
+          "Usage: ./raytracer INPUT_PFM_FILE FACTOR GAMMA OUTPUT_PNG_FILE \n");
     }
 
     input_pfm_filename = argv[1];
@@ -47,13 +47,13 @@ int main(int argc, char **argv) {
              parameters.input_pfm_filename);
   in.close();
 
-  // Convert PFM to LDR format
+  // Run Tone-Mapping
   img.normalize_image(parameters.factor);
   img.clamp_image();
 
   // Open output file
   ofstream out(parameters.output_png_filename);
-  // img.write_ldr_image(out, "PNG", gamma);
+  img.write_ldr_image(parameters.output_png_filename.c_str(), parameters.gamma);
   fmt::print("File {} has been written to disk. \n",
              parameters.output_png_filename);
   out.close();
