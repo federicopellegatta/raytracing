@@ -5,12 +5,12 @@
 using namespace std;
 
 // Template functions
-template <typename In> string convert_to_string(const In &a) {
+template <typename In> string _to_string(const In &a) {
   return string{"(" + to_string(a.x) + ", " + to_string(a.y) + ", " +
                 to_string(a.z) + ")"};
 }
 
-template <typename In> bool are_close(const In &a, const In &b) {
+template <typename In> bool _are_close(const In &a, const In &b) {
   return are_close(a.x, b.x) && are_close(a.y, b.y) && are_close(a.z, b.z);
 }
 
@@ -30,16 +30,21 @@ struct Vec {
   Vec(const Vec &);  // Copy constructor
   Vec(const Vec &&); // Move constructor
 
+  // Scalar and Vector product
+  inline float dot(const Vec &a) { return a.x * x + a.y * y + a.z * z; }
+  inline Vec cross(const Vec &b) {
+    return Vec(y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x);
+  }
+
   inline float squared_norm() { return pow(x, 2) + pow(y, 2) + pow(z, 2); }
-  inline float norm() { return sqrt(this->squared_norm()); }
+  inline float norm() { return sqrt(squared_norm()); }
   inline void normalize() {
     float norm = this->norm();
     x /= norm;
     y /= norm;
     z /= norm;
   }
-  inline string to_str() { return string{"Vec" + convert_to_string(*this)}; }
-  inline bool is_close(Vec a) { return are_close<Vec>(*this, a); }
+  inline string to_str() { return string{"Vec" + _to_string(*this)}; }
 };
 
 struct Point {
@@ -48,9 +53,16 @@ struct Point {
   Point(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
   Point(const Point &);  // Copy constructor
   Point(const Point &&); // Move constructor
-  inline string to_str() { return string{"Point" + convert_to_string(*this)}; }
-  inline bool is_close(Point a) { return are_close<Point>(*this, a); }
+  inline string to_str() { return string{"Point" + _to_string(*this)}; }
 };
+
+// Compare between Vecs and Points
+template <typename In> bool operator==(const In &a, const In &b) {
+  return _are_close<In>(a, b);
+}
+template <typename In> bool operator!=(const In &a, const In &b) {
+  return !(_are_close<In>(a, b));
+}
 
 // Sum operation between Vecs and Points
 Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
@@ -76,13 +88,4 @@ Vec operator-(const Point &a, const Point &b) {
 }
 Point operator-(const Point &a, const Vec &b) {
   return _sum<Point, Vec, Point>(a, -1 * b);
-}
-
-// Scalar and Vector product between Vecs
-inline float dot(const Vec &a, const Vec &b) {
-  return a.x * b.x + a.y * b.y + a.z * b.z;
-}
-inline Vec cross(const Vec &a, const Vec &b) {
-  return Vec(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
-             a.x * b.y - a.y * b.x);
 }
