@@ -235,7 +235,7 @@ void HdrImage::clamp_image() {
 float HdrImage::average_luminosity() { return average_luminosity(1e-10); }
 
 void HdrImage::normalize_pixels(float factor, float luminosity) {
-  if (factor < 0)
+  if (factor <= 0)
     throw invalid_argument("FACTOR must be a positive floating point");
 
   for (int i{}; i < pixels.size(); i++) {
@@ -258,6 +258,8 @@ void HdrImage::write_ldr_image(const char *output_filename, float gamma) {
   FILE *output_file;
 
   img = gdImageCreateTrueColor(width, height);
+  if (gamma <= 0)
+    throw invalid_argument("GAMMA must be a positive floating point");
 
   for (int row{}; row < height; ++row) {
     for (int col{}; col < width; ++col) {
