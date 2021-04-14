@@ -37,14 +37,13 @@ add_executable(HdrImageTest
 )
 
 add_executable(geometryTest
-  test/geometryTest.cpp
+  test/geometry.cpp
 )
 
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
     src/HdrImage.cpp
-    src/geometry.cpp
     src/format.cc
 )
 
