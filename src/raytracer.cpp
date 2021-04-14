@@ -1,5 +1,4 @@
 #include "HdrImage.h"
-#include <iostream>
 
 using namespace std;
 
@@ -9,28 +8,7 @@ struct Parameters {
   float gamma = 1.0;
   string output_png_filename = "";
 
-  void parse_line_arguments(int argc, char **argv) {
-    if (argc != 5) {
-      throw runtime_error(
-          "Usage: ./raytracer INPUT_PFM_FILE FACTOR GAMMA OUTPUT_PNG_FILE \n");
-    }
-
-    input_pfm_filename = argv[1];
-
-    try {
-      factor = atof(argv[2]);
-    } catch (invalid_argument) {
-      throw invalid_argument("FACTOR is not a floating point number");
-    }
-
-    try {
-      gamma = atof(argv[3]);
-    } catch (invalid_argument) {
-      throw invalid_argument("GAMMA is not a floating point number");
-    }
-
-    output_png_filename = argv[4];
-  }
+  void parse_line_arguments(int argc, char **argv);
 };
 
 int main(int argc, char **argv) {
@@ -55,4 +33,16 @@ int main(int argc, char **argv) {
              parameters.output_png_filename);
 
   return 0;
+}
+
+void Parameters::parse_line_arguments(int argc, char **argv) {
+  if (argc != 5) {
+    throw runtime_error("Usage: ./raytracer INPUT_PFM_FILE FACTOR GAMMA "
+                        "OUTPUT_PNG-OR-JPEG_FILE \n");
+  }
+
+  input_pfm_filename = argv[1];
+  factor = atof(argv[2]);
+  gamma = atof(argv[3]);
+  output_png_filename = argv[4];
 }
