@@ -1,4 +1,4 @@
-#include "../include/geometry.h"
+#include "geometry.h"
 #include <cassert>
 #include <cstdlib>
 
