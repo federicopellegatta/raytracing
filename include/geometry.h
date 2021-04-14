@@ -4,6 +4,7 @@
 
 using namespace std;
 
+// Template functions
 template <typename In> string convert_to_string(const In &a) {
   return string{"(" + to_string(a.x) + ", " + to_string(a.y) + ", " +
                 to_string(a.z) + ")"};
@@ -11,6 +12,15 @@ template <typename In> string convert_to_string(const In &a) {
 
 template <typename In> bool are_close(const In &a, const In &b) {
   return are_close(a.x, b.x) && are_close(a.y, b.y) && are_close(a.z, b.z);
+}
+
+template <typename In1, typename In2, typename Out>
+Out _sum(const In1 &a, const In2 &b) {
+  return Out{a.x + b.x, a.y + b.y, a.z + b.z};
+}
+
+template <typename In1, typename Out> Out _mul(const float &a, const In1 &b) {
+  return Out{a * b.x, a * b.y, a * b.z};
 }
 
 struct Vec {
@@ -42,32 +52,24 @@ struct Point {
   inline bool is_close(Point a) { return are_close<Point>(*this, a); }
 };
 
-// Template function for sum
-// Summing points and/or vectors is the same thing in 3D
-template <typename In1, typename In2, typename Out>
-Out _sum(const In1 &a, const In2 &b) {
-  return Out{a.x + b.x, a.y + b.y, a.z + b.z};
-}
-template <typename In1, typename Out> Out _mul(const float &a, const In1 &b) {
-  return Out{a * b.x, a * b.y, a * b.z};
-}
-
-// Definition of + between points
+// Sum operation between Vecs and Points
+Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
 Point operator+(const Point &a, const Vec &b) {
   return _sum<Point, Vec, Point>(a, b);
 }
 
-// Definitions and overloads of basic operations between vectors
-Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
+// Mul operation between Vecs and Points
 inline Vec operator*(const float &a, const Vec &b) {
   return _mul<Vec, Vec>(a, b);
 }
 inline Vec operator*(const Vec &a, const float &b) { return b * a; }
-Vec operator-(const Vec &a, const Vec &b) {
-  return _sum<Vec, Vec, Vec>(a, -1 * b);
-}
 Point operator*(const float &a, const Point &b) {
   return _mul<Point, Point>(a, b);
+}
+
+// Minus operation between Vecs and Points
+Vec operator-(const Vec &a, const Vec &b) {
+  return _sum<Vec, Vec, Vec>(a, -1 * b);
 }
 Vec operator-(const Point &a, const Point &b) {
   return _sum<Point, Point, Vec>(a, -1 * b);
@@ -75,6 +77,8 @@ Vec operator-(const Point &a, const Point &b) {
 Point operator-(const Point &a, const Vec &b) {
   return _sum<Point, Vec, Point>(a, -1 * b);
 }
+
+// Scalar and Vector product between Vecs
 inline float dot(const Vec &a, const Vec &b) {
   return a.x * b.x + a.y * b.y + a.z * b.z;
 }
