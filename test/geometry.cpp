@@ -27,10 +27,8 @@ int main() {
   assert(a.dot(b) == 40.0);
   assert(a.cross(b) == Vec(-2.0, 4.0, -2.0));
   assert(b.cross(a) == Vec(2.0, -4.0, 2.0));
-  assert(a.squared_norm() == 14.0);
-  // std::cout << std::fixed << std::setprecision(10) << pow(a.norm(), 2) <<
-  // endl;
-  // assert(pow(a.norm(), 2) == 14.0); // Why it doesn't work???
+  assert(are_close(a.squared_norm(), 14.0));
+  assert(are_close(pow(a.norm(), 2), 14.0));
 
   // check Point operations
   assert(2 * p == Point(2.0, 4.0, 6.0));
