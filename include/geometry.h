@@ -70,14 +70,14 @@ Point operator+(const Point &a, const Vec &b) {
   return _sum<Point, Vec, Point>(a, b);
 }
 
-// Mul operation between Vecs and Points
-inline Vec operator*(const float &a, const Vec &b) {
-  return _mul<Vec, Vec>(a, b);
-}
-inline Vec operator*(const Vec &a, const float &b) { return b * a; }
+// Mul operation between Vecs/Points and a floating point (and viceversa)
+Vec operator*(const float &a, const Vec &b) { return _mul<Vec, Vec>(a, b); }
+Vec operator*(const Vec &a, const float &b) { return b * a; }
+
 Point operator*(const float &a, const Point &b) {
   return _mul<Point, Point>(a, b);
 }
+Point operator*(const Point &a, const float &b) { return b * a; }
 
 // Minus operation between Vecs and Points
 Vec operator-(const Vec &a, const Vec &b) {

@@ -1,8 +1,6 @@
 #include "geometry.h"
 #include <cassert>
 #include <cstdlib>
-#include <iomanip>
-#include <iostream> // std::cout, std::fixed
 
 using namespace fmt;
 
@@ -31,7 +29,7 @@ int main() {
   assert(are_close(pow(a.norm(), 2), 14.0));
 
   // check Point operations
-  assert(2 * p == Point(2.0, 4.0, 6.0));
+  assert(p * 2 == Point(2.0, 4.0, 6.0));
   assert(q + a == Point(5.0, 8.0, 11.0));
   assert(q - p == Vec(3.0, 4.0, 5.0));
   return 0;
