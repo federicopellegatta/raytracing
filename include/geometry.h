@@ -69,6 +69,11 @@ struct Transformation {
 
   Transformation();
   Transformation(float _m[4][4], float _invm[4][4]);
+
+  Vec operator*(Vec);
+  Point operator*(Point);
+  Normal operator*(Normal);
+  Transformation operator*(Transformation);
 };
 
 // Compare between Vecs and Points
