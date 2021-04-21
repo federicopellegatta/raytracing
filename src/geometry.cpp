@@ -39,3 +39,15 @@ Transformation translation(Vec vec) {
 
   return Transformation(_m, _invm);
 }
+
+float _matr_prod(float a[4][4], float b[4][4]) {
+  float result[4][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+  for (int i{}; i < 4; i++) {
+    for (int j{}; j < 4; j++) {
+      for (int k{}; k < 4; k++)
+        result[i][j] += a[i][k] * b[k][j];
+    }
+  }
+
+  return **result;
+}
