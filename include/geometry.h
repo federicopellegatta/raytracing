@@ -69,20 +69,6 @@ struct Normal {
   float x, y, z;
 };
 
-// Define a generic transformation
-// from two 4x4 matrices
-struct Transformation {
-  float m[4][4];
-  float invm[4][4];
-
-  Transformation();
-  Transformation(float[4][4], float[4][4]);
-  Vec operator*(Vec);
-  Point operator*(Point);
-  Normal operator*(Normal);
-  Transformation operator*(Transformation);
-};
-
 // Sum operation between Vecs and Points
 Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
 Point operator+(const Point &a, const Vec &b) {
@@ -109,8 +95,27 @@ Point operator-(const Point &a, const Vec &b) {
   return _sum<Point, Vec, Point>(a, -1 * b);
 }
 
-// Trasformazioni
-Transformation translation(Vec);
+////////////////////
+/* TRANSFORMATION */
+////////////////////
 
+// Define a generic transformation
+// from two 4x4 matrices
+struct Transformation {
+  float m[4][4];
+  float invm[4][4];
+
+  Transformation();
+  Transformation(float[4][4], float[4][4]);
+  Vec operator*(Vec);
+  Point operator*(Point);
+  Normal operator*(Normal);
+  Transformation operator*(Transformation);
+};
+
+// Comparison
+bool _are_matr_close(float[4][4], float[4][4]);
 // Matrix operation
 void _matr_prod(const float[4][4], const float[4][4], float[4][4]);
+
+Transformation translation(Vec);
