@@ -1,6 +1,7 @@
 #include "colors.h"
 #include <cmath>
 #include <iostream>
+#include <valarray>
 
 using namespace std;
 
@@ -56,6 +57,18 @@ struct Point {
   inline string to_str() { return string{"Point" + _to_string(*this)}; }
 };
 
+struct Normal {
+  float x, y, z;
+};
+
+struct Transformation {
+  float m[4][4];
+  float invm[4][4];
+
+  Transformation(float **_m, float **_invm);
+  Transformation();
+};
+
 // Compare between Vecs and Points
 template <typename In> bool operator==(const In &a, const In &b) {
   return _are_close<In>(a, b);
@@ -89,3 +102,6 @@ Vec operator-(const Point &a, const Point &b) {
 Point operator-(const Point &a, const Vec &b) {
   return _sum<Point, Vec, Point>(a, -1 * b);
 }
+
+// Trasformazioni
+Transformation translation(Vec vec);
