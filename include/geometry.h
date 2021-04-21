@@ -107,3 +107,6 @@ Point operator-(const Point &a, const Vec &b) {
 
 // Trasformazioni
 Transformation translation(Vec vec);
+
+// Matrix operation
+float _matr_prod(float a[4][4], float b[4][4]);
