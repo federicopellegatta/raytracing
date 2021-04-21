@@ -61,12 +61,14 @@ struct Normal {
   float x, y, z;
 };
 
+// Define a generic transformation
+// from two 4x4 matrices
 struct Transformation {
   float m[4][4];
   float invm[4][4];
 
-  Transformation(float **_m, float **_invm);
   Transformation();
+  Transformation(float _m[4][4], float _invm[4][4]);
 };
 
 // Compare between Vecs and Points

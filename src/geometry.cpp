@@ -1,17 +1,10 @@
 #include "geometry.h"
 
-Transformation::Transformation(float **_m, float **_invm) {
-  for (int i{}; i < 4; i++) {
-    for (int j{}; j < 4; i++) {
-      m[i][j] = _m[i][j];
-      invm[i][j] = _invm[i][j];
-    }
-  }
-}
-
+// Default constructor
+// Initialize the identical transformation
 Transformation::Transformation() {
   for (int i{}; i < 4; i++) {
-    for (int j{}; j < 4; i++) {
+    for (int j{}; j < 4; j++) {
       if (i == j) {
         m[i][j] = 1;
         invm[i][j] = 1;
@@ -19,6 +12,17 @@ Transformation::Transformation() {
         m[i][j] = 0;
         invm[i][j] = 0;
       }
+    }
+  }
+}
+
+// Constructor which takes two matrices as argument
+// and initialize a transformation
+Transformation::Transformation(float _m[4][4], float _invm[4][4]) {
+  for (int i{}; i < 4; i++) {
+    for (int j{}; j < 4; j++) {
+      m[i][j] = _m[i][j];
+      invm[i][j] = _invm[i][j];
     }
   }
 }
