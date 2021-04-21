@@ -77,6 +77,10 @@ struct Transformation {
 
   Transformation();
   Transformation(float[4][4], float[4][4]);
+  Vec operator*(Vec);
+  Point operator*(Point);
+  Normal operator*(Normal);
+  Transformation operator*(Transformation);
 };
 
 // Sum operation between Vecs and Points
