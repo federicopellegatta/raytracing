@@ -76,7 +76,7 @@ struct Transformation {
   float invm[4][4];
 
   Transformation();
-  Transformation(float _m[4][4], float _invm[4][4]);
+  Transformation(float[4][4], float[4][4]);
 };
 
 // Sum operation between Vecs and Points
@@ -106,7 +106,7 @@ Point operator-(const Point &a, const Vec &b) {
 }
 
 // Trasformazioni
-Transformation translation(Vec vec);
+Transformation translation(Vec);
 
 // Matrix operation
-float _matr_prod(float a[4][4], float b[4][4]);
+void _matr_prod(const float[4][4], const float[4][4], float[4][4]);

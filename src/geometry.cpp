@@ -27,6 +27,15 @@ Transformation::Transformation(float _m[4][4], float _invm[4][4]) {
   }
 }
 
+void _matr_prod(const float a[4][4], const float b[4][4], float c[4][4]) {
+  for (int i{}; i < 4; i++) {
+    for (int j{}; j < 4; j++) {
+      for (int k{}; k < 4; k++)
+        c[i][j] += a[i][k] * b[k][j];
+    }
+  }
+}
+
 Transformation translation(Vec vec) {
   float _m[4][4] = {{1.0, 0.0, 0.0, vec.x},
                     {0.0, 1.0, 0.0, vec.y},
@@ -38,16 +47,4 @@ Transformation translation(Vec vec) {
                        {0.0, 0.0, 0.0, 1.0}};
 
   return Transformation(_m, _invm);
-}
-
-float _matr_prod(float a[4][4], float b[4][4]) {
-  float result[4][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
-  for (int i{}; i < 4; i++) {
-    for (int j{}; j < 4; j++) {
-      for (int k{}; k < 4; k++)
-        result[i][j] += a[i][k] * b[k][j];
-    }
-  }
-
-  return **result;
 }
