@@ -15,6 +15,14 @@ template <typename In> bool _are_close(const In &a, const In &b) {
   return are_close(a.x, b.x) && are_close(a.y, b.y) && are_close(a.z, b.z);
 }
 
+// Wrapper around _are_close. More elegant ;)
+template <typename In> bool operator==(const In &a, const In &b) {
+  return _are_close<In>(a, b);
+}
+template <typename In> bool operator!=(const In &a, const In &b) {
+  return !(_are_close<In>(a, b));
+}
+
 template <typename In1, typename In2, typename Out>
 Out _sum(const In1 &a, const In2 &b) {
   return Out{a.x + b.x, a.y + b.y, a.z + b.z};
@@ -70,14 +78,6 @@ struct Transformation {
   Transformation();
   Transformation(float _m[4][4], float _invm[4][4]);
 };
-
-// Compare between Vecs and Points
-template <typename In> bool operator==(const In &a, const In &b) {
-  return _are_close<In>(a, b);
-}
-template <typename In> bool operator!=(const In &a, const In &b) {
-  return !(_are_close<In>(a, b));
-}
 
 // Sum operation between Vecs and Points
 Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
