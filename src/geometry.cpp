@@ -1,4 +1,5 @@
 #include "geometry.h"
+#define PI 3.14159265
 
 ////////////////////
 /* TRANSFORMATION */
@@ -72,11 +73,11 @@ Point Transformation::operator*(Point p) {
     return Point(q.x / w, q.y / w, q.z / w);
 }
 
-// Normal Transformation::operator*(Normal n) {
-//  return Normal{n.x * invm[0][0] + n.y * invm[0][1] + n.z * invm[0][2],
-//                n.x * invm[1][0] + n.y * invm[1][1] + n.z * invm[1][2],
-//                n.x * invm[2][0] + n.y * invm[2][1] + n.z * invm[2][2]};
-//}
+Normal Transformation::operator*(Normal n) {
+  return Normal{n.x * invm[0][0] + n.y * invm[1][0] + n.z * invm[2][0],
+                n.x * invm[0][1] + n.y * invm[1][1] + n.z * invm[2][1],
+                n.x * invm[0][2] + n.y * invm[1][2] + n.z * invm[2][2]};
+}
 
 Transformation Transformation::operator*(Transformation t) {
   float result_m[4][4] = {};
@@ -96,6 +97,70 @@ Transformation translation(Vec vec) {
   float _invm[4][4] = {{1.0, 0.0, 0.0, -vec.x},
                        {0.0, 1.0, 0.0, -vec.y},
                        {0.0, 0.0, 1.0, -vec.z},
+                       {0.0, 0.0, 0.0, 1.0}};
+
+  return Transformation(_m, _invm);
+}
+
+Transformation scaling(Vec vec) {
+  float _m[4][4] = {{vec.x, 0.0, 0.0, 0.0},
+                    {0.0, vec.y, 0.0, 0.0},
+                    {0.0, 0.0, vec.z, 0.0},
+                    {0.0, 0.0, 0.0, 1.0}};
+  float _invm[4][4] = {{1 / vec.x, 0.0, 0.0, 0.0},
+                       {0.0, 1 / vec.y, 0.0, 0.0},
+                       {0.0, 0.0, 1 / vec.z, 0.0},
+                       {0.0, 0.0, 0.0, 1.0}};
+
+  return Transformation(_m, _invm);
+}
+
+Transformation rotation_x(float ang) { // angolo in rad
+  // float ang = ang * PI / 180;
+  float cosang = cos(ang);
+  float sinang = sin(ang);
+
+  float _m[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                    {0.0, cosang, -sinang, 0.0},
+                    {0.0, sinang, cosang, 0.0},
+                    {0.0, 0.0, 0.0, 1.0}};
+  float _invm[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                       {0.0, cosang, sinang, 0.0},
+                       {0.0, -sinang, cosang, 0.0},
+                       {0.0, 0.0, 0.0, 1.0}};
+
+  return Transformation(_m, _invm);
+}
+
+Transformation rotation_y(float ang) { // angolo in rad
+  // float ang = ang * PI / 180;
+  float cosang = cos(ang);
+  float sinang = sin(ang);
+
+  float _m[4][4] = {{cosang, 0.0, sinang, 0.0},
+                    {0.0, 1.0, 0.0, 0.0},
+                    {-sinang, 0.0, cosang, 0.0},
+                    {0.0, 0.0, 0.0, 1.0}};
+  float _invm[4][4] = {{cosang, 0.0, -sinang, 0.0},
+                       {0.0, 1.0, 0.0, 0.0},
+                       {sinang, 0.0, cosang, 0.0},
+                       {0.0, 0.0, 0.0, 1.0}};
+
+  return Transformation(_m, _invm);
+}
+
+Transformation rotation_z(float ang) { // angolo in rad
+  // float ang = ang * PI / 180;
+  float cosang = cos(ang);
+  float sinang = sin(ang);
+
+  float _m[4][4] = {{cosang, -sinang, 0.0, 0.0},
+                    {sinang, cosang, 0.0, 0.0},
+                    {0.0, 0.0, 1.0, 0.0},
+                    {0.0, 0.0, 0.0, 1.0}};
+  float _invm[4][4] = {{cosang, sinang, 0.0, 0.0},
+                       {-sinang, cosang, 0.0, 0.0},
+                       {0.0, 0.0, 1.0, 0.0},
                        {0.0, 0.0, 0.0, 1.0}};
 
   return Transformation(_m, _invm);

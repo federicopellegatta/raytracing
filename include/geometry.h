@@ -119,3 +119,7 @@ bool _are_matr_close(float[4][4], float[4][4]);
 void _matr_prod(const float[4][4], const float[4][4], float[4][4]);
 
 Transformation translation(Vec);
+Transformation scaling(Vec);
+Transformation rotation_x(float);
+Transformation rotation_y(float);
+Transformation rotation_z(float);
