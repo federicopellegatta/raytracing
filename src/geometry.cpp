@@ -1,25 +1,13 @@
 #include "geometry.h"
-#define PI 3.14159265
+
+float IDENTITY_MATR4x4[4][4] = {{1.f, 0.f, 0.f, 0.f},
+                                {0.f, 1.f, 0.f, 0.f},
+                                {0.f, 0.f, 1.f, 0.f},
+                                {0.f, 0.f, 0.f, 1.f}};
 
 ////////////////////
 /* TRANSFORMATION */
 ////////////////////
-
-// Default constructor
-// Initialize the identical transformation
-Transformation::Transformation() {
-  for (int i{}; i < 4; i++) {
-    for (int j{}; j < 4; j++) {
-      if (i == j) {
-        m[i][j] = 1;
-        invm[i][j] = 1;
-      } else {
-        m[i][j] = 0;
-        invm[i][j] = 0;
-      }
-    }
-  }
-}
 
 // Constructor which takes two matrices as argument
 // and initialize a transformation
@@ -52,6 +40,31 @@ void _matr_prod(const float a[4][4], const float b[4][4], float c[4][4]) {
     }
   }
 }
+
+bool Transformation::is_close(Transformation t) {
+  return _are_matr_close(m, t.m) and _are_matr_close(invm, t.invm);
+}
+
+bool Transformation::is_consistent() {
+  float prod[4][4] = {};
+  _matr_prod(m, invm, prod);
+  return _are_matr_close(prod, IDENTITY_MATR4x4);
+}
+
+string Transformation::to_str() {
+  ostringstream stream;
+  stream << "[\n";
+  for (int i{}; i < 4; i++) {
+    for (int j{}; j < 4; j++) {
+      stream << m[i][j] << " ";
+    }
+    stream << "\n";
+  }
+  stream << " ]\n";
+  return stream.str();
+}
+
+Transformation Transformation::inverse() { return Transformation{invm, m}; }
 
 // Mul operation overloading
 Vec Transformation::operator*(Vec vec) {

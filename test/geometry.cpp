@@ -32,5 +32,21 @@ int main() {
   assert(p * 2 == Point(2.0, 4.0, 6.0));
   assert(q + a == Point(5.0, 8.0, 11.0));
   assert(q - p == Vec(3.0, 4.0, 5.0));
+
+  // check Matrix constructor
+  float m1[4][4] = {{1.0, 2.0, 3.0, 4.0},
+                    {5.0, 6.0, 7.0, 8.0},
+                    {9.0, 9.0, 8.0, 7.0},
+                    {6.0, 5.0, 4.0, 1.0}};
+  float minv1[4][4] = {{-3.75, 2.75, -1.0, 0.0},
+                       {4.375, -3.875, 2.0, -0.5},
+                       {0.5, 0.5, -1.0, 1.0},
+                       {-1.375, 0.875, 0.0, -0.5}};
+
+  Transformation t1{m1, minv1};
+  // assert(t1.is_consistent());
+
+  // print(t1.to_str());
+
   return 0;
 }

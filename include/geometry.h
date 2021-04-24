@@ -1,9 +1,15 @@
 #include "colors.h"
 #include <cmath>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <valarray>
 
+#define PI 3.14159265
+
 using namespace std;
+
+extern float IDENTITY_MATR4x4[4][4];
 
 // Template functions
 template <typename In> string _to_string(const In &a) {
@@ -67,6 +73,11 @@ struct Point {
 
 struct Normal {
   float x, y, z;
+
+  Normal(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
+  Normal(const Normal &);  // Copy constructor
+  Normal(const Normal &&); // Move constructor
+  inline string to_str() { return string{"Normal" + _to_string(*this)}; }
 };
 
 // Sum operation between Vecs and Points
@@ -99,23 +110,37 @@ Point operator-(const Point &a, const Vec &b) {
 /* TRANSFORMATION */
 ////////////////////
 
-// Define a generic transformation
-// from two 4x4 matrices
+// Define a generic transformation from two 4x4 matrices
 struct Transformation {
-  float m[4][4];
-  float invm[4][4];
+  float m[4][4] = {{1.f, 0.f, 0.f, 0.f},
+                   {0.f, 1.f, 0.f, 0.f},
+                   {0.f, 0.f, 1.f, 0.f},
+                   {0.f, 0.f, 0.f, 1.f}};
 
-  Transformation();
+  float invm[4][4] = {{1.f, 0.f, 0.f, 0.f},
+                      {0.f, 1.f, 0.f, 0.f},
+                      {0.f, 0.f, 1.f, 0.f},
+                      {0.f, 0.f, 0.f, 1.f}};
+
+  Transformation(){};
   Transformation(float[4][4], float[4][4]);
+
+  bool is_consistent();
+  bool is_close(Transformation);
+  string to_str();
+
+  Transformation inverse();
   Vec operator*(Vec);
   Point operator*(Point);
   Normal operator*(Normal);
   Transformation operator*(Transformation);
 };
 
-// Comparison
+// Comparison between 4x4 matrix
 bool _are_matr_close(float[4][4], float[4][4]);
+
 // Matrix operation
+
 void _matr_prod(const float[4][4], const float[4][4], float[4][4]);
 
 Transformation translation(Vec);
