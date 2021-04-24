@@ -80,32 +80,6 @@ struct Normal {
   inline string to_str() { return string{"Normal" + _to_string(*this)}; }
 };
 
-// Sum operation between Vecs and Points
-Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
-Point operator+(const Point &a, const Vec &b) {
-  return _sum<Point, Vec, Point>(a, b);
-}
-
-// Mul operation between Vecs/Points and a floating point (and viceversa)
-Vec operator*(const float &a, const Vec &b) { return _mul<Vec, Vec>(a, b); }
-Vec operator*(const Vec &a, const float &b) { return b * a; }
-
-Point operator*(const float &a, const Point &b) {
-  return _mul<Point, Point>(a, b);
-}
-Point operator*(const Point &a, const float &b) { return b * a; }
-
-// Minus operation between Vecs and Points
-Vec operator-(const Vec &a, const Vec &b) {
-  return _sum<Vec, Vec, Vec>(a, -1 * b);
-}
-Vec operator-(const Point &a, const Point &b) {
-  return _sum<Point, Point, Vec>(a, -1 * b);
-}
-Point operator-(const Point &a, const Vec &b) {
-  return _sum<Point, Vec, Point>(a, -1 * b);
-}
-
 ////////////////////
 /* TRANSFORMATION */
 ////////////////////
@@ -138,9 +112,6 @@ struct Transformation {
 
 // Comparison between 4x4 matrix
 bool _are_matr_close(float[4][4], float[4][4]);
-
-// Matrix operation
-
 void _matr_prod(const float[4][4], const float[4][4], float[4][4]);
 
 Transformation translation(Vec);
@@ -148,3 +119,19 @@ Transformation scaling(Vec);
 Transformation rotation_x(float);
 Transformation rotation_y(float);
 Transformation rotation_z(float);
+
+// Sum operation between Vecs and Points
+Vec operator+(const Vec &, const Vec &);
+Point operator+(const Point &, const Vec &);
+
+// Mul operation between Vecs/Points and a floating point (and viceversa)
+Vec operator*(const float &, const Vec &);
+Vec operator*(const Vec &, const float &);
+
+Point operator*(const float &, const Point &);
+Point operator*(const Point &, const float &);
+
+// Minus operation between Vecs and Points
+Vec operator-(const Vec &, const Vec &);
+Vec operator-(const Point &, const Point &);
+Point operator-(const Point &, const Vec &);

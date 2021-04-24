@@ -44,9 +44,9 @@ int main() {
                        {-1.375, 0.875, 0.0, -0.5}};
 
   Transformation t1{m1, minv1};
-  // assert(t1.is_consistent());
+  assert(t1.is_consistent());
 
-  // print(t1.to_str());
+  print(t1.to_str());
 
   return 0;
 }

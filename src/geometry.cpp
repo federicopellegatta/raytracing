@@ -74,16 +74,12 @@ Vec Transformation::operator*(Vec vec) {
 }
 
 Point Transformation::operator*(Point p) {
-  Point q{p.x * m[0][0] + p.y * m[0][1] + p.z * m[0][2],
-          p.x * m[1][0] + p.y * m[1][1] + p.z * m[1][2],
-          p.x * m[2][0] + p.y * m[2][1] + p.z * m[2][2]};
 
   float w = p.x * m[3][0] + p.y * m[3][1] + p.z * m[3][2] + m[3][3];
 
-  if (w == 1)
-    return q;
-  else
-    return Point(q.x / w, q.y / w, q.z / w);
+  return Point{(p.x * m[0][0] + p.y * m[0][1] + p.z * m[0][2]) / w,
+               (p.x * m[1][0] + p.y * m[1][1] + p.z * m[1][2]) / w,
+               (p.x * m[2][0] + p.y * m[2][1] + p.z * m[2][2]) / w};
 }
 
 Normal Transformation::operator*(Normal n) {
@@ -177,4 +173,30 @@ Transformation rotation_z(float ang) { // angolo in rad
                        {0.0, 0.0, 0.0, 1.0}};
 
   return Transformation(_m, _invm);
+}
+
+// Sum operation between Vecs and Points
+Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
+Point operator+(const Point &a, const Vec &b) {
+  return _sum<Point, Vec, Point>(a, b);
+}
+
+// Mul operation between Vecs/Points and a floating point (and viceversa)
+Vec operator*(const float &a, const Vec &b) { return _mul<Vec, Vec>(a, b); }
+Vec operator*(const Vec &a, const float &b) { return b * a; }
+
+Point operator*(const float &a, const Point &b) {
+  return _mul<Point, Point>(a, b);
+}
+Point operator*(const Point &a, const float &b) { return b * a; }
+
+// Minus operation between Vecs and Points
+Vec operator-(const Vec &a, const Vec &b) {
+  return _sum<Vec, Vec, Vec>(a, -1 * b);
+}
+Vec operator-(const Point &a, const Point &b) {
+  return _sum<Point, Point, Vec>(a, -1 * b);
+}
+Point operator-(const Point &a, const Vec &b) {
+  return _sum<Point, Vec, Point>(a, -1 * b);
 }
