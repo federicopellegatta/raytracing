@@ -3,13 +3,12 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <valarray>
-
-#define PI 3.14159265
 
 using namespace std;
 
-extern float IDENTITY_MATR4x4[4][4];
+////////////////////////////
+/* VECS, POINT AND NORMAL */
+////////////////////////////
 
 // Template functions
 template <typename In> string _to_string(const In &a) {
@@ -80,9 +79,27 @@ struct Normal {
   inline string to_str() { return string{"Normal" + _to_string(*this)}; }
 };
 
+// Sum operation between Vecs and Points
+Vec operator+(const Vec &, const Vec &);
+Point operator+(const Point &, const Vec &);
+
+// Mul operation between Vecs/Points and a floating point (and viceversa)
+Vec operator*(const float &, const Vec &);
+Vec operator*(const Vec &, const float &);
+
+Point operator*(const float &, const Point &);
+Point operator*(const Point &, const float &);
+
+// Minus operation between Vecs and Points
+Vec operator-(const Vec &, const Vec &);
+Vec operator-(const Point &, const Point &);
+Point operator-(const Point &, const Vec &);
+
 ////////////////////
 /* TRANSFORMATION */
 ////////////////////
+
+extern float IDENTITY_MATR4x4[4][4];
 
 // Define a generic transformation from two 4x4 matrices
 struct Transformation {
@@ -119,19 +136,3 @@ Transformation scaling(Vec);
 Transformation rotation_x(float);
 Transformation rotation_y(float);
 Transformation rotation_z(float);
-
-// Sum operation between Vecs and Points
-Vec operator+(const Vec &, const Vec &);
-Point operator+(const Point &, const Vec &);
-
-// Mul operation between Vecs/Points and a floating point (and viceversa)
-Vec operator*(const float &, const Vec &);
-Vec operator*(const Vec &, const float &);
-
-Point operator*(const float &, const Point &);
-Point operator*(const Point &, const float &);
-
-// Minus operation between Vecs and Points
-Vec operator-(const Vec &, const Vec &);
-Vec operator-(const Point &, const Point &);
-Point operator-(const Point &, const Vec &);

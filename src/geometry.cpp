@@ -1,13 +1,43 @@
 #include "geometry.h"
 
-float IDENTITY_MATR4x4[4][4] = {{1.f, 0.f, 0.f, 0.f},
-                                {0.f, 1.f, 0.f, 0.f},
-                                {0.f, 0.f, 1.f, 0.f},
-                                {0.f, 0.f, 0.f, 1.f}};
+////////////////////////////
+/* VECS, POINT AND NORMAL */
+////////////////////////////
+
+// Sum operation between Vecs and Points
+Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
+Point operator+(const Point &a, const Vec &b) {
+  return _sum<Point, Vec, Point>(a, b);
+}
+
+// Mul operation between Vecs/Points and a floating point (and viceversa)
+Vec operator*(const float &a, const Vec &b) { return _mul<Vec, Vec>(a, b); }
+Vec operator*(const Vec &a, const float &b) { return b * a; }
+
+Point operator*(const float &a, const Point &b) {
+  return _mul<Point, Point>(a, b);
+}
+Point operator*(const Point &a, const float &b) { return b * a; }
+
+// Minus operation between Vecs and Points
+Vec operator-(const Vec &a, const Vec &b) {
+  return _sum<Vec, Vec, Vec>(a, -1 * b);
+}
+Vec operator-(const Point &a, const Point &b) {
+  return _sum<Point, Point, Vec>(a, -1 * b);
+}
+Point operator-(const Point &a, const Vec &b) {
+  return _sum<Point, Vec, Point>(a, -1 * b);
+}
 
 ////////////////////
 /* TRANSFORMATION */
 ////////////////////
+
+float IDENTITY_MATR4x4[4][4] = {{1.f, 0.f, 0.f, 0.f},
+                                {0.f, 1.f, 0.f, 0.f},
+                                {0.f, 0.f, 1.f, 0.f},
+                                {0.f, 0.f, 0.f, 1.f}};
 
 // Constructor which takes two matrices as argument
 // and initialize a transformation
@@ -24,7 +54,7 @@ Transformation::Transformation(float _m[4][4], float _invm[4][4]) {
 bool _are_matr_close(float a[4][4], float b[4][4]) {
   for (int i{}; i < 4; i++) {
     for (int j{}; j < 4; j++) {
-      if (!(are_close(a[i][j], a[i][j])))
+      if (!(are_close(a[i][j], b[i][j])))
         return false;
     }
   }
@@ -125,7 +155,7 @@ Transformation scaling(Vec vec) {
 }
 
 Transformation rotation_x(float ang) { // angolo in rad
-  // float ang = ang * PI / 180;
+  // float ang = ang * M_PI / 180;
   float cosang = cos(ang);
   float sinang = sin(ang);
 
@@ -142,7 +172,7 @@ Transformation rotation_x(float ang) { // angolo in rad
 }
 
 Transformation rotation_y(float ang) { // angolo in rad
-  // float ang = ang * PI / 180;
+  // float ang = ang * M_PI / 180;
   float cosang = cos(ang);
   float sinang = sin(ang);
 
@@ -159,7 +189,7 @@ Transformation rotation_y(float ang) { // angolo in rad
 }
 
 Transformation rotation_z(float ang) { // angolo in rad
-  // float ang = ang * PI / 180;
+  // float ang = ang * M_PI / 180;
   float cosang = cos(ang);
   float sinang = sin(ang);
 
@@ -173,30 +203,4 @@ Transformation rotation_z(float ang) { // angolo in rad
                        {0.0, 0.0, 0.0, 1.0}};
 
   return Transformation(_m, _invm);
-}
-
-// Sum operation between Vecs and Points
-Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
-Point operator+(const Point &a, const Vec &b) {
-  return _sum<Point, Vec, Point>(a, b);
-}
-
-// Mul operation between Vecs/Points and a floating point (and viceversa)
-Vec operator*(const float &a, const Vec &b) { return _mul<Vec, Vec>(a, b); }
-Vec operator*(const Vec &a, const float &b) { return b * a; }
-
-Point operator*(const float &a, const Point &b) {
-  return _mul<Point, Point>(a, b);
-}
-Point operator*(const Point &a, const float &b) { return b * a; }
-
-// Minus operation between Vecs and Points
-Vec operator-(const Vec &a, const Vec &b) {
-  return _sum<Vec, Vec, Vec>(a, -1 * b);
-}
-Vec operator-(const Point &a, const Point &b) {
-  return _sum<Point, Point, Vec>(a, -1 * b);
-}
-Point operator-(const Point &a, const Vec &b) {
-  return _sum<Point, Vec, Point>(a, -1 * b);
 }
