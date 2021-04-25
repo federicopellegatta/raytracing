@@ -54,7 +54,7 @@ Transformation::Transformation(float _m[4][4], float _invm[4][4]) {
 bool _are_matr_close(float a[4][4], float b[4][4]) {
   for (int i{}; i < 4; i++) {
     for (int j{}; j < 4; j++) {
-      if (!(are_close(a[i][j], b[i][j])))
+      if (!(are_close(a[i][j], b[i][j], 1e-4)))
         return false;
     }
   }
@@ -104,12 +104,18 @@ Vec Transformation::operator*(Vec vec) {
 }
 
 Point Transformation::operator*(Point p) {
+  float x = m[0][0] * p.x + m[0][1] * p.y + m[0][2] * p.z + m[0][3];
+  float y = m[1][0] * p.x + m[1][1] * p.y + m[1][2] * p.z + m[1][3];
+  float z = m[2][0] * p.x + m[2][1] * p.y + m[2][2] * p.z + m[2][3];
+  float w = m[3][0] * p.x + m[3][1] * p.y + m[3][2] * p.z + m[3][3];
 
-  float w = p.x * m[3][0] + p.y * m[3][1] + p.z * m[3][2] + m[3][3];
+  if (w != 1) {
+    x = x / w;
+    y = y / w;
+    z = z / w;
+  }
 
-  return Point{(p.x * m[0][0] + p.y * m[0][1] + p.z * m[0][2]) / w,
-               (p.x * m[1][0] + p.y * m[1][1] + p.z * m[1][2]) / w,
-               (p.x * m[2][0] + p.y * m[2][1] + p.z * m[2][2]) / w};
+  return Point{x, y, z};
 }
 
 Normal Transformation::operator*(Normal n) {
