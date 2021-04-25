@@ -24,3 +24,4 @@ public:
 };
 
 bool are_close(float, float);
+bool are_close(float, float, float);
