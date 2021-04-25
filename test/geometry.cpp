@@ -45,22 +45,32 @@ void test_transformation_mul(float m1[4][4], float invm1[4][4]) {
                                {25.525, -22.025, 12.25, -5.2},
                                {4.825, -4.325, 2.5, -1.1}};
   Transformation t_expected{m_expected, invm_expected};
+
   assert(t_expected.is_consistent());
   assert(t_expected.is_close(t1 * t2));
 }
 
-void test_transformation_vec_point_mul(float m1[4][4], float invm1[4][4]) {
-  Transformation t1{m1, invm1};
-  assert(t1.is_consistent());
+void test_transformation_vec_point_mul() {
+  float m[4][4] = {{1.0, 2.0, 3.0, 4.0},
+                   {5.0, 6.0, 7.0, 8.0},
+                   {9.0, 9.0, 8.0, 7.0},
+                   {0.0, 0.0, 0.0, 1.0}};
+  float invm[4][4] = {{-3.75, 2.75, -1, 0},
+                      {5.75, -4.75, 2.0, 1.0},
+                      {-2.25, 2.25, -1.0, -2.0},
+                      {0.0, 0.0, 0.0, 1.0}};
+
+  Transformation t{m, invm};
+  assert(t.is_consistent());
 
   Vec v_expected(14.0, 38.0, 51.0);
-  assert(v_expected == (t1 * Vec(1.0, 2.0, 3.0)));
+  assert(v_expected == (t * Vec(1.0, 2.0, 3.0)));
 
   Point p_expected(18.0, 46.0, 58.0);
-  assert(p_expected == (t1 * Point(1.0, 2.0, 3.0)));
+  assert(p_expected == (t * Point(1.0, 2.0, 3.0)));
 
   Normal n_expected(-8.75, 7.75, -3.0);
-  assert(n_expected == (t1 * Normal(3.0, 2.0, 4.0)));
+  assert(n_expected == (t * Normal(3.0, 2.0, 4.0)));
 }
 
 void test_transformation_inverse(float m1[4][4], float invm1[4][4]) {
@@ -158,7 +168,7 @@ int main() {
 
   test_transformation_constructor(m1, invm1);
   test_transformation_mul(m1, invm1);
-  test_transformation_vec_point_mul(m1, invm1);
+  test_transformation_vec_point_mul();
   test_transformation_inverse(m1, invm1);
   test_transformation_translation();
   test_transformation_rotations();
