@@ -29,7 +29,12 @@ jobs:
       run: cmake -E make_directory ${{github.workspace}}/build
       
     - name: Install dependencies
-      run: sudo apt-get install libgd-dev
+        if  ${{ matrix.os }} = ubuntu-latest 
+        run: sudo apt-get install libgd-dev
+        
+        if  ${{ matrix.os }} = macos-latest 
+        run: brew install gd
+      
 
     - name: Configure CMake
       # Use a bash shell so we can use the same syntax for environment variable
