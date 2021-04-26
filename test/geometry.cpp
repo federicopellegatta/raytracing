@@ -164,7 +164,7 @@ int main() {
   float invm1[4][4] = {{-3.75, 2.75, -1.0, 0.0},
                        {4.375, -3.875, 2.0, -0.5},
                        {0.5, 0.5, -1.0, 1.0},
-                       {-1.375, 0.875, 0.0, -0.2}}; // 0.5
+                       {-1.375, 0.875, 0.0, -0.5}};
 
   test_transformation_constructor(m1, invm1);
   test_transformation_mul(m1, invm1);
