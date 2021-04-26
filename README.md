@@ -1,5 +1,6 @@
 # Ray-Tracing
 ![Operating Systems](https://img.shields.io/badge/OS-Linux%20%7C%20MacOS-lightgrey)
+[![CI](https://img.shields.io/github/workflow/status/federicopellegatta/raytracing/CMake)](https://github.com/federicopellegatta/raytracing/actions)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 Ray-Tracing is a C++ code that you can use to generate photorealistic images.
