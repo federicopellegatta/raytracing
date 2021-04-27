@@ -36,11 +36,16 @@ add_executable(HdrImageTest
   test/HdrImage.cpp
 )
 
+add_executable(geometryTest
+  test/geometry.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
     src/HdrImage.cpp
     src/format.cc
+    src/geometry.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
@@ -64,12 +69,17 @@ target_link_libraries(
 # The test program too needs to be linked to "trace"
 target_link_libraries(colorTest PUBLIC trace)
 target_link_libraries(HdrImageTest PUBLIC trace)
+target_link_libraries(geometryTest PUBLIC trace)
+
 
 add_test(NAME colorTest 
     COMMAND colorTest
 )
 add_test(NAME HdrImageTest
     COMMAND HdrImageTest
+)
+add_test(NAME geometryTest
+    COMMAND geometryTest
 )
 
 # Force the compiler to use the C++17 standard
