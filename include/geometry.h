@@ -41,7 +41,7 @@ struct Vec {
   float x, y, z;
 
   Vec(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
-  Vec(const Vec &);  // Copy constructor
+  Vec(const Vec &_v) : x{_v.x}, y{_v.y}, z{_v.z} {}
   Vec(const Vec &&); // Move constructor
 
   // Scalar and Vector product
@@ -65,8 +65,8 @@ struct Point {
   float x, y, z;
 
   Point(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
-  Point(const Point &);  // Copy constructor
-  Point(const Point &&); // Move constructor
+  Point(const Point &_p) : x{_p.x}, y{_p.y}, z{_p.z} {} // Copy constructor
+  Point(const Point &&);                                // Move constructor
   inline string to_str() { return string{"Point" + _to_string(*this)}; }
 };
 
