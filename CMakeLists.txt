@@ -40,12 +40,17 @@ add_executable(geometryTest
   test/geometry.cpp
 )
 
+add_executable(cameraTest
+  test/camera.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
     src/HdrImage.cpp
     src/format.cc
     src/geometry.cpp
+    src/camera.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
@@ -80,6 +85,9 @@ add_test(NAME HdrImageTest
 )
 add_test(NAME geometryTest
     COMMAND geometryTest
+)
+add_test(NAME cameraTest
+    COMMAND cameraTest 
 )
 
 # Force the compiler to use the C++17 standard
