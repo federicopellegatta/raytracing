@@ -27,9 +27,10 @@ struct Ray {
       float _tmin = 1e-5, float _tmax = std::numeric_limits<float>::infinity())
       : origin{_origin}, dir{_dir}, depth{_depth}, tmin{_tmin}, tmax{_tmax} {}
 
-  inline bool is_close(Ray other) {
+  bool operator==(Ray other) {
     return (origin == other.origin) && (dir == other.dir);
   }
+  bool operator!=(Ray other) { return !(*this == other); }
 
   /**
    * @brief Compute the point along the ray's path at some distance from the
