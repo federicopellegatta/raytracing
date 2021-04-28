@@ -41,8 +41,6 @@ struct Vec {
   float x, y, z;
 
   Vec(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
-  Vec(const Vec &);  // Copy constructor
-  Vec(const Vec &&); // Move constructor
 
   // Scalar and Vector product
   inline float dot(const Vec &a) { return a.x * x + a.y * y + a.z * z; }
@@ -65,8 +63,6 @@ struct Point {
   float x, y, z;
 
   Point(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
-  Point(const Point &);  // Copy constructor
-  Point(const Point &&); // Move constructor
   inline string to_str() { return string{"Point" + _to_string(*this)}; }
 };
 
@@ -74,8 +70,6 @@ struct Normal {
   float x, y, z;
 
   Normal(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
-  Normal(const Normal &);  // Copy constructor
-  Normal(const Normal &&); // Move constructor
   inline string to_str() { return string{"Normal" + _to_string(*this)}; }
 };
 
