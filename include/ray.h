@@ -23,14 +23,9 @@ struct Ray {
   float tmax = numeric_limits<float>::infinity();
   int depth = 0;
 
-  Ray();
-  Ray(Point _origin, Vec _dir, float _tmin, float _tmax, int _depth) {
-    origin = _origin;
-    dir = _dir;
-    tmin = _tmin;
-    tmax = _tmax;
-    depth = _depth;
-  }
+  Ray(Point _origin = Point(), Vec _dir = Vec(), int _depth = 0,
+      float _tmin = 1e-5, float _tmax = std::numeric_limits<float>::infinity())
+      : origin{_origin}, dir{_dir}, depth{_depth}, tmin{_tmin}, tmax{_tmax} {}
 
   inline bool is_close(Ray other) {
     return (origin == other.origin) && (dir == other.dir);
