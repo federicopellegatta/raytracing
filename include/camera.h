@@ -23,11 +23,17 @@ struct Camera {
  *
  */
 
-struct OrtogonalCamera : public Camera {
+struct OrthogonalCamera : public Camera {
   Transformation transformation;
   float aspect_ratio;
 
-  OrtogonalCamera(float, Transformation);
+  OrthogonalCamera(float _aspect_ratio = 1.f,
+                   Transformation _transformation = Transformation())
+      : aspect_ratio{_aspect_ratio}, transformation{_transformation} {}
 
-  Ray fire_ray(float, float);
+  Ray fire_ray(float u, float v) {
+    Point origin(-1.0, (1.0 - 2 * u) * aspect_ratio, 2 * v - 1.0);
+    Vec dir = VEC_X;
+    return Ray{origin, dir, 0, 1.0}.transform(transformation);
+  }
 };

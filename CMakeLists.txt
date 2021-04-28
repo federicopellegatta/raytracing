@@ -50,7 +50,6 @@ add_library(trace
     src/HdrImage.cpp
     src/format.cc
     src/geometry.cpp
-    src/camera.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
