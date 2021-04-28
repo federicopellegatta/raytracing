@@ -73,6 +73,10 @@ struct Normal {
   inline string to_str() { return string{"Normal" + _to_string(*this)}; }
 };
 
+extern Vec VEC_X;
+extern Vec VEC_Y;
+extern Vec VEC_Z;
+
 // Sum operation between Vecs and Points
 Vec operator+(const Vec &, const Vec &);
 Point operator+(const Point &, const Vec &);
