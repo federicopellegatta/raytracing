@@ -1,4 +1,4 @@
-#include "camera.h"
+#include "../include/camera.h"
 
 using namespace std;
 
