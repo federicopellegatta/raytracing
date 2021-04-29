@@ -1,4 +1,4 @@
-#include "../include/HdrImage.h"
+#include "HdrImage.h"
 #include <cassert>
 
 using namespace std;
