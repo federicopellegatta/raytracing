@@ -12,8 +12,8 @@ struct Camera {
    * Implementation is to be provided by OrtogonalCamera and PerspectiveCamera
    *
    */
-  virtual void fire_ray() = 0;
-  virtual void fire_all_rays() = 0;
+  virtual Ray fire_ray(float, float) = 0;
+  /*virtual void fire_all_rays() = 0;*/
 };
 
 /**
@@ -96,7 +96,7 @@ struct PerspectiveCamera : public Camera {
    * @return Ray
    */
   Ray fire_ray(float u, float v) {
-    Point origin(screen_distance, 0.f, 0.f);
+    Point origin(-screen_distance, 0.f, 0.f);
     Vec direction(screen_distance, (1.0 - 2 * u) * aspect_ratio, 2 * v - 1.0);
     return Ray(origin, direction, 1.0).transform(transformation);
   }
