@@ -34,4 +34,5 @@ int main() {
   test_is_close();
   test_at();
   test_transformation();
+  return 0;
 }
