@@ -27,7 +27,7 @@ struct ImageTracer {
    * @param row image row
    * @param u_pixel `u` coordinate in pixel frame
    * @param v_pixel `v` coordinate in pixel frame
-   * @return Ray he Ray passing through (col, row) starting from the observer
+   * @return Ray the Ray passing through (col, row) starting from the observer
    */
   Ray fire_ray(int col, int row, float u_pixel = 0.5, float v_pixel = 0.5) {
     float u = (col + u_pixel) / (image.width - 1);

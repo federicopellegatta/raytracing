@@ -36,7 +36,7 @@ struct Ray {
    * @brief Compute the point along the ray's path at some distance from the
    * origin
    *
-   * @param t Lenght in `dir` unit
+   * @param t Length in `dir` unit
    * @return Point The point in 3D space whose distance from the
         ray's origin is equal to `t`
    */
