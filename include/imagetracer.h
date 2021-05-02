@@ -11,7 +11,9 @@ struct ImageTracer {
   HdrImage image;
   Camera camera;
 
-  ImageTracer(HdrImage _image, Camera _camera)
+  ImageTracer(HdrImage _image, OrthogonalCamera _camera)
+      : image{_image}, camera{_camera} {}
+  ImageTracer(HdrImage _image, PerspectiveCamera _camera)
       : image{_image}, camera{_camera} {}
 
   /**
@@ -46,8 +48,7 @@ struct ImageTracer {
    return a :class:`.Color` instance telling the color to
    assign to that pixel in the image.
    */
-  template <typename F>;
-  void fire_all_rays(F func) {
+  template <typename F> void fire_all_rays(F func) {
     for (int row{}; row < image.height; row++) {
       for (int col{}; col < image.width; col++) {
         Ray ray = fire_ray(col, row);
