@@ -37,10 +37,11 @@ void Color::print() {
 float Color::luminosity() {
   return float(max(max(r, g), b) + min(min(r, g), b)) / 2;
 }
-
+/*
 bool are_close(float a, float b) {
   float eps = 1e-5;
   return abs(a - b) < eps;
 }
 
 bool are_close(float a, float b, float eps) { return abs(a - b) < eps; }
+*/
