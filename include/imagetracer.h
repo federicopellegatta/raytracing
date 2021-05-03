@@ -1,5 +1,6 @@
 #include "HdrImage.h"
 #include "camera.h"
+#include <functional>
 
 using namespace std;
 
@@ -9,13 +10,16 @@ using namespace std;
  */
 struct ImageTracer {
   HdrImage image;
-  Camera camera;
+  shared_ptr<Camera> camera;
 
+  ImageTracer(HdrImage _image, shared_ptr<Camera> _camera)
+      : image{_image}, camera{_camera} {}
+  /*
   ImageTracer(HdrImage _image, OrthogonalCamera _camera)
       : image{_image}, camera{_camera} {}
   ImageTracer(HdrImage _image, PerspectiveCamera _camera)
       : image{_image}, camera{_camera} {}
-
+  */
   /**
    * @brief Shoot one light ray through image pixel (col, row)
    *
@@ -35,7 +39,7 @@ struct ImageTracer {
     float u = (col + u_pixel) / (image.width - 1);
     float v = (row + v_pixel) / (image.height - 1);
 
-    return camera.fire_ray(u, v);
+    return camera->fire_ray(u, v);
   }
 
   /**
@@ -48,7 +52,8 @@ struct ImageTracer {
    return a :class:`.Color` instance telling the color to
    assign to that pixel in the image.
    */
-  template <typename F> void fire_all_rays(F func) {
+  // template <typename F>
+  void fire_all_rays(function<Color(Ray)> func) {
     for (int row{}; row < image.height; row++) {
       for (int col{}; col < image.width; col++) {
         Ray ray = fire_ray(col, row);
