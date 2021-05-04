@@ -40,6 +40,18 @@ add_executable(geometryTest
   test/geometry.cpp
 )
 
+add_executable(rayTest
+  test/ray.cpp
+)
+
+add_executable(cameraTest
+  test/camera.cpp
+)
+
+add_executable(imagetracerTest
+  test/imagetracer.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
@@ -70,6 +82,9 @@ target_link_libraries(
 target_link_libraries(colorTest PUBLIC trace)
 target_link_libraries(HdrImageTest PUBLIC trace)
 target_link_libraries(geometryTest PUBLIC trace)
+target_link_libraries(rayTest PUBLIC trace)
+target_link_libraries(cameraTest PUBLIC trace)
+target_link_libraries(imagetracerTest PUBLIC trace)
 
 
 add_test(NAME colorTest 
@@ -81,6 +96,14 @@ add_test(NAME HdrImageTest
 add_test(NAME geometryTest
     COMMAND geometryTest
 )
-
+add_test(NAME rayTest
+    COMMAND rayTest
+) 
+add_test(NAME cameraTest
+    COMMAND cameraTest
+)
+add_test(NAME imagetracerTest
+    COMMAND imagetracerTest
+)
 # Force the compiler to use the C++17 standard
 target_compile_features(raytracer PUBLIC cxx_std_17)

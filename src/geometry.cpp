@@ -4,6 +4,10 @@
 /* VECS, POINT AND NORMAL */
 ////////////////////////////
 
+Vec VEC_X(1.0, 0.0, 0.0);
+Vec VEC_Y(0.0, 1.0, 0.0);
+Vec VEC_Z(0.0, 0.0, 1.0);
+
 // Sum operation between Vecs and Points
 Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
 Point operator+(const Point &a, const Vec &b) {

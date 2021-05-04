@@ -1,4 +1,4 @@
-#include "../include/colors.h"
+#include "colors.h"
 #include <cassert>
 #include <cstdlib>
 

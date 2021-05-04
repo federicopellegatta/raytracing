@@ -1,4 +1,7 @@
 // Color header file
+#ifndef COLORS_H
+#define COLORS_H
+
 #include "fmt/core.h"
 #include "fmtlib.h"
 #include <algorithm>
@@ -23,5 +26,10 @@ public:
   float luminosity();
 };
 
-bool are_close(float, float);
-bool are_close(float, float, float);
+inline bool are_close(float a, float b) {
+  float eps = 1e-5;
+  return abs(a - b) < eps;
+};
+inline bool are_close(float a, float b, float eps) { return abs(a - b) < eps; };
+
+#endif
