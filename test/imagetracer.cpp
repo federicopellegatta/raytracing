@@ -25,12 +25,7 @@ void test_imagetracer() {
   tracer.fire_all_rays([](Ray ray) -> Color { return Color(1.0, 2.0, 3.0); });
   for (int row{}; row < img.height; row++) {
     for (int col{}; col < img.width; col++) {
-      assert(img.get_pixel(col, row).is_close(Color(1.0, 2.0, 3.0)));
-      /*
-      Color img_color = img.get_pixel(col, row);
-      fmt::print("Color: r = {}, g = {}, b = {} \n", img_color.r, img_color.g,
-                 img_color.b);
-      */
+      assert(tracer.image.get_pixel(col, row).is_close(Color(1.0, 2.0, 3.0)));
     }
   }
 }
