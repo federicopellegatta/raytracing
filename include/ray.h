@@ -4,17 +4,17 @@
 
 using namespace std;
 
-/**
+/** Ray class
  * @brief A ray of light propagating in space
- * The class contains the following members:
-    -   `origin` (``Point``): the 3D point where the ray originated
-    -   `dir` (``Vec``): the 3D direction along which this ray propagates
-    -   `tmin` (float): the minimum distance travelled by the ray is this number
- times `dir`
-    -   `tmax` (float): the maximum distance travelled by the ray is this number
- times `dir`
-    -   `depth` (int): number of times this ray was reflected/refracted"""
-
+ *
+ * @param origin A `Point` where the ray is originated
+ * @param dir A `Vec`that indicates the direction along which the ray propagates
+ * @param depth number of times this ray was reflected/refracted
+ * @param tmin The minimum distance travelled by the ray is this float number
+ * @param tmax The maximum distance travelled by the ray is this float number
+ *
+ * @see Point
+ * @see Vec
  */
 struct Ray {
   Point origin = Point();
@@ -37,18 +37,18 @@ struct Ray {
    * origin
    *
    * @param t Length in `dir` unit
-   * @return Point The point in 3D space whose distance from the
+   * @return The point in 3D space whose distance from the
         ray's origin is equal to `t`
    */
   inline Point at(float t) { return origin + dir * t; }
 
   /**
    * @brief Transform a ray
-    This method returns a new ray whose origin and direction are the
+   * This method returns a new ray whose origin and direction are the
    transformation of the original ray
    *
    * @param transformation
-   * @return Ray
+   * @return The ray transformed
    */
   Ray transform(Transformation transformation) {
     return Ray(transformation * origin, transformation * dir, tmin, tmax,

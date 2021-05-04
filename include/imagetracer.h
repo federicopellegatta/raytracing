@@ -4,9 +4,17 @@
 
 using namespace std;
 
-/**
+/** ImageTracer Class
  * @brief Trace an image by shooting light rays through each of its pixels
  *
+ * @param image A :class:`.HdrImage` object; it must be already initialized
+ * @param camera must be a descendeant of the :class:`.Camera` object
+ * (:class:`.OrthogonalCamera` or :class:`.PerspectiveCamera`)
+ *
+ * @see HdrImage
+ * @see Camera
+ * @see OrthogonalCamera
+ * @see PerspectiveCamera
  */
 struct ImageTracer {
   HdrImage image;
@@ -14,12 +22,7 @@ struct ImageTracer {
 
   ImageTracer(HdrImage _image, shared_ptr<Camera> _camera)
       : image{_image}, camera{_camera} {}
-  /*
-  ImageTracer(HdrImage _image, OrthogonalCamera _camera)
-      : image{_image}, camera{_camera} {}
-  ImageTracer(HdrImage _image, PerspectiveCamera _camera)
-      : image{_image}, camera{_camera} {}
-  */
+
   /**
    * @brief Shoot one light ray through image pixel (col, row)
    *
@@ -33,7 +36,7 @@ struct ImageTracer {
    * @param row image row
    * @param u_pixel `u` coordinate in pixel frame
    * @param v_pixel `v` coordinate in pixel frame
-   * @return Ray the Ray passing through (col, row) starting from the observer
+   * @return the Ray passing through (col, row) starting from the observer
    */
   Ray fire_ray(int col, int row, float u_pixel = 0.5, float v_pixel = 0.5) {
     float u = (col + u_pixel) / (image.width - 1);
@@ -52,7 +55,6 @@ struct ImageTracer {
    return a :class:`.Color` instance telling the color to
    assign to that pixel in the image.
    */
-  // template <typename F>
   void fire_all_rays(function<Color(Ray)> func) {
     for (int row{}; row < image.height; row++) {
       for (int col{}; col < image.width; col++) {

@@ -17,6 +17,13 @@ using namespace std;
 
 enum class Endianness { little_endian, big_endian };
 
+/** HdrImage class
+ * @brief This class represents a HDR (High-Dynamic Range) image
+ *
+ * @param width The number of pixel on the horizontal axis
+ * @param height The number of pixel on the vertical axis
+ * @param pixels a :class:`.Color` vector that contains all pixels' color
+ */
 struct HdrImage {
 private:
   // Read a pfm file
@@ -29,7 +36,6 @@ private:
   void normalize_pixels(float, float);
 
 public:
-  // Variables needed
   int width;
   int height;
   vector<Color> pixels;

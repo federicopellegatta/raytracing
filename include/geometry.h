@@ -37,6 +37,9 @@ template <typename In1, typename Out> Out _mul(const float &a, const In1 &b) {
   return Out{a * b.x, a * b.y, a * b.z};
 }
 
+/** Vec class
+ * @brief A class which represent a 3D vector
+ */
 struct Vec {
   float x, y, z;
 
@@ -59,6 +62,9 @@ struct Vec {
   inline string to_str() { return string{"Vec" + _to_string(*this)}; }
 };
 
+/** Point class
+ * @brief A class which represent a 3D point
+ */
 struct Point {
   float x, y, z;
 
@@ -66,6 +72,9 @@ struct Point {
   inline string to_str() { return string{"Point" + _to_string(*this)}; }
 };
 
+/** Normal class
+ * @brief A class which represent a 3D normal to a surface
+ */
 struct Normal {
   float x, y, z;
 
@@ -99,7 +108,12 @@ Point operator-(const Point &, const Vec &);
 
 extern float IDENTITY_MATR4x4[4][4];
 
-// Define a generic transformation from two 4x4 matrices
+/** Transformation class
+ * @brief Define a generic transformation from two 4x4 matrices
+ *
+ * @param m A 4x4 matrix
+ * @param invm `m` inverse matrix
+ */
 struct Transformation {
   float m[4][4] = {{1.f, 0.f, 0.f, 0.f},
                    {0.f, 1.f, 0.f, 0.f},
@@ -114,6 +128,9 @@ struct Transformation {
   Transformation(){};
   Transformation(float[4][4], float[4][4]);
 
+  /**
+   * @brief Check if `m` * `invm` is the identity matrix
+   */
   bool is_consistent();
   bool is_close(Transformation);
   string to_str();
