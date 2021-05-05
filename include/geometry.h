@@ -70,6 +70,7 @@ struct Point {
 
   Point(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
   inline string to_str() { return string{"Point" + _to_string(*this)}; }
+  inline Vec to_vec() { return Vec(x, y, z); }
 };
 
 /** Normal class
@@ -94,11 +95,14 @@ Point operator+(const Point &, const Vec &);
 Vec operator*(const float &, const Vec &);
 Vec operator*(const Vec &, const float &);
 
+Normal operator*(const float &, const Normal &);
+
 Point operator*(const float &, const Point &);
 Point operator*(const Point &, const float &);
 
 // Minus operation between Vecs and Points
 Vec operator-(const Vec &, const Vec &);
+Normal operator-(const Normal &, const Normal &);
 Vec operator-(const Point &, const Point &);
 Point operator-(const Point &, const Vec &);
 
