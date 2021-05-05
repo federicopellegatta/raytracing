@@ -3,7 +3,6 @@
 
 using namespace std;
 
-Color set_color(Ray ray) { return Color(1.0, 2.0, 3.0); }
 void test_imagetracer() {
   HdrImage img(4, 2);
   //  PerspectiveCamera cam(1.0, 2.0, Transformation());
