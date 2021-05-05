@@ -39,8 +39,8 @@ struct ImageTracer {
    * @return the Ray passing through (col, row) starting from the observer
    */
   Ray fire_ray(int col, int row, float u_pixel = 0.5, float v_pixel = 0.5) {
-    float u = (col + u_pixel) / (image.width - 1);
-    float v = (row + v_pixel) / (image.height - 1);
+    float u = (col + u_pixel) / image.width;
+    float v = 1.0 - (row + v_pixel) / image.height;
 
     return camera->fire_ray(u, v);
   }
