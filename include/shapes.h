@@ -1,5 +1,5 @@
-#ifndef COLORS_H
-#define COLORS_H
+#ifndef SHAPES_H
+#define SHAPES_H
 
 #include "hitrecord.h"
 #include "ray.h"

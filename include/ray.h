@@ -1,3 +1,5 @@
+#ifndef RAY_H
+#define RAY_H
 #include "geometry.h"
 #include <iostream>
 #include <limits>
@@ -55,3 +57,4 @@ struct Ray {
                depth);
   }
 };
+#endif
