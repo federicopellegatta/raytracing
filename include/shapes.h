@@ -13,7 +13,7 @@
  *
  * @see Point
  */
-Vec2d _sphere_point_to_uv(Point point) {
+inline Vec2d _sphere_point_to_uv(Point point) {
   return Vec2d(atan2(point.y, point.x) / (2.0 * M_PI), acos(point.z) / M_PI);
 }
 
@@ -32,7 +32,7 @@ Vec2d _sphere_point_to_uv(Point point) {
  * @see Vec
  * @see Normal
  */
-Normal _sphere_normal(Point point, Vec ray_dir) {
+inline Normal _sphere_normal(Point point, Vec ray_dir) {
   Normal result = Normal(point.x, point.y, point.z);
 
   return point.to_vec().dot(ray_dir) < 0.0 ? result : -1 * result;

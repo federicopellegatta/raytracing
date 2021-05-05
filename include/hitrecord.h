@@ -68,10 +68,10 @@ struct HitRecord {
    * @param _hit
    */
   HitRecord(Point _world_point = Point(), Normal _normal = Normal(),
-            Vec2d _surface_point = Vec2d(), Ray _ray = Ray(), float _t = 0.f,
+            Vec2d _surface_point = Vec2d(), float _t = 0.f, Ray _ray = Ray(),
             bool _hit = false)
       : world_point{_world_point}, normal{_normal},
-        surface_point{_surface_point}, ray{_ray}, t{_t}, hit{_hit} {}
+        surface_point{_surface_point}, t{_t}, ray{_ray}, hit{_hit} {}
 
   /**
    * @brief Check if two HitRecords are the same hit event or not
