@@ -18,6 +18,10 @@ Point operator+(const Point &a, const Vec &b) {
 Vec operator*(const float &a, const Vec &b) { return _mul<Vec, Vec>(a, b); }
 Vec operator*(const Vec &a, const float &b) { return b * a; }
 
+Normal operator*(const float &a, const Normal &b) {
+  return _mul<Normal, Normal>(a, b);
+}
+
 Point operator*(const float &a, const Point &b) {
   return _mul<Point, Point>(a, b);
 }
@@ -27,6 +31,10 @@ Point operator*(const Point &a, const float &b) { return b * a; }
 Vec operator-(const Vec &a, const Vec &b) {
   return _sum<Vec, Vec, Vec>(a, -1 * b);
 }
+Normal operator-(const Normal &a, const Normal &b) {
+  return _sum<Normal, Normal, Normal>(a, -1 * b);
+}
+
 Vec operator-(const Point &a, const Point &b) {
   return _sum<Point, Point, Vec>(a, -1 * b);
 }
