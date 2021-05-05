@@ -13,6 +13,14 @@ struct Vec2d {
    */
   float u, v;
   /**
+   * @brief Construct a new Vec 2d object
+   *
+   * @param _u
+   * @param _v
+   */
+  Vec2d(float _u = 0.f, float _v = 0.f) : u{_u}, v{_v} {}
+
+  /**
    * @brief Check whether two 2d vectors are the same
    *
    * @param other_vec2d
@@ -48,6 +56,23 @@ struct HitRecord {
   Ray ray;
   float t;
   bool hit;
+
+  /**
+   * @brief Construct a new Hit Record object
+   *
+   * @param _world_point
+   * @param _normal
+   * @param _surface_point
+   * @param _ray
+   * @param _t
+   * @param _hit
+   */
+  HitRecord(Point _world_point = Point(), Normal _normal = Normal(),
+            Vec2d _surface_point = Vec2d(), Ray _ray = Ray(), float _t = 0.f,
+            bool _hit = false)
+      : world_point{_world_point}, normal{_normal},
+        surface_point{_surface_point}, ray{_ray}, t{_t}, hit{_hit} {}
+
   /**
    * @brief Check if two HitRecords are the same hit event or not
    *
