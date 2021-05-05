@@ -15,7 +15,7 @@ struct World {
     shapes.push_back(make_shared<Shape>(newShape));
   }
 
-  HitRecord rayIntersection(Ray ray) {
+  HitRecord ray_intersection(Ray ray) {
     HitRecord closest{};
 
     for (int i{}; i < shapes.size(); i++) {
