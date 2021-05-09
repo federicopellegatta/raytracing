@@ -1,6 +1,6 @@
 #include "shapes.h"
 
-HitRecord Sphere::ray_intersection(Ray ray) {
+HitRecord Sphere ::ray_intersection(Ray ray) {
   Ray inv_ray = ray.transform(transformation.inverse());
   Vec origin_vec = inv_ray.origin.to_vec();
   bool hit = true;
