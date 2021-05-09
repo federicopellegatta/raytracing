@@ -7,27 +7,29 @@
 #include <vector>
 
 using namespace std;
-
+/**
+ * @brief A class holding a list of shapes, which make a "world"
+    You can add shapes to a world using add. Typically, you call
+    ray_intersection to check whether a light ray intersects any
+    of the shapes in the world.
+ *
+ */
 struct World {
   vector<shared_ptr<Shape>> shapes;
 
-  void add(shared_ptr<Shape> newShape) {
-    shapes.push_back(make_shared<Shape>(newShape));
-  }
-
-  HitRecord ray_intersection(Ray ray) {
-    HitRecord closest{};
-
-    for (int i{}; i < shapes.size(); i++) {
-      HitRecord intersection = shapes[i]->ray_intersection(ray);
-      if (!intersection.hit)
-        continue;
-      if ((!closest.hit) || (intersection.t < closest.t))
-        HitRecord closest{intersection};
-    }
-
-    return closest;
-  }
+  /**
+   * @brief Add a new shape to the world
+   *
+   * @param newShape
+   */
+  inline void add(shared_ptr<Shape> newShape) { shapes.push_back(newShape); }
+  /**
+   * @brief Determine if a ray intersect an object of the current world.
+   *
+   * @param ray
+   * @return HitRecord
+   */
+  HitRecord ray_intersection(Ray ray);
 };
 
 #endif
