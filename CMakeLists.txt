@@ -63,6 +63,7 @@ add_library(trace
     src/format.cc
     src/geometry.cpp
     src/shapes.cpp
+    src/world.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
