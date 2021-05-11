@@ -52,9 +52,9 @@ struct Ray {
    * @param transformation
    * @return The ray transformed
    */
-  Ray transform(Transformation transformation) {
-    return Ray(transformation * origin, transformation * dir, tmin, tmax,
-               depth);
+  inline Ray transform(Transformation transformation) {
+    return Ray(transformation * origin, transformation * dir, depth, tmin,
+               tmax);
   }
 };
 #endif

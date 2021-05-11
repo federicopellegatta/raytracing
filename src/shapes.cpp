@@ -15,7 +15,7 @@ HitRecord Sphere ::ray_intersection(Ray ray) {
 
   float tmin = (-b - sqrt(delta)) / (2.0 * a);
   float tmax = (-b + sqrt(delta)) / (2.0 * a);
-  float first_hit_t;
+  float first_hit_t = 0.f;
 
   if (tmin > inv_ray.tmin && tmin < inv_ray.tmax)
     first_hit_t = tmin;

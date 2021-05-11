@@ -5,7 +5,7 @@ using namespace std;
 
 void test_sphere_hit() {
   Sphere sphere;
-  Ray ray1(Point(0., 0., 1.), -1 * VEC_Z);
+  Ray ray1(Point(0., 0., 2.), -1 * VEC_Z);
 
   HitRecord intersection1 = sphere.ray_intersection(ray1);
   assert(intersection1.hit);
