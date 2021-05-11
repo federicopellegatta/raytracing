@@ -68,7 +68,54 @@ void test_sphere_normal() {
   assert(intersection.normal.normalize() == Normal(1.0, 4.0, 0.0).normalize());
 }
 
+void test_normal_direction() {
+  // Scaling a sphere by - 1 keeps the sphere the same but reverses its
+  // reference frame
+  Sphere sphere{scaling(Vec(-1.0, -1.0, -1.0))};
+
+  Ray ray{Point(0.0, 2.0, 0.0), -1 * VEC_Y};
+  HitRecord intersection = sphere.ray_intersection(ray);
+
+  // We normalize "intersection.normal", as we are not interested in its length
+  cout << intersection.normal.normalize().x << " "
+       << intersection.normal.normalize().y << " "
+       << intersection.normal.normalize().z << endl;
+  assert(intersection.normal.normalize() == Normal(0.0, 1.0, 0.0).normalize());
+}
+
+void test_uv_coordinates() {
+  Sphere sphere{};
+
+  Ray ray1{Point(2.0, 0.0, 0.0), -1 * VEC_X};
+  assert(sphere.ray_intersection(ray1).surface_point.is_close(Vec2d(0.0, 0.5)));
+
+  Ray ray2{Point(0.0, 2.0, 0.0), -1 * VEC_Y};
+  assert(
+      sphere.ray_intersection(ray2).surface_point.is_close(Vec2d(0.25, 0.5)));
+
+  Ray ray3{Point(-2.0, 0.0, 0.0), VEC_X};
+  assert(sphere.ray_intersection(ray3).surface_point.is_close(Vec2d(0.5, 0.5)));
+
+  Ray ray4 = {Point(0.0, -2.0, 0.0), VEC_Y};
+  assert(
+      sphere.ray_intersection(ray4).surface_point.is_close(Vec2d(0.75, 0.5)));
+
+  Ray ray5{Point(2.0, 0.0, 0.5), -1 * VEC_X};
+  assert(sphere.ray_intersection(ray5).surface_point.is_close(
+      Vec2d(0.0, 1. / 3.)));
+
+  Ray ray6{Point(2.0, 0.0, -0.5), -1 * VEC_X};
+  assert(sphere.ray_intersection(ray6).surface_point.is_close(
+      Vec2d(0.0, 2. / 3.)));
+}
+
 int main() {
   test_sphere_hit();
+  test_inner_hit();
+  test_sphere_transformation();
+  test_sphere_normal();
+  test_normal_direction();
+  test_uv_coordinates();
+
   return 0;
 }
