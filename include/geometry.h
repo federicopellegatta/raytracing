@@ -53,11 +53,9 @@ struct Vec {
 
   inline float squared_norm() { return pow(x, 2) + pow(y, 2) + pow(z, 2); }
   inline float norm() { return sqrt(squared_norm()); }
-  inline void normalize() {
+  inline Vec normalize() {
     float norm = this->norm();
-    x /= norm;
-    y /= norm;
-    z /= norm;
+    return Vec{x /= norm, y /= norm, z /= norm};
   }
   inline string to_str() { return string{"Vec" + _to_string(*this)}; }
 };
@@ -81,6 +79,14 @@ struct Normal {
 
   Normal(float _x = 0, float _y = 0, float _z = 0) : x{_x}, y{_y}, z{_z} {}
   inline string to_str() { return string{"Normal" + _to_string(*this)}; }
+
+  inline float squared_norm() { return x * x + y * y + z * z; }
+
+  inline float norm() { return sqrt(squared_norm()); }
+  inline Normal normalize() {
+    float norm = this->norm();
+    return Normal{x /= norm, y /= norm, z /= norm};
+  }
 };
 
 extern Vec VEC_X;
