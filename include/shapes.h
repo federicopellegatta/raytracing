@@ -4,40 +4,6 @@
 #include "hitrecord.h"
 #include "ray.h"
 
-/**
- * @brief Convert a 3D point on the surface of the unit sphere into a (u, "
-              "v) 2D point"
- *
- * @param point A `Point` object
- * @return Vec2d
- *
- * @see Point
- */
-inline Vec2d _sphere_point_to_uv(Point point) {
-  return Vec2d(atan2(point.y, point.x) / (2.0 * M_PI), acos(point.z) / M_PI);
-}
-
-/**
- * @brief Compute the normal of a unit sphere
-    The normal is computed for `point` (a point on the surface of the
-    sphere), and it is chosen so that it is always in the opposite
-    direction with respect to `ray_dir`.
- *
- * @param point A `Point` object on the surface of the sphere where to compute
- the normal
- * @param ray_dir A `Vec` which indicates the ray direction
- * @return Normal
- *
- * @see Point
- * @see Vec
- * @see Normal
- */
-inline Normal _sphere_normal(Point point, Vec ray_dir) {
-  Normal result = Normal(point.x, point.y, point.z);
-
-  return point.to_vec().dot(ray_dir) < 0.0 ? result : -1 * result;
-}
-
 /** Shape class
  * @brief A generic 3D shape
     This is an abstract class, and you should only use it to
@@ -74,36 +40,44 @@ struct Sphere : public Shape {
    * @see Ray
    * @see HitRecord
    */
-  HitRecord ray_intersection(Ray); //{
-  //   Ray inv_ray = ray.transform(transformation.inverse());
-  //   Vec origin_vec = inv_ray.origin.to_vec();
-  //   bool hit = true;
+  HitRecord ray_intersection(Ray);
 
-  //   float a = inv_ray.dir.squared_norm();
-  //   float b = 2.0 * origin_vec.dot(inv_ray.dir);
-  //   float c = origin_vec.squared_norm() - 1.0;
+private:
+  /**
+ * @brief Convert a 3D point on the surface of the unit sphere into a (u, "
+              "v) 2D point"
+ *
+ * @param point A `Point` object
+ * @return Vec2d
+ *
+ * @see Point
+ */
+  inline Vec2d sphere_point_to_uv(Point point) {
+    float u = atan2(point.y, point.x) / (float)(2.0 * M_PI);
+    if (u < 0)
+      u = u + 1;
+    return Vec2d{u, acos(point.z) / (float)(M_PI)};
+  }
 
-  //   float delta = b * b - 4.0 * a * c;
-  //   if (delta <= 0.0)
-  //     hit = false;
-
-  //   float tmin = (-b - sqrt(delta)) / (2.0 * a);
-  //   float tmax = (-b + sqrt(delta)) / (2.0 * a);
-  //   float first_hit_t;
-
-  //   if (tmin > inv_ray.tmin && tmin < inv_ray.tmax)
-  //     first_hit_t = tmin;
-  //   else if (tmax > inv_ray.tmin && tmax < inv_ray.tmax)
-  //     first_hit_t = tmax;
-  //   else
-  //     hit = false;
-
-  //   Point hit_point = inv_ray.at(first_hit_t);
-
-  //   return HitRecord(transformation * hit_point,
-  //                    transformation * _sphere_normal(hit_point, ray.dir),
-  //                    _sphere_point_to_uv(hit_point), first_hit_t, ray, hit);
-  // }
+  /**
+   * @brief Compute the normal of a unit sphere
+      The normal is computed for `point` (a point on the surface of the
+      sphere), and it is chosen so that it is always in the opposite
+      direction with respect to `ray_dir`.
+   *
+   * @param point A `Point` object on the surface of the sphere where to
+   compute the normal
+   * @param ray_dir A `Vec` which indicates the ray direction
+   * @return Normal
+   *
+   * @see Point
+   * @see Vec
+   * @see Normal
+   */
+  inline Normal sphere_normal(Point point, Vec ray_dir) {
+    Normal result{point.x, point.y, point.z};
+    return point.to_vec().dot(ray_dir) < 0.0 ? result : -1 * result;
+  }
 };
 
 #endif

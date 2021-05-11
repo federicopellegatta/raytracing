@@ -1,6 +1,6 @@
 #include "shapes.h"
 
-HitRecord Sphere ::ray_intersection(Ray ray) {
+HitRecord Sphere::ray_intersection(Ray ray) {
   Ray inv_ray = ray.transform(transformation.inverse());
   Vec origin_vec = inv_ray.origin.to_vec();
   bool hit = true;
@@ -27,6 +27,6 @@ HitRecord Sphere ::ray_intersection(Ray ray) {
   Point hit_point = inv_ray.at(first_hit_t);
 
   return HitRecord(transformation * hit_point,
-                   transformation * _sphere_normal(hit_point, ray.dir),
-                   _sphere_point_to_uv(hit_point), first_hit_t, ray, hit);
+                   transformation * sphere_normal(hit_point, ray.dir),
+                   sphere_point_to_uv(hit_point), first_hit_t, ray, hit);
 }
