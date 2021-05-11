@@ -63,8 +63,8 @@ struct HitRecord {
    * @param _world_point
    * @param _normal
    * @param _surface_point
-   * @param _ray
    * @param _t
+   * @param _ray
    * @param _hit
    */
   HitRecord(Point _world_point = Point(), Normal _normal = Normal(),
