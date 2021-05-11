@@ -58,6 +58,8 @@ struct Vec {
     return Vec{x /= norm, y /= norm, z /= norm};
   }
   inline string to_str() { return string{"Vec" + _to_string(*this)}; }
+
+  Vec operator-() const { return Vec{-x, -y, -z}; }
 };
 
 /** Point class
@@ -87,6 +89,8 @@ struct Normal {
     float norm = this->norm();
     return Normal{x /= norm, y /= norm, z /= norm};
   }
+
+  Normal operator-() const { return Normal{-x, -y, -z}; }
 };
 
 extern Vec VEC_X;
