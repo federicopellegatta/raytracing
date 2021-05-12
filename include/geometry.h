@@ -89,7 +89,7 @@ struct Normal {
     float norm = this->norm();
     return Normal{x /= norm, y /= norm, z /= norm};
   }
-
+  inline Vec to_vec() { return Vec(x, y, z); }
   Normal operator-() const { return Normal{-x, -y, -z}; }
 };
 
