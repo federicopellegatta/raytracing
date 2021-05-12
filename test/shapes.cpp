@@ -69,18 +69,13 @@ void test_sphere_normal() {
 }
 
 void test_normal_direction() {
-  // Scaling a sphere by - 1 keeps the sphere the same but reverses its
-  // reference frame
-  Sphere sphere{scaling(Vec(-1.0, -1.0, -1.0))};
 
-  Ray ray{Point(0.0, 2.0, 0.0), -VEC_Y};
+  Sphere sphere;
+  Ray ray{Point(0.0, 0.0, 0.0), VEC_Y};
   HitRecord intersection = sphere.ray_intersection(ray);
 
   // We normalize "intersection.normal", as we are not interested in its length
-  cout << intersection.normal.normalize().x << " "
-       << intersection.normal.normalize().y << " "
-       << intersection.normal.normalize().z << endl;
-  assert(intersection.normal.normalize() == Normal(0.0, 1.0, 0.0).normalize());
+  assert(intersection.normal.normalize().to_vec() == -VEC_Y);
 }
 
 void test_uv_coordinates() {
