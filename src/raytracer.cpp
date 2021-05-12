@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
   fmt::print("File {} has been written to disk. \n",
              parameters.output_png_filename);*/
 
-  Demo demo(480, 480, 0, "perspective", "demo");
+  Demo demo(640, 480, 0, "perspective", "demo");
   demo.run();
 
   return 0;
@@ -71,8 +71,6 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
            string output)
     : image(width, height) {
   // Create a world and populate it with a few shapes
-  World world;
-
   for (int i{}; i < 2; i++) {
     for (int j{}; j < 2; j++) {
       for (int k{}; k < 2; k++) {
@@ -98,11 +96,11 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
       rotation_z(angle_rad) * translation(Vec(-1.0, 0.0, 0.0));
 
   if (camera_type == "orthogonal" || camera_type == "orthogonalCamera")
-    camera = make_shared<OrthogonalCamera>(
-        OrthogonalCamera((float)width / (float)height, camera_tr));
+    camera = make_shared<OrthogonalCamera>(OrthogonalCamera(
+        static_cast<float>(width) / static_cast<float>(height), camera_tr));
   else
-    camera = make_shared<PerspectiveCamera>(
-        PerspectiveCamera(1., (float)width / (float)height, camera_tr));
+    camera = make_shared<PerspectiveCamera>(PerspectiveCamera(
+        1., static_cast<float>(width) / static_cast<float>(height), camera_tr));
 
   // if() check not format passing
   pfm_output = output + ".pfm";
@@ -112,13 +110,16 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
 void Demo::run() {
   ImageTracer tracer(image, camera);
   tracer.fire_all_rays([&](Ray ray) -> Color {
-    return world.ray_intersection(ray).hit ? Color{0.0, 0.0, 0.0}  // WHITE
-                                           : Color{1.0, 1.0, 1.0}; // BLACK
+    if (world.ray_intersection(ray).hit) {
+      return Color{1.0, 1.0, 1.0};
+    } else {
+      return Color{0.0, 0.0, 0.0};
+    }
   });
 
   ofstream stream(pfm_output);
   tracer.image.write_pfm(stream, Endianness::little_endian);
-  fmt::print("HDR demo image written to {}. \n", pfm_output);
+  fmt::print("HDR demo image written to {}\n", pfm_output);
 
   // Apply tone - mapping to the image
   tracer.image.normalize_image(1.0);
