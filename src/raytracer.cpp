@@ -1,18 +1,10 @@
 #include "HdrImage.h"
+#include "args.hxx"
 #include "camera.h"
 #include "imagetracer.h"
 #include "world.h"
 
 using namespace std;
-
-struct Parameters {
-  string input_pfm_filename = "";
-  float factor = 0.2;
-  float gamma = 1.0;
-  string output_png_filename = "";
-
-  void parse_line_arguments(int argc, char **argv);
-};
 
 struct Demo {
   HdrImage image;
@@ -28,43 +20,44 @@ struct Demo {
   void save_png();
 };
 
+struct pfm2png {
+  HdrImage image;
+  float factor = 1.0;
+  float gamma = 1.0;
+  string input_pfm_filename = "";
+  string output_filename = "";
+
+  pfm2png(string input_pfm_filename, string output_filename, float factor,
+          float gamma);
+};
+
+int interface(int argc, char **argv);
+
 int main(int argc, char **argv) {
+  interface(argc, argv);
 
-  /*Parameters parameters;
-
-  // Read input from command-line
-  parameters.parse_line_arguments(argc, argv);
-
-  // Open input PFM file
-  HdrImage img(parameters.input_pfm_filename);
-  fmt::print("File {} has been read from disk. \n",
-             parameters.input_pfm_filename);
-
-  // Run Tone-Mapping
-  img.normalize_image(parameters.factor);
-  img.clamp_image();
-
-  // Open output file
-  img.write_ldr_image(parameters.output_png_filename.c_str(), parameters.gamma);
-  fmt::print("File {} has been written to disk. \n",
-             parameters.output_png_filename);*/
-
-  Demo demo(640, 480, 0, "perspective", "demo");
-  demo.run();
+  pfm2png("../test/HdrImage_references/memorial.pfm", "memorial.png", 0.5, 2.1);
+  // Demo demo(640, 480, 0, "perspective", "demo");
+  // demo.run();
 
   return 0;
 }
 
-void Parameters::parse_line_arguments(int argc, char **argv) {
-  if (argc != 5) {
-    throw runtime_error("Usage: ./raytracer INPUT_PFM_FILE FACTOR GAMMA "
-                        "OUTPUT_PNG-OR-JPEG_FILE \n");
-  }
+pfm2png::pfm2png(string input_pfm_filename, string output_filename,
+                 float _factor, float _gamma)
+    : image(input_pfm_filename) {
 
-  input_pfm_filename = argv[1];
-  factor = atof(argv[2]);
-  gamma = atof(argv[3]);
-  output_png_filename = argv[4];
+  factor = _factor;
+  gamma = _gamma;
+  fmt::print("File {} has been read from disk. \n", input_pfm_filename);
+
+  // Run Tone-Mapping
+  image.normalize_image(factor);
+  image.clamp_image();
+
+  // Open output file
+  image.write_ldr_image(output_filename.c_str(), gamma);
+  fmt::print("File {} has been written to disk. \n", output_filename);
 }
 
 Demo::Demo(int width, int height, float angle_deg, string camera_type,
@@ -127,4 +120,40 @@ void Demo::run() {
 
   tracer.image.write_ldr_image(png_output.c_str(), 1.0);
   fmt::print("File {} has been written to disk. \n", png_output);
+}
+
+int interface(int argc, char **argv) {
+  args::ArgumentParser parser(
+      "Raytracing is a program that can generate photorealistic images.");
+  args::ArgumentParser p("git-like parser");
+  args::Group commands(p, "commands");
+  args::Command add(commands, "add", "add file contents to the index");
+  args::Command commit(commands, "commit", "record changes to the repository");
+  args::Group arguments(p, "arguments", args::Group::Validators::DontCare,
+                        args::Options::Global);
+  args::ValueFlag<std::string> gitdir(arguments, "path", "", {"git-dir"});
+  args::HelpFlag h(arguments, "help", "help", {'h', "help"});
+  args::PositionalList<std::string> pathsList(arguments, "paths",
+                                              "files to commit");
+
+  try {
+    p.ParseCLI(argc, argv);
+    if (add) {
+      std::cout << "Add";
+    } else {
+      std::cout << "Commit";
+    }
+
+    for (auto &&path : pathsList) {
+      std::cout << ' ' << path;
+    }
+
+    std::cout << std::endl;
+  } catch (args::Help) {
+    std::cout << p;
+  } catch (args::Error &e) {
+    std::cerr << e.what() << std::endl << p;
+    return 1;
+  }
+  return 0;
 }
