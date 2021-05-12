@@ -1,3 +1,6 @@
+#ifndef CAMERA_H
+#define CAMERA_H
+
 #include "ray.h"
 
 /** Camera Class
@@ -134,3 +137,5 @@ struct PerspectiveCamera : public Camera {
     return 2.f * atan(screen_distance / aspect_ratio) * 180.f / M_PI;
   }
 };
+
+#endif
