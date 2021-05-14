@@ -16,8 +16,6 @@ struct Demo {
        string output);
 
   void run();
-  void save_pfm();
-  void save_png();
 };
 
 struct pfm2png {
@@ -36,9 +34,8 @@ int interface(int argc, char **argv);
 int main(int argc, char **argv) {
   interface(argc, argv);
 
-  pfm2png("../test/HdrImage_references/memorial.pfm", "memorial.png", 0.5, 2.1);
-  // Demo demo(640, 480, 0, "perspective", "demo");
-  // demo.run();
+  // pfm2png("../test/HdrImage_references/memorial.pfm", "memorial.png",
+  // 0.5, 2.1); Demo demo(640, 480, 0, "perspective", "demo"); demo.run();
 
   return 0;
 }
