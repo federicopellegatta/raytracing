@@ -111,12 +111,15 @@ pfm2png::pfm2png(string input_pfm_filename, string output_filename,
 int interface(int argc, char **argv) {
   args::ArgumentParser parser(
       "Raytracing is a program that can generate photorealistic images.");
-  args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
   args::Group commands(parser, "commands");
   args::Command demo(commands, "demo", "Use this command to produce an image");
   args::Command convertpfm2png(
       commands, "convertpfm2png",
       "Use this option to convert a HDR image to PNG format");
+  args::Group arguments(parser, "arguments", args::Group::Validators::DontCare,
+                        args::Options::Global);
+  args::HelpFlag help(arguments, "help", "Display this help menu",
+                      {'h', "help"});
   try {
     parser.ParseCLI(argc, argv);
   } catch (const args::Help &) {
