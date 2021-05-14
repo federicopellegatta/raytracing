@@ -18,45 +18,6 @@ struct Demo {
   void run();
 };
 
-struct pfm2png {
-  HdrImage image;
-  float factor = 1.0;
-  float gamma = 1.0;
-  string input_pfm_filename = "";
-  string output_filename = "";
-
-  pfm2png(string input_pfm_filename, string output_filename, float factor,
-          float gamma);
-};
-
-int interface(int argc, char **argv);
-
-int main(int argc, char **argv) {
-  interface(argc, argv);
-
-  // pfm2png("../test/HdrImage_references/memorial.pfm", "memorial.png",
-  // 0.5, 2.1); Demo demo(640, 480, 0, "perspective", "demo"); demo.run();
-
-  return 0;
-}
-
-pfm2png::pfm2png(string input_pfm_filename, string output_filename,
-                 float _factor, float _gamma)
-    : image(input_pfm_filename) {
-
-  factor = _factor;
-  gamma = _gamma;
-  fmt::print("File {} has been read from disk. \n", input_pfm_filename);
-
-  // Run Tone-Mapping
-  image.normalize_image(factor);
-  image.clamp_image();
-
-  // Open output file
-  image.write_ldr_image(output_filename.c_str(), gamma);
-  fmt::print("File {} has been written to disk. \n", output_filename);
-}
-
 Demo::Demo(int width, int height, float angle_deg, string camera_type,
            string output)
     : image(width, height) {
@@ -109,7 +70,7 @@ void Demo::run() {
 
   ofstream stream(pfm_output);
   tracer.image.write_pfm(stream, Endianness::little_endian);
-  fmt::print("HDR demo image written to {}\n", pfm_output);
+  fmt::print("File {} has been written to disk\n", pfm_output);
 
   // Apply tone - mapping to the image
   tracer.image.normalize_image(1.0);
@@ -119,9 +80,63 @@ void Demo::run() {
   fmt::print("File {} has been written to disk. \n", png_output);
 }
 
+struct pfm2png {
+  HdrImage image;
+  float factor = 1.0;
+  float gamma = 1.0;
+  string input_pfm_filename = "";
+  string output_filename = "";
+
+  pfm2png(string input_pfm_filename, string output_filename, float factor,
+          float gamma);
+};
+
+pfm2png::pfm2png(string input_pfm_filename, string output_filename,
+                 float _factor, float _gamma)
+    : image(input_pfm_filename) {
+
+  factor = _factor;
+  gamma = _gamma;
+  fmt::print("File {} has been read from disk. \n", input_pfm_filename);
+
+  // Run Tone-Mapping
+  image.normalize_image(factor);
+  image.clamp_image();
+
+  // Open output file
+  image.write_ldr_image(output_filename.c_str(), gamma);
+  fmt::print("File {} has been written to disk. \n", output_filename);
+}
+
 int interface(int argc, char **argv) {
   args::ArgumentParser parser(
       "Raytracing is a program that can generate photorealistic images.");
+  args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
+  args::Group commands(parser, "commands");
+  args::Command demo(commands, "demo", "Use this command to produce an image");
+  args::Command convertpfm2png(
+      commands, "convertpfm2png",
+      "Use this option to convert a HDR image to PNG format");
+  try {
+    parser.ParseCLI(argc, argv);
+  } catch (const args::Help &) {
+    std::cout << parser;
+    return 0;
+  } catch (const args::ParseError &e) {
+    std::cerr << e.what() << std::endl;
+    std::cerr << parser;
+    return 1;
+  }
+  if (demo) {
+    Demo test(640, 480, 0, "perspective", "test");
+    test.run();
+  }
+  if (convertpfm2png) {
+    pfm2png("../test/HdrImage_references/memorial.pfm", "memorial.png", 0.5,
+            2.1);
+  }
+  return 0;
+  /*
   args::ArgumentParser p("git-like parser");
   args::Group commands(p, "commands");
   args::Command add(commands, "add", "add file contents to the index");
@@ -152,5 +167,11 @@ int interface(int argc, char **argv) {
     std::cerr << e.what() << std::endl << p;
     return 1;
   }
+  return 0;
+  */
+}
+
+int main(int argc, char **argv) {
+  interface(argc, argv);
   return 0;
 }
