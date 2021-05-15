@@ -120,6 +120,34 @@ int interface(int argc, char **argv) {
                         args::Options::Global);
   args::HelpFlag help(arguments, "help", "Display this help menu",
                       {'h', "help"});
+  args::ValueFlag<int> width(arguments, "width",
+                             "DEMO: width of the image to produce", {"width"});
+  args::ValueFlag<int> height(
+      arguments, "height", "DEMO: height of the image to produce", {"height"});
+  args::ValueFlag<float> angle_deg(
+      arguments, "degrees",
+      "DEMO: angle in degrees of the pov of the image to produce", {"degrees"});
+  args::ValueFlag<string> camera(
+      arguments, "camera",
+      "DEMO: type of camera to use, can be either perspective or orthogonal",
+      {"camera"});
+  args::ValueFlag<string> output_filename(
+      arguments, "output_filename",
+      "DEMO: name of the output file; the program will produce to files, "
+      "<output_filename>.pfm and <output_filename>.png",
+      {"output_filename"});
+  args::ValueFlag<string> input_pfm(arguments, "input_pfm",
+                                    "CONVERTPFM2PNG: path to input pfm file",
+                                    {"input_pfm"});
+  args::ValueFlag<string> output_png(arguments, "output_png",
+                                     "CONVERTPFM2PNG: path to output png file",
+                                     {"output_png"});
+  args::ValueFlag<float> factor(
+      arguments, "factor", "CONVERTPFM2PNG: normalization factor", {"factor"});
+  args::ValueFlag<float> gamma(
+      arguments, "gamma", "CONVERTPFM2PNG: gamma factor of the screen to use",
+      {"gamma"});
+
   try {
     parser.ParseCLI(argc, argv);
   } catch (const args::Help &) {
@@ -131,12 +159,13 @@ int interface(int argc, char **argv) {
     return 1;
   }
   if (demo) {
-    Demo test(640, 480, 0, "perspective", "test");
+    Demo test(args::get(width), args::get(height), args::get(angle_deg),
+              args::get(camera), args::get(output_filename));
     test.run();
   }
   if (convertpfm2png) {
-    pfm2png("../test/HdrImage_references/memorial.pfm", "memorial.png", 0.5,
-            2.1);
+    pfm2png(args::get(input_pfm), args::get(output_png), args::get(factor),
+            args::get(gamma));
   }
   return 0;
   /*
