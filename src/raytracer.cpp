@@ -112,41 +112,46 @@ int interface(int argc, char **argv) {
   args::ArgumentParser parser(
       "Raytracing is a program that can generate photorealistic images.");
   args::Group commands(parser, "commands");
+
   args::Command demo(commands, "demo", "Use this command to produce an image");
   args::Command convertpfm2png(
       commands, "convertpfm2png",
       "Use this option to convert a HDR image to PNG format");
-  args::Group arguments(parser, "arguments", args::Group::Validators::DontCare,
+
+  args::Group arguments(parser, "help", args::Group::Validators::DontCare,
                         args::Options::Global);
+  args::Group demo_arguments(parser, "demo arguments",
+                             args::Group::Validators::DontCare,
+                             args::Options::Global);
+  args::Group pfm2png_arguments(parser, "pfm2png arguments",
+                                args::Group::Validators::DontCare,
+                                args::Options::Global);
   args::HelpFlag help(arguments, "help", "Display this help menu",
                       {'h', "help"});
-  args::ValueFlag<int> width(arguments, "width",
-                             "DEMO: width of the image to produce", {"width"});
-  args::ValueFlag<int> height(
-      arguments, "height", "DEMO: height of the image to produce", {"height"});
+  args::ValueFlag<int> width(demo_arguments, "",
+                             "Width of the image to produce", {"width"});
+  args::ValueFlag<int> height(demo_arguments, "",
+                              "Height of the image to produce", {"height"});
   args::ValueFlag<float> angle_deg(
-      arguments, "degrees",
-      "DEMO: angle in degrees of the pov of the image to produce", {"degrees"});
+      demo_arguments, "", "Angle in degrees of the pov of the image to produce",
+      {"deg"});
   args::ValueFlag<string> camera(
-      arguments, "camera",
-      "DEMO: type of camera to use, can be either perspective or orthogonal",
-      {"camera"});
+      demo_arguments, "",
+      "Type of camera to use, can be either 'perspective' or 'orthogonal'",
+      {"cam"});
   args::ValueFlag<string> output_filename(
-      arguments, "output_filename",
-      "DEMO: name of the output file; the program will produce to files, "
+      demo_arguments, "",
+      "Name of the output file; the program will produce to files, "
       "<output_filename>.pfm and <output_filename>.png",
-      {"output_filename"});
-  args::ValueFlag<string> input_pfm(arguments, "input_pfm",
-                                    "CONVERTPFM2PNG: path to input pfm file",
-                                    {"input_pfm"});
-  args::ValueFlag<string> output_png(arguments, "output_png",
-                                     "CONVERTPFM2PNG: path to output png file",
-                                     {"output_png"});
-  args::ValueFlag<float> factor(
-      arguments, "factor", "CONVERTPFM2PNG: normalization factor", {"factor"});
-  args::ValueFlag<float> gamma(
-      arguments, "gamma", "CONVERTPFM2PNG: gamma factor of the screen to use",
-      {"gamma"});
+      {"outf"});
+  args::ValueFlag<string> input_pfm(pfm2png_arguments, "",
+                                    "Path to input pfm file", {"inpfm"});
+  args::ValueFlag<string> output_png(pfm2png_arguments, "",
+                                     "Path to output png file", {"out_png"});
+  args::ValueFlag<float> factor(pfm2png_arguments, "", "Normalization factor",
+                                {'f'});
+  args::ValueFlag<float> gamma(pfm2png_arguments, "",
+                               "Gamma factor of the screen to use", {'g'});
 
   try {
     parser.ParseCLI(argc, argv);
@@ -154,6 +159,10 @@ int interface(int argc, char **argv) {
     std::cout << parser;
     return 0;
   } catch (const args::ParseError &e) {
+    std::cerr << e.what() << std::endl;
+    std::cerr << parser;
+    return 1;
+  } catch (args::ValidationError e) {
     std::cerr << e.what() << std::endl;
     std::cerr << parser;
     return 1;
@@ -168,39 +177,6 @@ int interface(int argc, char **argv) {
             args::get(gamma));
   }
   return 0;
-  /*
-  args::ArgumentParser p("git-like parser");
-  args::Group commands(p, "commands");
-  args::Command add(commands, "add", "add file contents to the index");
-  args::Command commit(commands, "commit", "record changes to the repository");
-  args::Group arguments(p, "arguments", args::Group::Validators::DontCare,
-                        args::Options::Global);
-  args::ValueFlag<std::string> gitdir(arguments, "path", "", {"git-dir"});
-  args::HelpFlag h(arguments, "help", "help", {'h', "help"});
-  args::PositionalList<std::string> pathsList(arguments, "paths",
-                                              "files to commit");
-
-  try {
-    p.ParseCLI(argc, argv);
-    if (add) {
-      std::cout << "Add";
-    } else {
-      std::cout << "Commit";
-    }
-
-    for (auto &&path : pathsList) {
-      std::cout << ' ' << path;
-    }
-
-    std::cout << std::endl;
-  } catch (args::Help) {
-    std::cout << p;
-  } catch (args::Error &e) {
-    std::cerr << e.what() << std::endl << p;
-    return 1;
-  }
-  return 0;
-  */
 }
 
 int main(int argc, char **argv) {
