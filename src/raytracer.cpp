@@ -126,39 +126,40 @@ int interface(int argc, char **argv) {
   args::Group pfm2png_arguments(parser, "pfm2png arguments",
                                 args::Group::Validators::DontCare,
                                 args::Options::Global);
-  args::HelpFlag help(arguments, "help", "Display this help menu",
-                      {'h', "help"});
+  args::HelpFlag help(arguments, "help", "Display this help menu", {"help"});
   args::ValueFlag<int> width(demo_arguments, "",
-                             "Width of the image to produce", {"width"});
-  args::ValueFlag<int> height(demo_arguments, "",
-                              "Height of the image to produce", {"height"});
+                             "Width of the image to produce", {'w', "width"});
+  args::ValueFlag<int> height(
+      demo_arguments, "", "Height of the image to produce", {'h', "height"});
   args::ValueFlag<float> angle_deg(
       demo_arguments, "", "Angle in degrees of the pov of the image to produce",
-      {"deg"});
+      {"deg", "degrees"});
   args::ValueFlag<string> camera(
       demo_arguments, "",
       "Type of camera to use, can be either 'perspective' or 'orthogonal'",
-      {"cam"});
+      {"cam", "camera"});
   args::ValueFlag<string> output_filename(
       demo_arguments, "",
       "Name of the output file; the program will produce to files, "
       "<output_filename>.pfm and <output_filename>.png",
-      {"outf"});
-  args::ValueFlag<string> input_pfm(pfm2png_arguments, "",
-                                    "Path to input pfm file", {"inpfm"});
+      {"outf", "output_filename"});
+  args::ValueFlag<string> input_pfm(
+      pfm2png_arguments, "", "Path to input pfm file", {"inpfm", "input_pfm"});
   args::ValueFlag<string> output_png(pfm2png_arguments, "",
-                                     "Path to output png file", {"out_png"});
+                                     "Path to output png file",
+                                     {"outpng", "output_png"});
   args::ValueFlag<float> factor(pfm2png_arguments, "", "Normalization factor",
-                                {'f'});
+                                {'f', "factor"});
   args::ValueFlag<float> gamma(pfm2png_arguments, "",
-                               "Gamma factor of the screen to use", {'g'});
+                               "Gamma factor of the screen to use",
+                               {'g', "gamma"});
 
   try {
     parser.ParseCLI(argc, argv);
-  } catch (const args::Help &) {
+  } catch (args::Help) {
     std::cout << parser;
     return 0;
-  } catch (const args::ParseError &e) {
+  } catch (args::ParseError e) {
     std::cerr << e.what() << std::endl;
     std::cerr << parser;
     return 1;
@@ -167,6 +168,7 @@ int interface(int argc, char **argv) {
     std::cerr << parser;
     return 1;
   }
+
   if (demo) {
     Demo test(args::get(width), args::get(height), args::get(angle_deg),
               args::get(camera), args::get(output_filename));
