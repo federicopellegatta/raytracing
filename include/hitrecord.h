@@ -34,22 +34,24 @@ struct Vec2d {
 /**
  * @brief A class representing an intersection between a ray and a shape
  *
+ * @param world_point a :class:`.Point` object holding the world coordinates of
+ the hit point
+ * @param normal a :class:`.Normal` object holding the orientation of the normal
+ to the surface where the hit happened
+ * @param surface_point a :class:`.Vec2d` object holding the position of the hit
+   point on the surface of the object
+ * @param t a floating-point value specifying the distance from the origin of
+ the ray where the hit happened
+ * @param ray the ray that hit the surface
+ * @param hit a bool which says whether the ray hit the surface
+ *
+ * @see Point
+ * @see Normal
+ * @see Vec2d
+ * @see Ray
  */
 struct HitRecord {
-  /**
-   * @brief The members of this class are:
-   * -`world_point`: a :class:`.Point` object holding the world coordinates of
-   the hit point
-     -`normal`: a :class:`.Normal` object holding the orientation of the normal
-   to the surface where the hit happened
-     -`surface_point`: a :class:`.Vec2d` object holding the position of the hit
-   point on the surface of the object
-     -`t`: a floating-point value specifying the distance from the origin of the
-   ray where the hit happened
-     -`ray`: the ray that hit the surface
-     - `hit`: says whether the ray hit the surface
-   *
-   */
+
   Point world_point;
   Normal normal;
   Vec2d surface_point;
@@ -60,12 +62,12 @@ struct HitRecord {
   /**
    * @brief Construct a new Hit Record object
    *
-   * @param _world_point
-   * @param _normal
-   * @param _surface_point
-   * @param _t
-   * @param _ray
-   * @param _hit
+   * @param world_point
+   * @param normal
+   * @param surface_point
+   * @param t
+   * @param ray
+   * @param hit
    */
   HitRecord(Point _world_point = Point(), Normal _normal = Normal(),
             Vec2d _surface_point = Vec2d(), float _t = 0.f, Ray _ray = Ray(),
