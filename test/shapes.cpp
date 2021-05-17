@@ -24,7 +24,7 @@ void test_sphere_hit() {
   assert(!sphere.ray_intersection(Ray(Point(0, 10, 2), -VEC_Z)).hit);
 }
 
-void test_inner_hit() {
+void test_sphere_inner_hit() {
   Sphere sphere;
 
   Ray ray(Point(0, 0, 0), VEC_X);
@@ -69,7 +69,7 @@ void test_sphere_normal() {
   assert(intersection.normal.normalize() == Normal(1.0, 4.0, 0.0).normalize());
 }
 
-void test_normal_direction() {
+void test_sphere_normal_direction() {
 
   Sphere sphere;
   Ray ray{Point(0.0, 0.0, 0.0), VEC_Y};
@@ -79,7 +79,7 @@ void test_normal_direction() {
   assert(intersection.normal.normalize().to_vec() == -VEC_Y);
 }
 
-void test_uv_coordinates() {
+void test_sphere_uv_coordinates() {
   Sphere sphere{};
 
   Ray ray1{Point(2.0, 0.0, 0.0), -VEC_X};
@@ -105,6 +105,45 @@ void test_uv_coordinates() {
       Vec2d(0.0, 2. / 3.)));
 }
 
+// Plane test
+void test_plane_hit() {
+  Plane plane;
+  Ray ray1(Point(0., 0., 2.), -VEC_Z);
+
+  HitRecord intersection1 = plane.ray_intersection(ray1);
+  assert(intersection1.hit);
+  assert(HitRecord(Point(0., 0., 0.), Normal(0., 0., 1.), Vec2d(0., 0.), 2.0,
+                   ray1, true)
+             .is_close(intersection1));
+
+  Ray ray2(Point(0., 0., 2.), VEC_X);
+  HitRecord intersection2 = plane.ray_intersection(ray2);
+  assert(!intersection2.hit);
+}
+
+void test_plane_transformation() {
+  Plane plane1(rotation_x(M_PI_2));
+  Ray ray1(Point(0., 2., 0.), -VEC_Y);
+  HitRecord intersection1{plane1.ray_intersection(ray1)};
+  assert(intersection1.hit);
+  assert(HitRecord(Point(0., 0., 0.), Normal(0., 1., 0.), Vec2d(0., 0.), 2.0,
+                   ray1, true)
+             .is_close(intersection1));
+
+  Ray ray2(Point(0., 1., 0.), VEC_X);
+  HitRecord intersection2{plane1.ray_intersection(ray2)};
+  assert(!intersection2.hit);
+
+  Plane plane2{translation(VEC_Z)};
+  Ray ray3(Point(0., 0., 2.), -VEC_Z);
+
+  HitRecord intersection3 = plane2.ray_intersection(ray3);
+  assert(intersection3.hit);
+  assert(HitRecord(Point(0., 0., 1.), Normal(0., 0., 1.), Vec2d(0., 0.), 1.0,
+                   ray3, true)
+             .is_close(intersection3));
+}
+
 // World test
 void test_ray_intersection() {
   World world;
@@ -127,13 +166,20 @@ void test_ray_intersection() {
 }
 
 int main() {
+
+  // Sphere tests
   test_sphere_hit();
-  test_inner_hit();
+  test_sphere_inner_hit();
   test_sphere_transformation();
   test_sphere_normal();
-  test_normal_direction();
-  test_uv_coordinates();
+  test_sphere_normal_direction();
+  test_sphere_uv_coordinates();
 
+  // Plane tests
+  test_plane_hit();
+  test_plane_transformation();
+
+  // World tests
   test_ray_intersection();
   return 0;
 }
