@@ -80,4 +80,60 @@ private:
   }
 };
 
+/**
+ * @brief A plane in 3D space. The default plane is the x-y
+ *
+ * @param _transformation
+ */
+struct Plane : public Shape {
+  Transformation transformation;
+
+  Plane(Transformation _transformation = Transformation())
+      : transformation{_transformation} {}
+
+  /**
+   * @brief Checks if a ray intersects the sphere
+   *
+   * @param ray
+   * @return Return a `HitRecord`, or `NULL` if no intersection was found.
+   *
+   * @see Ray
+   * @see HitRecord
+   */
+  HitRecord ray_intersection(Ray);
+
+private:
+  /**
+   * @brief Convert a 3D point on the surface of the plane into a (u, v) 2D
+   * point"
+   *
+   * @param point A `Point` object
+   * @return Vec2d
+   *
+   * @see Point
+   */
+  inline Vec2d plane_point_to_uv(Point point) {
+    return Vec2d{point.x - floor(point.x), point.y - floor(point.y)};
+  }
+
+  /**
+   * @brief Compute the normal of a plane
+      The normal is computed for `point` (a point on the surface of the
+      plane), and it is chosen so that it is always in the opposite
+      direction with respect to `ray_dir`.
+   *
+   * @param point A `Point` object on the surface of the plane where to
+   compute the normal
+   * @param ray_dir A `Vec` which indicates the ray direction
+   * @return Normal
+   *
+   * @see Point
+   * @see Vec
+   * @see Normal
+   */
+  inline Normal plane_normal(Point point, Vec ray_dir) {
+    Normal result{0.0, 0.0, 1.0};
+    return ray_dir.z < 0.0 ? result : -1 * result;
+  }
+};
 #endif
