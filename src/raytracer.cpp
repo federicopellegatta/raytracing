@@ -53,9 +53,21 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
     camera = make_shared<PerspectiveCamera>(PerspectiveCamera(
         1., static_cast<float>(width) / static_cast<float>(height), camera_tr));
 
-  // if() check not format passing
+  if (output == "") // if user have not specify the output
+    throw invalid_argument("You must specify the output filename");
+
+  string format = static_cast<string>(output).erase(
+      0, static_cast<string>(output).find(".") + 1);
+  string name = static_cast<string>(output).substr(
+      0, static_cast<string>(output).find("."));
+  if (format != output) // if user have specified a format
+    output = name;
+
   pfm_output = output + ".pfm";
-  png_output = output + ".png";
+  if (format == "jpeg" || format == "jpg" || format == "JPEG")
+    png_output = output + ".jpg";
+  else
+    png_output = output + ".png";
 }
 
 void Demo::run() {
@@ -140,8 +152,8 @@ int interface(int argc, char **argv) {
       {"cam", "camera"});
   args::ValueFlag<string> output_filename(
       demo_arguments, "",
-      "Name of the output file; the program will produce to files, "
-      "<output_filename>.pfm and <output_filename>.png",
+      "Name of the output file. The program will produce two files: "
+      "<outf>.pfm and <outf>.png (or <outf>.jpg)",
       {"outf", "output_filename"});
   args::ValueFlag<string> input_pfm(
       pfm2png_arguments, "", "Path to input pfm file", {"inpfm", "input_pfm"});
