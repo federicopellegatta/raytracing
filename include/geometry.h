@@ -98,23 +98,42 @@ extern Vec VEC_Y;
 extern Vec VEC_Z;
 
 // Sum operation between Vecs and Points
-Vec operator+(const Vec &, const Vec &);
-Point operator+(const Point &, const Vec &);
+inline Vec operator+(const Vec &a, const Vec &b) {
+  return _sum<Vec, Vec, Vec>(a, b);
+}
+inline Point operator+(const Point &a, const Vec &b) {
+  return _sum<Point, Vec, Point>(a, b);
+}
 
 // Mul operation between Vecs/Points and a floating point (and viceversa)
-Vec operator*(const float &, const Vec &);
-Vec operator*(const Vec &, const float &);
+inline Vec operator*(const float &a, const Vec &b) {
+  return _mul<Vec, Vec>(a, b);
+}
+inline Vec operator*(const Vec &a, const float &b) { return b * a; }
 
-Normal operator*(const float &, const Normal &);
+inline Normal operator*(const float &a, const Normal &b) {
+  return _mul<Normal, Normal>(a, b);
+}
 
-Point operator*(const float &, const Point &);
-Point operator*(const Point &, const float &);
+inline Point operator*(const float &a, const Point &b) {
+  return _mul<Point, Point>(a, b);
+}
+inline Point operator*(const Point &a, const float &b) { return b * a; }
 
 // Minus operation between Vecs and Points
-Vec operator-(const Vec &, const Vec &);
-Normal operator-(const Normal &, const Normal &);
-Vec operator-(const Point &, const Point &);
-Point operator-(const Point &, const Vec &);
+inline Vec operator-(const Vec &a, const Vec &b) {
+  return _sum<Vec, Vec, Vec>(a, -1 * b);
+}
+inline Normal operator-(const Normal &a, const Normal &b) {
+  return _sum<Normal, Normal, Normal>(a, -1 * b);
+}
+
+inline Vec operator-(const Point &a, const Point &b) {
+  return _sum<Point, Point, Vec>(a, -1 * b);
+}
+inline Point operator-(const Point &a, const Vec &b) {
+  return _sum<Point, Vec, Point>(a, -1 * b);
+}
 
 ////////////////////
 /* TRANSFORMATION */
