@@ -25,4 +25,10 @@ struct CheckeredPigment : public Pigment {
       : color1{_color1}, color2{_color2}, num_of_steps{_num_of_steps} {}
   Color get_color(Vec2d uv);
 };
+
+struct ImagePigment : public Pigment {
+  HdrImage image;
+  ImagePigment(HdrImage _image) : image{_image} {};
+  Color get_color(Vec2d uv);
+};
 #endif
