@@ -56,6 +56,10 @@ add_executable(shapesTest
   test/shapes.cpp
 )
 
+add_executable(materialsTest
+  test/materials.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
@@ -64,6 +68,7 @@ add_library(trace
     src/geometry.cpp
     src/shapes.cpp
     src/world.cpp
+    src/materials.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
@@ -92,6 +97,8 @@ target_link_libraries(rayTest PUBLIC trace)
 target_link_libraries(cameraTest PUBLIC trace)
 target_link_libraries(imagetracerTest PUBLIC trace)
 target_link_libraries(shapesTest PUBLIC trace)
+target_link_libraries(materialsTest PUBLIC trace)
+
 
 
 add_test(NAME colorTest 
@@ -114,6 +121,9 @@ add_test(NAME imagetracerTest
 )
 add_test(NAME shapesTest
     COMMAND shapesTest 
+)
+add_test(NAME materialsTest
+    COMMAND materialsTest 
 )
 # Force the compiler to use the C++17 standard
 # Force the compiler to use the C++17 standard
