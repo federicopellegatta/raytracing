@@ -1,8 +1,14 @@
 #ifndef HITRECORD_H
 #define HITRECORD_H
+
 #include "geometry.h"
 #include "ray.h"
-#include "shapes.h"
+
+/**
+ * @brief "Redefining" class Shape in order to avoid circular references
+ * This works because we only use a pointer to Shape
+ */
+class Shape;
 
 /**
  * @brief A class representing an intersection between a ray and a shape
@@ -45,12 +51,11 @@ struct HitRecord {
    * @param hit
    * @param shape
    */
-  HitRecord(Point _world_point = Point(), Normal _normal = Normal(),
-            Vec2d _surface_point = Vec2d(), float _t = 0.f, Ray _ray = Ray(),
-            bool _hit = false, shared_ptr<Shape> _shape = make_shared<Shape>())
-      : world_point{_world_point}, normal{_normal},
-        surface_point{_surface_point}, t{_t}, ray{_ray}, hit{_hit},
-        shape{_shape} {}
+  HitRecord(shared_ptr<Shape> _shape, Point _world_point = Point(),
+            Normal _normal = Normal(), Vec2d _surface_point = Vec2d(),
+            float _t = 0.f, Ray _ray = Ray(), bool _hit = false)
+      : shape{_shape}, world_point{_world_point}, normal{_normal},
+        surface_point{_surface_point}, t{_t}, ray{_ray}, hit{_hit} {}
 
   /**
    * @brief Check if two HitRecords are the same hit event or not
