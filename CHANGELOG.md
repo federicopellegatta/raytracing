@@ -1,5 +1,5 @@
 # HEAD #
-- something is brewing...
+- Add pathtracing algorithm 
 
 # 2021-05-19 #
 - **Major update** Implement the `demo` command and enable a nicer CLI [#5](https://github.com/federicopellegatta/raytracing/pull/5)
