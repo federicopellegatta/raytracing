@@ -1,3 +1,6 @@
+#ifndef GEOMETRY_H
+#define GEOMETRY_H
+
 #include "colors.h"
 #include <cmath>
 #include <iostream>
@@ -136,6 +139,41 @@ inline Point operator-(const Point &a, const Vec &b) {
 }
 
 ////////////////////
+/*   2D VECTOR    */
+////////////////////
+
+/**
+ * @brief A 2D vector used to represent a point on a surface
+ *
+ */
+struct Vec2d {
+  /**
+   * @brief The class members are named u and v to distinguish them from x,y,z,
+   * which are used for 3D vectors
+   *
+   */
+  float u, v;
+  /**
+   * @brief Construct a new Vec 2d object
+   *
+   * @param _u
+   * @param _v
+   */
+  Vec2d(float _u = 0.f, float _v = 0.f) : u{_u}, v{_v} {}
+
+  /**
+   * @brief Check whether two 2d vectors are the same
+   *
+   * @param other_vec2d
+   * @return true
+   * @return false
+   */
+  inline bool is_close(Vec2d other_vec2d) {
+    return are_close(u, other_vec2d.u) && are_close(v, other_vec2d.v);
+  }
+};
+
+////////////////////
 /* TRANSFORMATION */
 ////////////////////
 
@@ -184,3 +222,5 @@ Transformation scaling(Vec);
 Transformation rotation_x(float);
 Transformation rotation_y(float);
 Transformation rotation_z(float);
+
+#endif
