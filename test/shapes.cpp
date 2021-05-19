@@ -10,15 +10,15 @@ void test_sphere_hit() {
 
   HitRecord intersection1 = sphere.ray_intersection(ray1);
   assert(intersection1.hit);
-  assert(HitRecord(Point(0., 0., 1.), Normal(0., 0., 1.), Vec2d(0., 0.), 1.0,
-                   ray1, false)
+  assert(HitRecord(make_shared<Sphere>(sphere), Point(0., 0., 1.),
+                   Normal(0., 0., 1.), Vec2d(0., 0.), 1.0, ray1, false)
              .is_close(intersection1));
 
   Ray ray2 = Ray(Point(3, 0, 0), -VEC_X);
   HitRecord intersection2 = sphere.ray_intersection(ray2);
   assert(intersection2.hit);
-  assert(HitRecord(Point(1.0, 0.0, 0.0), Normal(1.0, 0.0, 0.0), Vec2d(0.0, 0.5),
-                   2.0, ray2, false)
+  assert(HitRecord(make_shared<Sphere>(sphere), Point(1.0, 0.0, 0.0),
+                   Normal(1.0, 0.0, 0.0), Vec2d(0.0, 0.5), 2.0, ray2, false)
              .is_close(intersection2));
 
   assert(!sphere.ray_intersection(Ray(Point(0, 10, 2), -VEC_Z)).hit);
@@ -30,8 +30,8 @@ void test_sphere_inner_hit() {
   Ray ray(Point(0, 0, 0), VEC_X);
   HitRecord intersection = sphere.ray_intersection(ray);
   assert(intersection.hit);
-  assert(HitRecord(Point(1.0, 0.0, 0.0), Normal(-1.0, 0.0, 0.0),
-                   Vec2d(0.0, 0.5), 1.0, ray, false)
+  assert(HitRecord(make_shared<Sphere>(sphere), Point(1.0, 0.0, 0.0),
+                   Normal(-1.0, 0.0, 0.0), Vec2d(0.0, 0.5), 1.0, ray, false)
              .is_close(intersection));
 }
 
@@ -41,15 +41,15 @@ void test_sphere_transformation() {
   Ray ray1{Point(10, 0, 2), -VEC_Z};
   HitRecord intersection1 = sphere.ray_intersection(ray1);
   assert(intersection1.hit);
-  assert(HitRecord(Point(10.0, 0.0, 1.0), Normal(0.0, 0.0, 1.0),
-                   Vec2d(0.0, 0.0), 1.0, ray1, false)
+  assert(HitRecord(make_shared<Sphere>(sphere), Point(10.0, 0.0, 1.0),
+                   Normal(0.0, 0.0, 1.0), Vec2d(0.0, 0.0), 1.0, ray1, false)
              .is_close(intersection1));
 
   Ray ray2{Point(13, 0, 0), -VEC_X};
   HitRecord intersection2 = sphere.ray_intersection(ray2);
   assert(intersection2.hit);
-  assert(HitRecord(Point(11.0, 0.0, 0.0), Normal(1.0, 0.0, 0.0),
-                   Vec2d(0.0, 0.5), 2.0, ray2, false)
+  assert(HitRecord(make_shared<Sphere>(sphere), Point(11.0, 0.0, 0.0),
+                   Normal(1.0, 0.0, 0.0), Vec2d(0.0, 0.5), 2.0, ray2, false)
              .is_close(intersection2));
 
   // Check if the sphere failed to move by trying to hit the untransformed shape
@@ -112,8 +112,8 @@ void test_plane_hit() {
 
   HitRecord intersection1 = plane.ray_intersection(ray1);
   assert(intersection1.hit);
-  assert(HitRecord(Point(0., 0., 0.), Normal(0., 0., 1.), Vec2d(0., 0.), 2.0,
-                   ray1, true)
+  assert(HitRecord(make_shared<Plane>(plane), Point(0., 0., 0.),
+                   Normal(0., 0., 1.), Vec2d(0., 0.), 2.0, ray1, true)
              .is_close(intersection1));
 
   Ray ray2(Point(0., 0., 2.), VEC_X);
@@ -126,8 +126,8 @@ void test_plane_transformation() {
   Ray ray1(Point(0., 2., 0.), -VEC_Y);
   HitRecord intersection1{plane1.ray_intersection(ray1)};
   assert(intersection1.hit);
-  assert(HitRecord(Point(0., 0., 0.), Normal(0., 1., 0.), Vec2d(0., 0.), 2.0,
-                   ray1, true)
+  assert(HitRecord(make_shared<Plane>(plane1), Point(0., 0., 0.),
+                   Normal(0., 1., 0.), Vec2d(0., 0.), 2.0, ray1, true)
              .is_close(intersection1));
 
   Ray ray2(Point(0., 1., 0.), VEC_X);
@@ -139,8 +139,8 @@ void test_plane_transformation() {
 
   HitRecord intersection3 = plane2.ray_intersection(ray3);
   assert(intersection3.hit);
-  assert(HitRecord(Point(0., 0., 1.), Normal(0., 0., 1.), Vec2d(0., 0.), 1.0,
-                   ray3, true)
+  assert(HitRecord(make_shared<Plane>(plane2), Point(0., 0., 1.),
+                   Normal(0., 0., 1.), Vec2d(0., 0.), 1.0, ray3, true)
              .is_close(intersection3));
 }
 
