@@ -2,6 +2,8 @@
 #define HITRECORD_H
 #include "geometry.h"
 #include "ray.h"
+#include "shapes.h"
+
 /**
  * @brief A class representing an intersection between a ray and a shape
  *
@@ -15,11 +17,13 @@
  the ray where the hit happened
  * @param ray the ray that hit the surface
  * @param hit a bool which says whether the ray hit the surface
+ * @param shape pointer to the shape hit by the ray
  *
  * @see Point
  * @see Normal
  * @see Vec2d
  * @see Ray
+ * @see Shape
  */
 struct HitRecord {
 
@@ -27,9 +31,9 @@ struct HitRecord {
   Normal normal;
   Vec2d surface_point;
   Ray ray;
+  shared_ptr<Shape> shape;
   float t;
   bool hit;
-
   /**
    * @brief Construct a new Hit Record object
    *
@@ -39,12 +43,14 @@ struct HitRecord {
    * @param t
    * @param ray
    * @param hit
+   * @param shape
    */
   HitRecord(Point _world_point = Point(), Normal _normal = Normal(),
             Vec2d _surface_point = Vec2d(), float _t = 0.f, Ray _ray = Ray(),
-            bool _hit = false)
+            bool _hit = false, shared_ptr<Shape> _shape = make_shared<Shape>())
       : world_point{_world_point}, normal{_normal},
-        surface_point{_surface_point}, t{_t}, ray{_ray}, hit{_hit} {}
+        surface_point{_surface_point}, t{_t}, ray{_ray}, hit{_hit},
+        shape{_shape} {}
 
   /**
    * @brief Check if two HitRecords are the same hit event or not

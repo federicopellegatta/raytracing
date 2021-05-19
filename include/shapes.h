@@ -2,6 +2,7 @@
 #define SHAPES_H
 
 #include "hitrecord.h"
+#include "materials.h"
 #include "ray.h"
 
 /** Shape class
@@ -27,9 +28,11 @@ struct Shape {
  */
 struct Sphere : public Shape {
   Transformation transformation;
+  Material material;
 
-  Sphere(Transformation _transformation = Transformation())
-      : transformation{_transformation} {}
+  Sphere(Transformation _transformation = Transformation(),
+         Material _material = Material())
+      : transformation{_transformation}, material{_material} {}
 
   /**
    * @brief Checks if a ray intersects the sphere
@@ -87,9 +90,11 @@ private:
  */
 struct Plane : public Shape {
   Transformation transformation;
+  Material material;
 
-  Plane(Transformation _transformation = Transformation())
-      : transformation{_transformation} {}
+  Plane(Transformation _transformation = Transformation(),
+        Material _material = Material())
+      : transformation{_transformation}, material{_material} {}
 
   /**
    * @brief Checks if a ray intersects the sphere
