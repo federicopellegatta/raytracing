@@ -28,6 +28,12 @@ struct CheckeredPigment : public Pigment {
   Color get_color(Vec2d uv);
 };
 
+struct ImagePigment : public Pigment {
+  HdrImage image;
+  ImagePigment(HdrImage _image) : image{_image} {};
+  Color get_color(Vec2d uv);
+};
+
 struct BRDF {
   shared_ptr<Pigment> pigment;
 
