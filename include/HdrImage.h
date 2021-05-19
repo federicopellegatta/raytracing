@@ -1,3 +1,6 @@
+#ifndef HDRIMAGE_H
+#define HDRIMAGE_H
+
 #include "colors.h"
 #include "gd.h"
 #include <algorithm>
@@ -88,3 +91,5 @@ Endianness parse_endianness(string);
 vector<int> parse_img_size(string);
 
 float clamp(float);
+
+#endif
