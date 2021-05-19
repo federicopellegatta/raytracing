@@ -25,13 +25,9 @@ $ make
 You will find tests and executable files in `build` directory. 
 
 ## Usage
-Ray-Tracing can also convert images from HDR to LDR format (only `png` and `jpeg` are supported): just run the command 
-
-```sh
-$ ./raytracer /path/to/pfmfile normalize_factor gamma /path/to/png-or-jpeg-file
-```
-   
-      
+- Ray-Tracing can generate imageses... use `demo` command bla bla
+- Ray-Tracing can also convert images from HDR to LDR format (only `png` and `jpeg` are supported): use the `convertpfm2png` command bla bla 
+- The CLI is built using [args](https://github.com/Taywee/args)
 
 ## Contributing
 If you wish to contribute or you have just found any bug, please open an issue or a pull request on our GitHub repository. Thank you!
