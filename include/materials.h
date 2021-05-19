@@ -4,7 +4,6 @@
 #include "HdrImage.h"
 #include "colors.h"
 #include "geometry.h"
-#include "shapes.h"
 
 struct Pigment {
   virtual Color get_color(Vec2d) = 0;
@@ -41,19 +40,17 @@ struct BRDF {
                                                                         1.)))
       : pigment{_pigment} {}
 
-  inline Color eval(Normal normal, Vec inc_dir, Vec out_dir, Vec2d uv) {
-    return Color(0., 0., 0.);
-  }
+  inline virtual Color eval(Normal normal, Vec inc_dir, Vec out_dir,
+                            Vec2d uv) = 0;
 };
 
 struct DiffusiveBRDF : public BRDF {
-  shared_ptr<Pigment> pigment;
   float reflectance;
 
   DiffusiveBRDF(shared_ptr<Pigment> _pigment =
                     make_shared<UniformPigment>(Color(1., 1., 1.)),
                 float _reflectance = 1.)
-      : pigment{_pigment} {
+      : BRDF{_pigment} {
     reflectance = _reflectance;
   }
 
