@@ -26,6 +26,9 @@ public:
   float luminosity();
 };
 
+extern Color BLACK;
+extern Color WHITE;
+
 inline bool are_close(float a, float b) {
   float eps = 1e-5;
   return fabs(a - b) < eps;
