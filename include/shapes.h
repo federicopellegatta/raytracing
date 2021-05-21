@@ -13,6 +13,12 @@
  *
  */
 struct Shape {
+
+  Transformation transformation;
+  Material material;
+
+  Shape(Transformation _transformation, Material _material)
+      : transformation{_transformation}, material{_material} {}
   /**
    * @brief Compute the intersection between a ray and this shape
    *
@@ -27,12 +33,10 @@ struct Shape {
  * @param _transformation
  */
 struct Sphere : public Shape {
-  Transformation transformation;
-  Material material;
 
-  Sphere(Transformation _transformation = Transformation(),
-         Material _material = Material())
-      : transformation{_transformation}, material{_material} {}
+  Sphere(Transformation transformation = Transformation(),
+         Material material = Material())
+      : Shape{transformation, material} {}
 
   /**
    * @brief Checks if a ray intersects the sphere
@@ -89,12 +93,9 @@ private:
  * @param _transformation
  */
 struct Plane : public Shape {
-  Transformation transformation;
-  Material material;
-
-  Plane(Transformation _transformation = Transformation(),
-        Material _material = Material())
-      : transformation{_transformation}, material{_material} {}
+  Plane(Transformation transformation = Transformation(),
+        Material material = Material())
+      : Shape{transformation, material} {};
 
   /**
    * @brief Checks if a ray intersects the sphere
