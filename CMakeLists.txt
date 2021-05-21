@@ -60,6 +60,10 @@ add_executable(materialsTest
   test/materials.cpp
 )
 
+add_executable(renderTest
+  test/render.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
@@ -98,6 +102,8 @@ target_link_libraries(cameraTest PUBLIC trace)
 target_link_libraries(imagetracerTest PUBLIC trace)
 target_link_libraries(shapesTest PUBLIC trace)
 target_link_libraries(materialsTest PUBLIC trace)
+target_link_libraries(renderTest PUBLIC trace)
+
 
 
 
@@ -125,6 +131,9 @@ add_test(NAME shapesTest
 add_test(NAME materialsTest
     COMMAND materialsTest 
 )
-# Force the compiler to use the C++17 standard
+add_test(NAME renderTest
+    COMMAND renderTest 
+)
+
 # Force the compiler to use the C++17 standard
 target_compile_features(raytracer PUBLIC cxx_std_17)
