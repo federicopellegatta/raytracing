@@ -36,8 +36,7 @@ struct ImagePigment : public Pigment {
 struct BRDF {
   shared_ptr<Pigment> pigment;
 
-  BRDF(shared_ptr<Pigment> _pigment = make_shared<UniformPigment>(Color(1., 1.,
-                                                                        1.)))
+  BRDF(shared_ptr<Pigment> _pigment = make_shared<UniformPigment>(WHITE))
       : pigment{_pigment} {}
 
   inline virtual Color eval(Normal normal, Vec inc_dir, Vec out_dir,
@@ -47,9 +46,9 @@ struct BRDF {
 struct DiffusiveBRDF : public BRDF {
   float reflectance;
 
-  DiffusiveBRDF(shared_ptr<Pigment> _pigment =
-                    make_shared<UniformPigment>(Color(1., 1., 1.)),
-                float _reflectance = 1.)
+  DiffusiveBRDF(
+      shared_ptr<Pigment> _pigment = make_shared<UniformPigment>(WHITE),
+      float _reflectance = 1.)
       : BRDF{_pigment} {
     reflectance = _reflectance;
   }
@@ -65,7 +64,7 @@ struct Material {
 
   Material(shared_ptr<BRDF> _brdf = make_shared<DiffusiveBRDF>(),
            shared_ptr<Pigment> _emitted_radiance =
-               make_shared<UniformPigment>(Color(0., 0., 0.)))
+               make_shared<UniformPigment>(BLACK))
       : brdf{_brdf}, emitted_radiance{_emitted_radiance} {}
 };
 #endif
