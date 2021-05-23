@@ -73,6 +73,7 @@ add_library(trace
     src/shapes.cpp
     src/world.cpp
     src/materials.cpp
+    src/render.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
