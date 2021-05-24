@@ -159,7 +159,10 @@ struct Vec2d {
    * @param _u
    * @param _v
    */
-  Vec2d(float _u = 0.f, float _v = 0.f) : u{_u}, v{_v} {}
+  Vec2d(float _u = 0.f, float _v = 0.f) {
+    u = _u;
+    v = _v;
+  }
 
   /**
    * @brief Check whether two 2d vectors are the same
