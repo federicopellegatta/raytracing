@@ -22,7 +22,7 @@ void test_image_coverage(ImageTracer tracer) {
   tracer.fire_all_rays([](Ray ray) -> Color { return Color(1.0, 2.0, 3.0); });
   for (int row{}; row < tracer.image.height; row++) {
     for (int col{}; col < tracer.image.width; col++) {
-      assert(tracer.image.get_pixel(col, row).is_close(Color(1.0, 2.0, 3.0)));
+      assert(tracer.image.get_pixel(col, row) == (Color(1.0, 2.0, 3.0)));
     }
   }
 }
