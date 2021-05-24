@@ -19,7 +19,7 @@ struct Pigment {
    *
    * @return Color
    */
-  virtual Color get_color(Vec2d) = 0;
+  virtual Color operator()(Vec2d) = 0;
 };
 
 /**
@@ -29,7 +29,7 @@ struct Pigment {
 struct UniformPigment : public Pigment {
   Color color;
   UniformPigment(Color _color = Color()) : color{_color} {}
-  Color get_color(Vec2d uv) { return color; }
+  Color operator()(Vec2d uv) { return color; }
 };
 
 /**
@@ -48,7 +48,7 @@ struct CheckeredPigment : public Pigment {
       : color1{_color1}, color2{_color2} {
     num_of_steps = _num_of_steps;
   }
-  Color get_color(Vec2d uv);
+  Color operator()(Vec2d uv);
 };
 
 /**
@@ -58,7 +58,7 @@ struct CheckeredPigment : public Pigment {
 struct ImagePigment : public Pigment {
   HdrImage image;
   ImagePigment(HdrImage _image) : image{_image} {};
-  Color get_color(Vec2d uv);
+  Color operator()(Vec2d uv);
 };
 
 /**
@@ -101,7 +101,7 @@ struct DiffusiveBRDF : public BRDF {
   }
 
   inline Color eval(Normal normal, Vec inc_dir, Vec out_dir, Vec2d uv) {
-    return pigment->get_color(uv) * (reflectance / M_PI);
+    return pigment->operator()(uv) * (reflectance / M_PI);
   }
 };
 

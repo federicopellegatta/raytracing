@@ -6,6 +6,6 @@ Color FlatRenderer::operator()(Ray ray) {
     return background_color;
 
   Material material = intersection.shape->material;
-  return (material.brdf->pigment->get_color(intersection.surface_point) +
-          material.emitted_radiance->get_color(intersection.surface_point));
+  return (material.brdf->pigment->operator()(intersection.surface_point) +
+          material.emitted_radiance->operator()(intersection.surface_point));
 }
