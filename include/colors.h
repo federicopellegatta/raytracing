@@ -16,11 +16,9 @@ public:
 
   Color operator+(Color);
   Color operator*(float);
-  // Color operator*(Color, float);
   Color operator*(Color);
 
-  bool is_close(Color);
-
+  bool operator==(const Color);
   void print();
 
   float luminosity();

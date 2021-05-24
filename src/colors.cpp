@@ -21,12 +21,9 @@ Color Color::operator+(Color a) { return Color(r + a.r, g + a.g, b + a.b); }
 
 Color Color::operator*(float a) { return Color(a * r, a * g, a * b); }
 
-// Color::operator*(Color b, float a) { return Color(a * b.r, a * b.g, a * b.b);
-// }
-
 Color Color::operator*(Color a) { return Color(a.r * r, a.g * g, a.b * b); }
 
-bool Color::is_close(Color a) {
+bool Color::operator==(Color a) {
   return are_close(r, a.r) && are_close(b, a.b) && are_close(g, a.g);
 }
 
