@@ -2,7 +2,10 @@
 #include "args.hxx"
 #include "camera.h"
 #include "imagetracer.h"
+#include "materials.h"
+#include "render.h"
 #include "world.h"
+#include <memory>
 
 using namespace std;
 
@@ -15,12 +18,25 @@ struct Demo {
   Demo(int width, int height, float angle_deg, string camera_type,
        string output);
 
-  void run();
+  void run(string);
 };
 
 Demo::Demo(int width, int height, float angle_deg, string camera_type,
            string output)
     : image(width, height) {
+  // Defining materials
+  Material material1(make_shared<DiffusiveBRDF>(
+      make_shared<UniformPigment>(Color(0.7, 0.3, 0.2))));
+  Material material2(make_shared<DiffusiveBRDF>(make_shared<CheckeredPigment>(
+      Color(0.2, 0.7, 0.3), Color(0.3, 0.2, 0.7), 4)));
+  HdrImage sphere_texture(2, 2);
+  sphere_texture.set_pixel(0, 0, Color(0.1, 0.2, 0.3));
+  sphere_texture.set_pixel(0, 1, Color(0.2, 0.1, 0.3));
+  sphere_texture.set_pixel(1, 0, Color(0.3, 0.2, 0.1));
+  sphere_texture.set_pixel(1, 1, Color(0.3, 0.1, 0.2));
+
+  Material material3(
+      make_shared<DiffusiveBRDF>(make_shared<ImagePigment>(sphere_texture)));
   // Create a world and populate it with a few shapes
   for (int i{}; i < 2; i++) {
     for (int j{}; j < 2; j++) {
@@ -29,7 +45,8 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
         float y = 0.5 - j;
         float z = 0.5 - k;
         world.add(make_shared<Sphere>(
-            Sphere{translation(Vec(x, y, z)) * scaling(Vec(0.1, 0.1, 0.1))}));
+            Sphere{translation(Vec(x, y, z)) * scaling(Vec(0.1, 0.1, 0.1)),
+                   material1}));
       }
     }
   }
@@ -37,9 +54,11 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
   // Place two other balls in the bottom / left part of the cube,so that we can
   // check if there are issues with the orientation of the image
   world.add(make_shared<Sphere>(
-      Sphere{translation(Vec(0.0, 0.0, -0.5)) * scaling(Vec(0.1, 0.1, 0.1))}));
+      Sphere{translation(Vec(0.0, 0.0, -0.5)) * scaling(Vec(0.1, 0.1, 0.1)),
+             material2}));
   world.add(make_shared<Sphere>(
-      Sphere{translation(Vec(0.0, 0.5, 0.0)) * scaling(Vec(0.1, 0.1, 0.1))}));
+      Sphere{translation(Vec(0.0, 0.5, 0.0)) * scaling(Vec(0.1, 0.1, 0.1)),
+             material3}));
 
   // Initialize camera
   float angle_rad = angle_deg * M_PI / 180;
@@ -70,15 +89,22 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
     png_output = output + ".png";
 }
 
-void Demo::run() {
+void Demo::run(string algorithm) {
+  shared_ptr<Renderer> renderer;
+
+  if (algorithm == "onoff") {
+    fmt::print("Using on/off renderer\n");
+    renderer = make_shared<OnOffRenderer>(world);
+  } else if (algorithm == "flat") {
+    fmt::print("Using flat renderer\n");
+    renderer = make_shared<FlatRenderer>(world);
+  } else {
+    fmt::print("Unknown renderer type.\nExiting.\n");
+    exit(1);
+  }
+
   ImageTracer tracer(image, camera);
-  tracer.fire_all_rays([&](Ray ray) -> Color {
-    if (world.ray_intersection(ray).hit) {
-      return Color{1.0, 1.0, 1.0};
-    } else {
-      return Color{0.0, 0.0, 0.0};
-    }
-  });
+  tracer.fire_all_rays(renderer);
 
   ofstream stream(pfm_output);
   tracer.image.write_pfm(stream, Endianness::little_endian);
@@ -94,25 +120,30 @@ void Demo::run() {
 
 struct pfm2png {
   HdrImage image;
-  float factor = 1.0;
-  float gamma = 1.0;
-  string input_pfm_filename = "";
-  string output_filename = "";
+  float factor;
+  float gamma;
+  float luminosity;
+  string input_pfm_filename;
+  string output_filename;
 
-  pfm2png(string input_pfm_filename, string output_filename, float factor,
-          float gamma);
+  pfm2png(string, string, float, float, float);
 };
 
 pfm2png::pfm2png(string input_pfm_filename, string output_filename,
-                 float _factor, float _gamma)
+                 float _factor = 1., float _gamma = 1., float _luminosity = 0.)
     : image(input_pfm_filename) {
 
   factor = _factor;
   gamma = _gamma;
+  luminosity = _luminosity;
   fmt::print("File {} has been read from disk. \n", input_pfm_filename);
 
   // Run Tone-Mapping
-  image.normalize_image(factor);
+  if (luminosity == 0.) {
+    image.normalize_image(factor);
+  } else {
+    image.normalize_image(factor, luminosity);
+  }
   image.clamp_image();
 
   // Open output file
@@ -150,6 +181,10 @@ int interface(int argc, char **argv) {
       demo_arguments, "",
       "Type of camera to use, can be either 'perspective' or 'orthogonal'",
       {"cam", "camera"});
+  args::ValueFlag<string> algorithm(demo_arguments, "",
+                                    "Type of renderer to use to produce image, "
+                                    "can either be 'flat' or 'onoff'",
+                                    {"alg", "algorithm"});
   args::ValueFlag<string> output_filename(
       demo_arguments, "",
       "Name of the output file. The program will produce two files: "
@@ -162,6 +197,11 @@ int interface(int argc, char **argv) {
                                      {"outpng", "output_png"});
   args::ValueFlag<float> factor(pfm2png_arguments, "", "Normalization factor",
                                 {'f', "factor"});
+  args::ValueFlag<float> luminosity(
+      pfm2png_arguments, "",
+      "Luminosity. Use 0 and it will be calculated "
+      "internally.",
+      {'l', "luminosity"});
   args::ValueFlag<float> gamma(pfm2png_arguments, "",
                                "Gamma factor of the screen to use",
                                {'g', "gamma"});
@@ -184,11 +224,11 @@ int interface(int argc, char **argv) {
   if (demo) {
     Demo test(args::get(width), args::get(height), args::get(angle_deg),
               args::get(camera), args::get(output_filename));
-    test.run();
+    test.run(args::get(algorithm));
   }
   if (convertpfm2png) {
     pfm2png(args::get(input_pfm), args::get(output_png), args::get(factor),
-            args::get(gamma));
+            args::get(gamma), args::get(luminosity));
   }
   return 0;
 }
