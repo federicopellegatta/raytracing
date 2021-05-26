@@ -104,7 +104,7 @@ void Demo::run(string algorithm) {
   }
 
   ImageTracer tracer(image, camera);
-  tracer.fire_all_rays(renderer);
+  tracer.fire_all_rays([&](const Ray &ray) { return (*renderer)(ray); });
 
   ofstream stream(pfm_output);
   tracer.image.write_pfm(stream, Endianness::little_endian);
