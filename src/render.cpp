@@ -39,18 +39,17 @@ Color PathTracer::operator()(Ray ray) {
     }
   }
 
-  Color cum_radiance = BLACK;
+  Color cum_radiance;
   if (hit_color_lum > 0.0) { // Only do costly recursions if it's worth it
     for (int i{}; i < num_of_rays; i++) {
-      Ray new_ray = hit_material.brdf.scatter_ray(
+      Ray new_ray = hit_material.brdf->scatter_ray(
           pcg, intersection.ray.dir, intersection.world_point,
           intersection.normal, ray.depth + 1);
 
       // Recursive call
       Color new_radiance = (*this)(new_ray);
-      Color cum_radiance = cum_radiance + (hit_color * new_radiance);
-
-      return emitted_radiance + cum_radiance * (1.0 / num_of_rays);
+      cum_radiance = cum_radiance + (hit_color * new_radiance);
     }
   }
+  return emitted_radiance + cum_radiance * (1.0 / num_of_rays);
 }
