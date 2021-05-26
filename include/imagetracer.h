@@ -56,28 +56,11 @@ struct ImageTracer {
    return a :class:`.Color` instance telling the color to
    assign to that pixel in the image.
    */
-  void fire_all_rays(function<Color(Ray)> func) {
+  void fire_all_rays(function<Color(const Ray &)> func) {
     for (int row{}; row < image.height; row++) {
       for (int col{}; col < image.width; col++) {
         Ray ray = fire_ray(col, row);
         Color color = func(ray);
-        image.set_pixel(col, row, color);
-      }
-    }
-  }
-  /**
-   * @brief overload of the previous function
-   * I (@pyros-cyber) don't think this is the best way to do it (it defeats the
-   * purpose of the previous function), I need to clarify how to use a function
-   * object wrapped in a shared_ptr
-   *
-   * @param renderer
-   */
-  void fire_all_rays(shared_ptr<Renderer> renderer) {
-    for (int row{}; row < image.height; row++) {
-      for (int col{}; col < image.width; col++) {
-        Ray ray = fire_ray(col, row);
-        Color color = renderer->operator()(ray);
         image.set_pixel(col, row, color);
       }
     }
