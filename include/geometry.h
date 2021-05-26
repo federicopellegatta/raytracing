@@ -183,10 +183,25 @@ struct Vec2d {
 /* ORTHOGONAL NORMAL BASE */
 ////////////////////////////
 
+/**
+ * @brief Orthogonal Normal Base (ONB)
+ *
+ */
 struct ONB {
   Vec e1, e2, e3;
 
+  /**
+   * @brief Construct a new ONB object: it generate a ONB from a `Normal`
+   *
+   * @param normal
+   */
   ONB(Normal normal);
+
+  /**
+   * @brief Construct a new ONB object: it generate a ONB from a generic `Vec`
+   *
+   * @param vec
+   */
   ONB(Vec vec) { ONB(vec.to_norm()); }
 };
 
