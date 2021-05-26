@@ -12,6 +12,7 @@ using namespace std;
 ////////////////////////////
 /* VECS, POINT AND NORMAL */
 ////////////////////////////
+struct Normal;
 
 // Template functions
 template <typename In> string _to_string(const In &a) {
@@ -61,6 +62,8 @@ struct Vec {
     return Vec{x /= norm, y /= norm, z /= norm};
   }
   inline string to_str() { return string{"Vec" + _to_string(*this)}; }
+
+  Normal to_norm();
 
   Vec operator-() const { return Vec{-x, -y, -z}; }
 };
@@ -148,8 +151,8 @@ inline Point operator-(const Point &a, const Vec &b) {
  */
 struct Vec2d {
   /**
-   * @brief The class members are named u and v to distinguish them from x,y,z,
-   * which are used for 3D vectors
+   * @brief The class members are named u and v to distinguish them from
+   * x,y,z, which are used for 3D vectors
    *
    */
   float u, v;
@@ -174,6 +177,17 @@ struct Vec2d {
   inline bool is_close(Vec2d other_vec2d) {
     return are_close(u, other_vec2d.u) && are_close(v, other_vec2d.v);
   }
+};
+
+////////////////////////////
+/* ORTHOGONAL NORMAL BASE */
+////////////////////////////
+
+struct ONB {
+  Vec e1, e2, e3;
+
+  ONB(Normal normal);
+  ONB(Vec vec) { ONB(vec.to_norm()); }
 };
 
 ////////////////////
