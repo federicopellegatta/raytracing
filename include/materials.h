@@ -101,7 +101,7 @@ struct DiffusiveBRDF : public BRDF {
   }
 
   inline Color eval(Normal normal, Vec inc_dir, Vec out_dir, Vec2d uv) {
-    return pigment->operator()(uv) * (reflectance / M_PI);
+    return (*pigment)(uv) * (reflectance / M_PI);
   }
 };
 
