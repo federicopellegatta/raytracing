@@ -5,6 +5,7 @@
 #include "colors.h"
 #include "geometry.h"
 #include "pcg.h"
+#include "ray.h"
 
 /**
  * @brief A pigment: this abstract class represents a pigment, i.e., a function
