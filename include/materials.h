@@ -4,6 +4,7 @@
 #include "HdrImage.h"
 #include "colors.h"
 #include "geometry.h"
+#include "pcg.h"
 
 /**
  * @brief A pigment: this abstract class represents a pigment, i.e., a function
@@ -84,6 +85,8 @@ struct BRDF {
    */
   inline virtual Color eval(Normal normal, Vec inc_dir, Vec out_dir,
                             Vec2d uv) = 0;
+  virtual Ray scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
+                          Normal normal, int depth) = 0;
 };
 
 /**
@@ -103,6 +106,35 @@ struct DiffusiveBRDF : public BRDF {
   inline Color eval(Normal normal, Vec inc_dir, Vec out_dir, Vec2d uv) {
     return (*pigment)(uv) * (reflectance / M_PI);
   }
+  Ray scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point, Normal normal,
+                  int depth);
+};
+/**
+ * @brief A class representing an ideal mirror BRDF
+ *
+ */
+struct SpecularBRDF : public BRDF {
+  float threshold_angle_rad;
+
+  SpecularBRDF(
+      shared_ptr<Pigment> _pigment = make_shared<UniformPigment>(WHITE),
+      float _threshold_angle_rad = 0.1)
+      : BRDF{_pigment} {
+    threshold_angle_rad = _threshold_angle_rad;
+  }
+
+  inline Color eval(Normal normal, Vec inc_dir, Vec out_dir, Vec2d uv) {
+    float theta_in = acos(normal.to_vec().dot(inc_dir));
+    float theta_out = acos(normal.to_vec().dot(out_dir));
+
+    if (fabs(theta_in - theta_out) < threshold_angle_rad) {
+      return (*pigment)(uv);
+    } else {
+      return BLACK;
+    }
+  }
+  Ray scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point, Normal normal,
+                  int depth);
 };
 
 /**
