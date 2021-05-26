@@ -14,7 +14,6 @@ void test_random() {
 }
 
 int main() {
-  PCG pcg;
   test_random();
 
   return 0;
