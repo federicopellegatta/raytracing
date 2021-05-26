@@ -4,6 +4,7 @@
 #include "colors.h"
 #include "geometry.h"
 #include "materials.h"
+#include "pcg.h"
 #include "ray.h"
 #include "world.h"
 
@@ -52,6 +53,42 @@ struct OnOffRenderer : public Renderer {
 struct FlatRenderer : public Renderer {
   FlatRenderer(World world, Color background_color = BLACK)
       : Renderer(world, background_color){};
+
+  Color operator()(Ray ray);
+};
+
+/**
+ * @brief A simple path-tracing renderer
+ *
+ * The algorithm implemented here allows the caller to tune number of rays
+ * thrown at each iteration, as well as the maximum depth. It implements Russian
+ * roulette, so in principle it will take a finite time to complete the
+ * calculation even if you set max_depth to `math.inf`.
+ */
+struct PathTracer : public Renderer {
+  World world;
+  Color background_color;
+  PCG pcg;
+  int num_of_rays, max_depth, russian_roulette_limit;
+
+  /**
+   * @brief Construct a new Path Tracing object
+   *
+   * @param world
+   * @param background_color
+   * @param pcg
+   * @param num_of_rays
+   * @param max_depth
+   * @param russian_roulette_limit
+   */
+  PathTracer(World world, Color background_color, PCG pcg = PCG(),
+             int num_of_rays = 10, int max_depth = 2,
+             int russian_roulette_limit = 3)
+      : Renderer(world, background_color), pcg{pcg} {
+    num_of_rays = num_of_rays;
+    max_depth = max_depth;
+    russian_roulette_limit = russian_roulette_limit;
+  }
 
   Color operator()(Ray ray);
 };
