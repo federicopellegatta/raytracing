@@ -202,7 +202,7 @@ struct ONB {
    *
    * @param vec
    */
-  ONB(Vec vec) { ONB(vec.to_norm()); }
+  ONB(Vec vec) : ONB(vec.to_norm()) {}
 };
 
 ////////////////////
