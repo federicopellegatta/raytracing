@@ -59,9 +59,38 @@ void test_flat_render() {
   assert(tracer.image.get_pixel(2, 2) == BLACK);
 }
 
+void test_pathTracer() {
+  PCG pcg;
+
+  for (int i{}; i < 5; i++) {
+    World world;
+    float emitted_radiance = pcg.random_float();
+    float reflectance = pcg.random_float();
+    Material enclosure_material{
+        make_shared<DiffusiveBRDF>(
+            make_shared<UniformPigment>(WHITE * reflectance)),
+        make_shared<UniformPigment>(WHITE * emitted_radiance)};
+
+    world.add(
+        make_shared<Sphere>(Sphere(Transformation(), enclosure_material)));
+
+    PathTracer path_tracer(world, BLACK, pcg, 1, 100, 101);
+
+    Ray ray(Point(0, 0, 0), Vec(1, 0, 0));
+    Color color = path_tracer(ray);
+
+    float expected = emitted_radiance / (1.0 - reflectance);
+
+    assert(are_close(expected, color.r, 1e-3));
+    assert(are_close(expected, color.g, 1e-3));
+    assert(are_close(expected, color.b, 1e-3));
+  }
+}
+
 int main() {
   test_OnOff_render();
   test_flat_render();
+  test_pathTracer();
 
   return 0;
 }
