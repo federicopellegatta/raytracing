@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include "pcg.h"
 #include <cassert>
 #include <cstdlib>
 
@@ -120,6 +121,26 @@ void test_transformation_scaling() {
   assert(expected.is_close(tr1 * tr2));
 }
 
+void test_ONB() {
+  PCG pcg;
+
+  for (int i{}; i < 1e6; i++) {
+    Vec normal(pcg.random_float(), pcg.random_float(), pcg.random_float());
+    normal.normalize();
+    ONB onb(normal);
+
+    assert(onb.e3 == normal);
+
+    assert(are_close(1.0, onb.e1.squared_norm()));
+    assert(are_close(1.0, onb.e2.squared_norm()));
+    assert(are_close(1.0, onb.e3.squared_norm()));
+
+    assert(are_close(0.0, onb.e1.dot(onb.e2)));
+    assert(are_close(0.0, onb.e2.dot(onb.e3)));
+    assert(are_close(0.0, onb.e3.dot(onb.e1)));
+  }
+}
+
 int main() {
 
   /////////////////////////////////
@@ -173,6 +194,8 @@ int main() {
   test_transformation_translation();
   test_transformation_rotations();
   test_transformation_scaling();
+
+  test_ONB();
 
   return 0;
 }
