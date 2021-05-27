@@ -146,6 +146,14 @@ struct Material {
   shared_ptr<BRDF> brdf;
   shared_ptr<Pigment> emitted_radiance;
 
+  /**
+   * @brief Construct a new Material object
+   *
+   * @param brdf A `shared_ptr` of `BRDF` (can be either `DiffusiveBRDF` or
+   * `SpecularBRDF`)
+   * @param emitted_radiance A `shared_ptr` of `Pigment` (can be either
+   * `UniformPigment` or `CheckeredPigment` or `ImagePigment`)
+   */
   Material(shared_ptr<BRDF> _brdf = make_shared<DiffusiveBRDF>(),
            shared_ptr<Pigment> _emitted_radiance =
                make_shared<UniformPigment>(BLACK))
