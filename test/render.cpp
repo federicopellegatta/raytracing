@@ -65,7 +65,7 @@ void test_pathTracer() {
   for (int i{}; i < 5; i++) {
     World world;
     float emitted_radiance = pcg.random_float();
-    float reflectance = pcg.random_float();
+    float reflectance = pcg.random_float() * 0.9;
     Material enclosure_material{
         make_shared<DiffusiveBRDF>(
             make_shared<UniformPigment>(WHITE * reflectance)),
