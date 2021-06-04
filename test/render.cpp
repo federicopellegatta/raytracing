@@ -71,8 +71,8 @@ void test_pathTracer() {
             make_shared<UniformPigment>(WHITE * reflectance)),
         make_shared<UniformPigment>(WHITE * emitted_radiance)};
 
-    world.add(
-        make_shared<Sphere>(Sphere(Transformation(), enclosure_material)));
+    Sphere sphere(Transformation(), enclosure_material);
+    world.add(make_shared<Sphere>(sphere));
 
     PathTracer path_tracer(world, BLACK, pcg, 1, 100, 101);
 

@@ -66,8 +66,6 @@ struct FlatRenderer : public Renderer {
  * calculation even if you set max_depth to `math.inf`.
  */
 struct PathTracer : public Renderer {
-  World world;
-  Color background_color;
   PCG pcg;
   int num_of_rays, max_depth, russian_roulette_limit;
 
