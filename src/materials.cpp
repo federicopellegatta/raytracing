@@ -31,6 +31,18 @@ Ray DiffusiveBRDF::scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
           orthonormal_base.e3 * sin_theta);
   return Ray(interaction_point, dir, depth, 1e-3);
 }
+
+/**
+ * @brief No need to use a PCG obj, because the reflected direction for a
+ * perfect mirror is always deterministic
+ *
+ * @param pcg
+ * @param inc_dir
+ * @param interaction_point
+ * @param normal
+ * @param depth
+ * @return Ray
+ */
 Ray SpecularBRDF::scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
                               Normal normal, int depth) {
   Vec ray_dir = inc_dir.normalize();

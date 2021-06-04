@@ -86,6 +86,16 @@ struct BRDF {
    */
   inline virtual Color eval(Normal normal, Vec inc_dir, Vec out_dir,
                             Vec2d uv) = 0;
+  /**
+   * @brief Distribution of the scattered ray
+   *
+   * @param pcg
+   * @param inc_dir
+   * @param interaction_point
+   * @param normal
+   * @param depth
+   * @return Ray
+   */
   virtual Ray scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
                           Normal normal, int depth) = 0;
 };
@@ -107,6 +117,17 @@ struct DiffusiveBRDF : public BRDF {
   inline Color eval(Normal normal, Vec inc_dir, Vec out_dir, Vec2d uv) {
     return (*pigment)(uv) * (reflectance / M_PI);
   }
+  /**
+   * @brief Implementation of a cosine-weighted distribution around the z
+   * (local) axis.
+   *
+   * @param pcg
+   * @param inc_dir
+   * @param interaction_point
+   * @param normal
+   * @param depth
+   * @return Ray
+   */
   Ray scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point, Normal normal,
                   int depth);
 };
