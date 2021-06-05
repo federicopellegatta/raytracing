@@ -79,7 +79,7 @@ struct PathTracer : public Renderer {
    * @param max_depth
    * @param russian_roulette_limit
    */
-  PathTracer(World world, Color background_color, PCG _pcg = PCG(),
+  PathTracer(World world, Color background_color = BLACK, PCG _pcg = PCG(),
              int _num_of_rays = 10, int _max_depth = 2,
              int _russian_roulette_limit = 3)
       : Renderer(world, background_color), pcg{_pcg} {
