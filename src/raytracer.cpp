@@ -25,45 +25,48 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
            string output)
     : image(width, height) {
   // Defining materials
-  Material material1(make_shared<DiffusiveBRDF>(
-      make_shared<UniformPigment>(Color(0.7, 0.3, 0.2))));
-  Material material2(make_shared<DiffusiveBRDF>(make_shared<CheckeredPigment>(
-      Color(0.2, 0.7, 0.3), Color(0.3, 0.2, 0.7), 4)));
-  HdrImage sphere_texture(2, 2);
-  sphere_texture.set_pixel(0, 0, Color(0.1, 0.2, 0.3));
-  sphere_texture.set_pixel(0, 1, Color(0.2, 0.1, 0.3));
-  sphere_texture.set_pixel(1, 0, Color(0.3, 0.2, 0.1));
-  sphere_texture.set_pixel(1, 1, Color(0.3, 0.1, 0.2));
-
-  Material material3(
-      make_shared<DiffusiveBRDF>(make_shared<ImagePigment>(sphere_texture)));
+  Material sky_material(
+      make_shared<DiffusiveBRDF>(make_shared<UniformPigment>(BLACK)),
+      make_shared<UniformPigment>(Color(1., 0.9, 0.5)));
+  Material ground_material(
+      make_shared<DiffusiveBRDF>(make_shared<CheckeredPigment>(
+          Color(0.3, 0.5, 0.1), Color(0.1, 0.2, 0.5))));
+  Material sphere_material(make_shared<DiffusiveBRDF>(
+      make_shared<UniformPigment>(Color(0.3, 0.4, 0.8))));
+  Material mirror_material(make_shared<SpecularBRDF>(
+      make_shared<UniformPigment>(Color(0.6, 0.2, 0.3))));
   // Create a world and populate it with a few shapes
-  for (int i{}; i < 2; i++) {
-    for (int j{}; j < 2; j++) {
-      for (int k{}; k < 2; k++) {
-        float x = 0.5 - i;
-        float y = 0.5 - j;
-        float z = 0.5 - k;
-        world.add(make_shared<Sphere>(
-            Sphere{translation(Vec(x, y, z)) * scaling(Vec(0.1, 0.1, 0.1)),
-                   material1}));
-      }
-    }
-  }
+  // for (int i{}; i < 2; i++) {
+  //  for (int j{}; j < 2; j++) {
+  //    for (int k{}; k < 2; k++) {
+  //      float x = 0.5 - i;
+  //      float y = 0.5 - j;
+  //      float z = 0.5 - k;
+  //      world.add(make_shared<Sphere>(
+  //          Sphere{translation(Vec(x, y, z)) * scaling(Vec(0.1, 0.1, 0.1)),
+  //                 material1}));
+  //    }
+  //  }
+  //}
 
   // Place two other balls in the bottom / left part of the cube,so that we can
   // check if there are issues with the orientation of the image
+  // world.add(make_shared<Sphere>(
+  //    Sphere{translation(Vec(0.0, 0.0, -0.5)) * scaling(Vec(0.1, 0.1, 0.1)),
+  //           material2}));
+  // world.add(make_shared<Sphere>(
+  //    Sphere{translation(Vec(0.0, 0.5, 0.0)) * scaling(Vec(0.1, 0.1, 0.1)),
+  //           material3}));
+
   world.add(make_shared<Sphere>(
-      Sphere{translation(Vec(0.0, 0.0, -0.5)) * scaling(Vec(0.1, 0.1, 0.1)),
-             material2}));
-  world.add(make_shared<Sphere>(
-      Sphere{translation(Vec(0.0, 0.5, 0.0)) * scaling(Vec(0.1, 0.1, 0.1)),
-             material3}));
+      scaling(Vec(200, 200, 200)) * translation(Vec(0, 0, 0.4)), sky_material));
+  world.add(make_shared<Plane>(Transformation(), ground_material));
+  world.add(make_shared<Sphere>(translation(Vec(1, 2.5, 0)), mirror_material));
 
   // Initialize camera
   float angle_rad = angle_deg * M_PI / 180;
   Transformation camera_tr =
-      rotation_z(angle_rad) * translation(Vec(-1.0, 0.0, 0.0));
+      rotation_z(angle_rad) * translation(Vec(-1.0, 0.0, 1.0));
 
   if (camera_type == "orthogonal" || camera_type == "orthogonalCamera")
     camera = make_shared<OrthogonalCamera>(OrthogonalCamera(
@@ -98,6 +101,9 @@ void Demo::run(string algorithm) {
   } else if (algorithm == "flat") {
     fmt::print("Using flat renderer\n");
     renderer = make_shared<FlatRenderer>(world);
+  } else if (algorithm == "pathtracing") {
+    fmt::print("Using a path tracer\n");
+    renderer = make_shared<PathTracer>(world);
   } else {
     fmt::print("Unknown renderer type.\nExiting.\n");
     exit(1);
@@ -181,10 +187,11 @@ int interface(int argc, char **argv) {
       demo_arguments, "",
       "Type of camera to use, can be either 'perspective' or 'orthogonal'",
       {"cam", "camera"});
-  args::ValueFlag<string> algorithm(demo_arguments, "",
-                                    "Type of renderer to use to produce image, "
-                                    "can either be 'flat' or 'onoff'",
-                                    {"alg", "algorithm"});
+  args::ValueFlag<string> algorithm(
+      demo_arguments, "",
+      "Type of renderer to use to produce image, "
+      "can either be 'flat', 'onoff' or 'pathtracing'",
+      {"alg", "algorithm"});
   args::ValueFlag<string> output_filename(
       demo_arguments, "",
       "Name of the output file. The program will produce two files: "
