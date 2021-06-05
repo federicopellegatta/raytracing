@@ -61,6 +61,7 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
   world.add(make_shared<Sphere>(
       scaling(Vec(200, 200, 200)) * translation(Vec(0, 0, 0.4)), sky_material));
   world.add(make_shared<Plane>(Transformation(), ground_material));
+  world.add(make_shared<Sphere>(translation(Vec(0, 0, 1)), sphere_material));
   world.add(make_shared<Sphere>(translation(Vec(1, 2.5, 0)), mirror_material));
 
   // Initialize camera
