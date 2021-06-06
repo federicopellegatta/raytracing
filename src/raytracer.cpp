@@ -18,7 +18,7 @@ struct Demo {
   Demo(int width, int height, float angle_deg, string camera_type,
        string output);
 
-  void run(string);
+  void run(string, int, int, int, int);
 };
 
 Demo::Demo(int width, int height, float angle_deg, string camera_type,
@@ -27,7 +27,7 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
   // Defining materials
   Material sky_material(
       make_shared<DiffusiveBRDF>(make_shared<UniformPigment>(BLACK)),
-      make_shared<UniformPigment>(Color(1., 0.9, 0.5)));
+      make_shared<UniformPigment>(Color(1.0, 0.9, 0.5)));
   Material ground_material(
       make_shared<DiffusiveBRDF>(make_shared<CheckeredPigment>(
           Color(0.3, 0.5, 0.1), Color(0.1, 0.2, 0.5))));
@@ -58,9 +58,9 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
   //    Sphere{translation(Vec(0.0, 0.5, 0.0)) * scaling(Vec(0.1, 0.1, 0.1)),
   //           material3}));
 
-  world.add(make_shared<Sphere>(
-      scaling(Vec(200, 200, 200)) * translation(Vec(0, 0, 0.4)), sky_material));
   world.add(make_shared<Plane>(Transformation(), ground_material));
+  world.add(make_shared<Sphere>(
+      translation(Vec(0, 0, 0.4)) * scaling(Vec(200, 200, 200)), sky_material));
   world.add(make_shared<Sphere>(translation(Vec(0, 0, 1)), sphere_material));
   world.add(make_shared<Sphere>(translation(Vec(1, 2.5, 0)), mirror_material));
 
@@ -93,7 +93,8 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
     png_output = output + ".png";
 }
 
-void Demo::run(string algorithm) {
+void Demo::run(string algorithm, int init_state, int init_seq, int num_of_rays,
+               int max_depth) {
   shared_ptr<Renderer> renderer;
 
   if (algorithm == "onoff") {
@@ -104,7 +105,8 @@ void Demo::run(string algorithm) {
     renderer = make_shared<FlatRenderer>(world);
   } else if (algorithm == "pathtracing") {
     fmt::print("Using a path tracer\n");
-    renderer = make_shared<PathTracer>(world);
+    renderer = make_shared<PathTracer>(world, BLACK, PCG(init_state, init_seq),
+                                       num_of_rays, max_depth);
   } else {
     fmt::print("Unknown renderer type.\nExiting.\n");
     exit(1);
@@ -198,6 +200,24 @@ int interface(int argc, char **argv) {
       "Name of the output file. The program will produce two files: "
       "<outf>.pfm and <outf>.png (or <outf>.jpg)",
       {"outf", "output_filename"});
+  args::ValueFlag<int> num_of_rays(
+      demo_arguments, "",
+      "Number of rays departing from each surface point (only applicable with "
+      "--algorithm=pathtracing).",
+      {"num-of-rays"});
+  args::ValueFlag<int> max_depth(demo_arguments, "",
+                                 "Maximum allowed ray depth (only applicable "
+                                 "with --algorithm=pathtracing).",
+                                 {"max-depth"});
+  args::ValueFlag<int> init_state(
+      demo_arguments, "",
+      "Initial seed for the random number generator (positive number).",
+      {"init-state"});
+  args::ValueFlag<int> init_seq(demo_arguments, "",
+                                "Identifier of the sequence produced by the "
+                                "random number generator (positive number).",
+                                {"init-seq"});
+
   args::ValueFlag<string> input_pfm(
       pfm2png_arguments, "", "Path to input pfm file", {"inpfm", "input_pfm"});
   args::ValueFlag<string> output_png(pfm2png_arguments, "",
@@ -232,7 +252,8 @@ int interface(int argc, char **argv) {
   if (demo) {
     Demo test(args::get(width), args::get(height), args::get(angle_deg),
               args::get(camera), args::get(output_filename));
-    test.run(args::get(algorithm));
+    test.run(args::get(algorithm), args::get(init_state), args::get(init_seq),
+             args::get(num_of_rays), args::get(max_depth));
   }
   if (convertpfm2png) {
     pfm2png(args::get(input_pfm), args::get(output_png), args::get(factor),
