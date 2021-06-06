@@ -38,7 +38,11 @@ HitRecord Plane::ray_intersection(Ray ray) {
 
   if (are_close(inv_ray.dir.z, 0.0)) // if ray is parallel to the plane
     hit = false;
+
   float t = -origin_vec.z / inv_ray.dir.z;
+
+  if (t <= inv_ray.tmin || t >= inv_ray.tmax)
+    hit = false;
 
   Point hit_point = inv_ray.at(t);
   return HitRecord(make_shared<Plane>(*this), transformation * hit_point,
