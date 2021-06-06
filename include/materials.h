@@ -140,7 +140,7 @@ struct SpecularBRDF : public BRDF {
 
   SpecularBRDF(
       shared_ptr<Pigment> _pigment = make_shared<UniformPigment>(WHITE),
-      float _threshold_angle_rad = 0.1)
+      float _threshold_angle_rad = M_PI / 1800.)
       : BRDF{_pigment} {
     threshold_angle_rad = _threshold_angle_rad;
   }
