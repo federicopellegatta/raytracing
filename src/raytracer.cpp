@@ -18,7 +18,7 @@ struct Demo {
   Demo(int width, int height, float angle_deg, string camera_type,
        string output);
 
-  void run(string, int, int, int, int);
+  void run(string, int, int, int, int, int);
 };
 
 Demo::Demo(int width, int height, float angle_deg, string camera_type,
@@ -94,7 +94,7 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
 }
 
 void Demo::run(string algorithm, int init_state, int init_seq, int num_of_rays,
-               int max_depth) {
+               int max_depth, int samples_per_pixel) {
   shared_ptr<Renderer> renderer;
 
   if (algorithm == "onoff") {
@@ -112,7 +112,15 @@ void Demo::run(string algorithm, int init_state, int init_seq, int num_of_rays,
     exit(1);
   }
 
-  ImageTracer tracer(image, camera);
+  int samples_per_side = static_cast<int>(sqrt(samples_per_pixel));
+  if (pow(samples_per_side, 2) != samples_per_pixel) {
+    fmt::print("ERROR: the number of samples per pixel {} must be a perfect "
+               "square.\nExiting.\n",
+               samples_per_pixel);
+    exit(1);
+  }
+
+  ImageTracer tracer(image, camera, samples_per_side);
   tracer.fire_all_rays([&](const Ray &ray) { return (*renderer)(ray); });
 
   ofstream stream(pfm_output);
@@ -217,7 +225,10 @@ int interface(int argc, char **argv) {
                                 "Identifier of the sequence produced by the "
                                 "random number generator (positive number).",
                                 {"init-seq"});
-
+  args::ValueFlag<int> samples_per_pixel(
+      demo_arguments, "",
+      "Number of samples per pixel (must be a perfect square, e.g., 16).",
+      {"samples-per-pixel"});
   args::ValueFlag<string> input_pfm(
       pfm2png_arguments, "", "Path to input pfm file", {"inpfm", "input_pfm"});
   args::ValueFlag<string> output_png(pfm2png_arguments, "",
@@ -253,7 +264,8 @@ int interface(int argc, char **argv) {
     Demo test(args::get(width), args::get(height), args::get(angle_deg),
               args::get(camera), args::get(output_filename));
     test.run(args::get(algorithm), args::get(init_state), args::get(init_seq),
-             args::get(num_of_rays), args::get(max_depth));
+             args::get(num_of_rays), args::get(max_depth),
+             args::get(samples_per_pixel));
   }
   if (convertpfm2png) {
     pfm2png(args::get(input_pfm), args::get(output_png), args::get(factor),
