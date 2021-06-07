@@ -75,6 +75,7 @@ add_library(trace
     src/format.cc
     src/geometry.cpp
     src/shapes.cpp
+    src/imagetracer.cpp
     src/world.cpp
     src/materials.cpp
     src/render.cpp
@@ -110,9 +111,6 @@ target_link_libraries(shapesTest PUBLIC trace)
 target_link_libraries(materialsTest PUBLIC trace)
 target_link_libraries(renderTest PUBLIC trace)
 target_link_libraries(pcgTest PUBLIC trace)
-
-
-
 
 
 add_test(NAME colorTest 
