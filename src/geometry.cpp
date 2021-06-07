@@ -5,8 +5,8 @@
 ////////////////////////////
 
 Normal Vec::to_norm() {
-  normalize();
-  return Normal{x, y, z};
+  this->normalize();
+  return Normal{this->x, this->y, this->z};
 }
 
 Vec VEC_X(1.0, 0.0, 0.0);
@@ -94,13 +94,6 @@ string Transformation::to_str() {
 
 Transformation Transformation::inverse() { return Transformation{invm, m}; }
 
-// Mul operation overloading
-Vec Transformation::operator*(Vec vec) {
-  return Vec{vec.x * m[0][0] + vec.y * m[0][1] + vec.z * m[0][2],
-             vec.x * m[1][0] + vec.y * m[1][1] + vec.z * m[1][2],
-             vec.x * m[2][0] + vec.y * m[2][1] + vec.z * m[2][2]};
-}
-
 Point Transformation::operator*(Point p) {
   float x = m[0][0] * p.x + m[0][1] * p.y + m[0][2] * p.z + m[0][3];
   float y = m[1][0] * p.x + m[1][1] * p.y + m[1][2] * p.z + m[1][3];
@@ -114,12 +107,6 @@ Point Transformation::operator*(Point p) {
   }
 
   return Point{x, y, z};
-}
-
-Normal Transformation::operator*(Normal n) {
-  return Normal{n.x * invm[0][0] + n.y * invm[1][0] + n.z * invm[2][0],
-                n.x * invm[0][1] + n.y * invm[1][1] + n.z * invm[2][1],
-                n.x * invm[0][2] + n.y * invm[1][2] + n.z * invm[2][2]};
 }
 
 Transformation Transformation::operator*(Transformation t) {
