@@ -19,16 +19,36 @@ using namespace std;
  * @see Vec
  */
 struct Ray {
-  Point origin = Point();
-  Vec dir = Vec();
-  float tmin = 1e-5;
-  float tmax = numeric_limits<float>::infinity();
-  int depth = 0;
+  Point origin;
+  Vec dir;
+  float tmin;
+  float tmax;
+  int depth;
 
+  /**
+   * @brief Construct a new Ray object
+   *
+   * @param _origin
+   * @param _dir
+   * @param _depth
+   * @param _tmin
+   * @param _tmax
+   */
   Ray(Point _origin = Point(), Vec _dir = Vec(), int _depth = 0,
       float _tmin = 1e-5, float _tmax = std::numeric_limits<float>::infinity())
-      : origin{_origin}, dir{_dir}, depth{_depth}, tmin{_tmin}, tmax{_tmax} {}
+      : origin{_origin}, dir{_dir} {
+    depth = _depth;
+    tmin = _tmin;
+    tmax = _tmax;
+  }
 
+  /**
+   * @brief Check wether two Rays are the same or not
+   *
+   * @param other
+   * @return true
+   * @return false
+   */
   bool operator==(Ray other) {
     return (origin == other.origin) && (dir == other.dir);
   }
