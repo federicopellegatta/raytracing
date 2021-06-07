@@ -38,9 +38,15 @@ void test_image_pigment() {
   assert(pigment(Vec2d(1.0, 1.0)) == (Color(3.0, 2.0, 1.0)));
 }
 
+void test_scatter_ray() {
+  /* test here, don't actually know how to test this */
+  assert(true);
+}
+
 int main() {
   test_uniform_pigment();
   test_checkered_pigment();
   test_image_pigment();
+  test_scatter_ray();
   return 0;
 }
