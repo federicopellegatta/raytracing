@@ -9,7 +9,7 @@ using namespace std;
  * @brief Trace an image by shooting light rays through each of its pixels
  *
  * @param image A :class:`.HdrImage` object; it must be already initialized
- * @param camera must be a descendeant of the :class:`.Camera` object
+ * @param camera must be a descendant of the :class:`.Camera` object
  * (:class:`.OrthogonalCamera` or :class:`.PerspectiveCamera`)
  *
  * @see HdrImage
@@ -39,7 +39,8 @@ struct ImageTracer {
    * @param v_pixel `v` coordinate in pixel frame
    * @return the Ray passing through (col, row) starting from the observer
    */
-  Ray fire_ray(int col, int row, float u_pixel = 0.5, float v_pixel = 0.5) {
+  inline Ray fire_ray(int col, int row, float u_pixel = 0.5,
+                      float v_pixel = 0.5) {
     float u = (col + u_pixel) / image.width;
     float v = 1.0 - (row + v_pixel) / image.height;
 
@@ -56,13 +57,5 @@ struct ImageTracer {
    return a :class:`.Color` instance telling the color to
    assign to that pixel in the image.
    */
-  void fire_all_rays(function<Color(const Ray &)> func) {
-    for (int row{}; row < image.height; row++) {
-      for (int col{}; col < image.width; col++) {
-        Ray ray = fire_ray(col, row);
-        Color color = func(ray);
-        image.set_pixel(col, row, color);
-      }
-    }
-  }
+  void fire_all_rays(function<Color(const Ray &)>);
 };
