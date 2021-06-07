@@ -17,6 +17,13 @@ struct Renderer {
   World world;
   Color background_color;
 
+  /**
+   * @brief Construct a new Renderer object. This is an abstract class, so it
+   * can't be called, but is needed for derived classes
+   *
+   * @param _world
+   * @param _background_color
+   */
   Renderer(World _world, Color _background_color = BLACK)
       : world{_world}, background_color{_background_color} {};
 
@@ -35,10 +42,23 @@ struct Renderer {
  */
 struct OnOffRenderer : public Renderer {
   Color color;
+  /**
+   * @brief Construct a new On Off Renderer object
+   *
+   * @param world
+   * @param background_color
+   * @param _color
+   */
   OnOffRenderer(World world, Color background_color = BLACK,
                 Color _color = WHITE)
       : Renderer(world, background_color), color{_color} {};
 
+  /**
+   * @brief Return color if the ray hit something, background_color otherwise
+   *
+   * @param ray
+   * @return Color
+   */
   Color operator()(Ray ray) {
     return world.ray_intersection(ray).hit ? color : background_color;
   }
@@ -51,9 +71,21 @@ struct OnOffRenderer : public Renderer {
  *
  */
 struct FlatRenderer : public Renderer {
+  /**
+   * @brief Construct a new Flat Renderer object
+   *
+   * @param world
+   * @param background_color
+   */
   FlatRenderer(World world, Color background_color = BLACK)
       : Renderer(world, background_color){};
 
+  /**
+   * @brief Determine the radiance based on the pigment of each surface
+   *
+   * @param ray
+   * @return Color
+   */
   Color operator()(Ray ray);
 };
 
@@ -88,6 +120,12 @@ struct PathTracer : public Renderer {
     russian_roulette_limit = _russian_roulette_limit;
   }
 
+  /**
+   * @brief Calculate the final radiance using the Russian Roulette
+   *
+   * @param ray
+   * @return Color
+   */
   Color operator()(Ray ray);
 };
 #endif
