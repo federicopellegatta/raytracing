@@ -60,10 +60,10 @@ private:
  * @see Point
  */
   inline Vec2d sphere_point_to_uv(Point point) {
-    float u = atan2(point.y, point.x) / (float)(2.0 * M_PI);
+    float u = atan2(point.y, point.x) / (2.0 * M_PI);
     if (u < 0)
       u = u + 1;
-    return Vec2d{u, acos(point.z) / (float)(M_PI)};
+    return Vec2d{u, static_cast<float>(acos(point.z) / M_PI)};
   }
 
   /**
