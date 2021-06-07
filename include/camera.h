@@ -45,7 +45,9 @@ struct OrthogonalCamera : public Camera {
    */
   OrthogonalCamera(float _aspect_ratio = 1.f,
                    Transformation _transformation = Transformation())
-      : aspect_ratio{_aspect_ratio}, transformation{_transformation} {}
+      : transformation{_transformation} {
+    aspect_ratio = _aspect_ratio;
+  }
 
   /**
    * @brief Shoots a ray through the camera screen
@@ -63,10 +65,9 @@ struct OrthogonalCamera : public Camera {
    * @param v `v` coordiante in screen frame
    * @return Ray generated passing through (u, v)
    */
-  Ray fire_ray(float u, float v) {
+  inline Ray fire_ray(float u, float v) {
     Point origin(-1.0, (1.0 - 2 * u) * aspect_ratio, 2 * v - 1.0);
-    Vec dir = VEC_X;
-    return Ray{origin, dir, 0, 1.0}.transform(transformation);
+    return Ray{origin, VEC_X, 0, 1.0}.transform(transformation);
   }
 };
 
@@ -102,8 +103,10 @@ struct PerspectiveCamera : public Camera {
    */
   PerspectiveCamera(float _screen_distance = 1.f, float _aspect_ratio = 1.f,
                     Transformation _transformation = Transformation())
-      : screen_distance{_screen_distance}, aspect_ratio{_aspect_ratio},
-        transformation{_transformation} {}
+      : transformation{_transformation} {
+    screen_distance = _screen_distance;
+    aspect_ratio = _aspect_ratio;
+  }
 
   /**
    * @brief Shoots a ray through the camera screen
@@ -117,11 +120,11 @@ struct PerspectiveCamera : public Camera {
           |                              |
           +------------------------------+
        (0, 0)                          (1, 0)
-   * @param u `u` coordiante in screen frame
-   * @param v `v` coordiante in screen frame
+   * @param u `u` coordinate in screen frame
+   * @param v `v` coordinate in screen frame
    * @return Ray generated passing through (u, v)
    */
-  Ray fire_ray(float u, float v) {
+  inline Ray fire_ray(float u, float v) {
     Point origin(-screen_distance, 0.f, 0.f);
     Vec direction(screen_distance, (1.0 - 2 * u) * aspect_ratio, 2 * v - 1.0);
     return Ray(origin, direction, 1.0).transform(transformation);
@@ -133,9 +136,8 @@ struct PerspectiveCamera : public Camera {
    *
    * @return The aperture of the camera in degrees
    */
-  float aperture_deg() {
+  inline float aperture_deg() {
     return 2.f * atan(screen_distance / aspect_ratio) * 180.f / M_PI;
   }
 };
-
 #endif
