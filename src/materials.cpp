@@ -45,8 +45,11 @@ Ray DiffusiveBRDF::scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
  */
 Ray SpecularBRDF::scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
                               Normal normal, int depth) {
-  Vec ray_dir = inc_dir.normalize();
-  Vec normal_vec = normal.to_vec().normalize();
+
+  inc_dir.normalize();
+  Vec ray_dir = inc_dir;
+  Vec normal_vec = normal.to_vec();
+  normal_vec.normalize();
   return Ray(interaction_point,
              Vec(ray_dir - (normal_vec * 2 * normal_vec.dot(ray_dir))), depth);
 }

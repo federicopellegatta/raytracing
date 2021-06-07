@@ -66,7 +66,10 @@ void test_sphere_normal() {
   HitRecord intersection = sphere.ray_intersection(ray);
 
   // We normalize "intersection.normal", as we are not interested in its length
-  assert(intersection.normal.normalize() == Normal(1.0, 4.0, 0.0).normalize());
+  intersection.normal.normalize();
+  Normal n(1., 4., 0.);
+  n.normalize();
+  assert(intersection.normal == n);
 }
 
 void test_sphere_normal_direction() {
@@ -76,7 +79,8 @@ void test_sphere_normal_direction() {
   HitRecord intersection = sphere.ray_intersection(ray);
 
   // We normalize "intersection.normal", as we are not interested in its length
-  assert(intersection.normal.normalize().to_vec() == -VEC_Y);
+  intersection.normal.normalize();
+  assert(intersection.normal.to_vec() == -VEC_Y);
 }
 
 void test_sphere_uv_coordinates() {
