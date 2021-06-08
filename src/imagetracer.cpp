@@ -13,9 +13,9 @@ void ImageTracer::fire_all_rays(function<Color(const Ray &)> func) {
              ++inter_pixel_row) {
           for (int inter_pixel_col{}; inter_pixel_col < samples_per_side;
                ++inter_pixel_col) {
-            int u_pixel =
+            float u_pixel =
                 (inter_pixel_col + pcg.random_float()) / samples_per_side;
-            int v_pixel =
+            float v_pixel =
                 (inter_pixel_row + pcg.random_float()) / samples_per_side;
             Ray ray = fire_ray(col, row, u_pixel, v_pixel);
             cum_color = cum_color + func(ray);
