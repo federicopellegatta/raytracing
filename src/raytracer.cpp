@@ -96,6 +96,15 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
 void Demo::run(string algorithm, int init_state, int init_seq, int num_of_rays,
                int max_depth, int samples_per_pixel) {
   shared_ptr<Renderer> renderer;
+  int samples_per_side = static_cast<int>(sqrt(samples_per_pixel));
+  if (pow(samples_per_side, 2) != samples_per_pixel) {
+    fmt::print("ERROR: the number of samples per pixel ({}) must be a perfect "
+               "square.\nExiting.\n",
+               samples_per_pixel);
+    exit(1);
+  }
+
+  ImageTracer tracer(image, camera, samples_per_side);
 
   if (algorithm == "onoff") {
     fmt::print("Using on/off renderer\n");
@@ -112,15 +121,6 @@ void Demo::run(string algorithm, int init_state, int init_seq, int num_of_rays,
     exit(1);
   }
 
-  int samples_per_side = static_cast<int>(sqrt(samples_per_pixel));
-  if (pow(samples_per_side, 2) != samples_per_pixel) {
-    fmt::print("ERROR: the number of samples per pixel {} must be a perfect "
-               "square.\nExiting.\n",
-               samples_per_pixel);
-    exit(1);
-  }
-
-  ImageTracer tracer(image, camera, samples_per_side);
   tracer.fire_all_rays([&](const Ray &ray) { return (*renderer)(ray); });
 
   ofstream stream(pfm_output);
