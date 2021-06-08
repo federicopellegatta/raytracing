@@ -1,5 +1,7 @@
 #include "HdrImage.h"
 #include "camera.h"
+#include "colors.h"
+#include "pcg.h"
 #include "render.h"
 #include <functional>
 
@@ -20,9 +22,24 @@ using namespace std;
 struct ImageTracer {
   HdrImage image;
   shared_ptr<Camera> camera;
+  int samples_per_side;
+  PCG pcg;
 
-  ImageTracer(HdrImage _image, shared_ptr<Camera> _camera)
-      : image{_image}, camera{_camera} {}
+  /**
+   * @brief Construct a new Image Tracer object
+   * If `samples_per_side` is greater than 0, then stratified sampling will be
+   applied to each pixel in the image, using the random number generator `pcg`.
+   *
+   * @param _image
+   * @param _camera
+   * @param _samples_per_side
+   * @param _pcg
+   */
+  ImageTracer(HdrImage _image, shared_ptr<Camera> _camera,
+              int _samples_per_side = 0, PCG _pcg = PCG())
+      : image{_image}, camera{_camera}, pcg{_pcg} {
+    samples_per_side = _samples_per_side;
+  }
 
   /**
    * @brief Shoot one light ray through image pixel (col, row)
