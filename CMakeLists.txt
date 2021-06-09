@@ -80,6 +80,7 @@ add_library(trace
     src/materials.cpp
     src/render.cpp
     src/pcg.cpp
+    src/scene_file.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
