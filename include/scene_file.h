@@ -7,6 +7,8 @@
 #include "geometry.h"
 #include "materials.h"
 #include "shapes.h"
+#include <fstream>
+#include <iostream>
 #include <map>
 
 using namespace std;
@@ -24,11 +26,9 @@ using namespace std;
  */
 struct SourceLocation {
 
-  string file_name = "";
-  int line_num = 0;
-  int col_num = 0;
-
-  SourceLocation(){};
+  string file_name;
+  int line_num;
+  int col_num;
 
   /**
    * @brief Construct a new Source Location object: a specific position in a
@@ -40,31 +40,68 @@ struct SourceLocation {
    * @param line_num: number of the line (starting from 1)
    * @param col_num: number of the column (starting from 1)
    */
-  SourceLocation(string file_name, int line_num, int col_num);
+  SourceLocation(string _file_name = "", int _line_num = 0, int _col_num = 0) {
+    file_name = _file_name;
+    line_num = _line_num;
+    col_num = _col_num;
+  }
 };
 
+/**
+ * @brief Struct representing an error found by the lexer/parser while reading a
+ * scene file
+ *
+ */
+struct GrammarError {
+  SourceLocation location;
+  string message;
+
+  /**
+   * @brief Construct a new Grammar Error object
+   *
+   * @param _location: position of the error
+   * @param _message: the error message
+   */
+  GrammarError(SourceLocation _location = SourceLocation(),
+               string _message = "")
+      : location{_location} {
+    message = _message;
+  }
+};
+
+/**
+ * @brief All possible types of tokens
+ *
+ */
 enum class TokenType {
   LITERAL_NUMBER,
   LITERAL_STRING,
   SYMBOL,
   KEYWORD,
-  IDENTIFIER,
+  IDENTIFIER
 };
 
-// The sum type.
+/**
+ * @brief Union representing the values of each TokenType
+ *
+ */
 union TokenValue {
   float number;
-  std::string string;
-  std::string keyword;
-  std::string identifier;
+  string str;
+  string keyword;
+  string identifier;
   char symbol;
 
   // The default constructor and destructor are *mandatory* for unions to
   // be used in structs/classes
-  TokenValue() : number(0.0) {}
+  TokenValue() { number = 0.; }
   ~TokenValue() {}
 };
 
+/**
+ * @brief All possible keywords accepted
+ *
+ */
 enum class KeywordEnum {
   NEW,
   MATERIAL,
@@ -87,6 +124,10 @@ enum class KeywordEnum {
   FLOAT
 };
 
+/**
+ * @brief Dictionary used to map strings in file to `KeywordEnum` type
+ *
+ */
 map<string, KeywordEnum> KEYWORDS{
     {"new", KeywordEnum::NEW},
     {"material", KeywordEnum::MATERIAL},
@@ -109,58 +150,107 @@ map<string, KeywordEnum> KEYWORDS{
     {"float", KeywordEnum::FLOAT},
 };
 
+/**
+ * @brief All symbols recognized as such by the lexer/parser
+ *
+ */
 char symbols[9] = {'(', ')', '<', '>', ',', '"', '[', ']', '*'};
 
-// Here is the "Token" type! We just combine `TokenType` and `TokenValue`
-// in a product type, which implements a proper "tagged union".
+/**
+ * @brief Struct representing a Token, with its type, value and poisition
+ *
+ */
 struct Token {
   TokenType type;   // The "tag"
   TokenValue value; // The "union"
+  SourceLocation location;
 
-  Token() : type(TokenType::LITERAL_NUMBER) {}
+  /**
+   * @brief Construct a new Token object
+   *
+   * @param _location
+   */
+  Token(SourceLocation _location = SourceLocation())
+      : type(TokenType::LITERAL_NUMBER), location{_location} {}
 
+  /**
+   * @brief Define the Token as a number and assign its value
+   *
+   * @param val
+   */
   void assign_number(float val) {
     type = TokenType::LITERAL_NUMBER;
     value.number = val;
   }
 
-  void assign_string(const std::string &s) {
+  /**
+   * @brief Define the Token as a string and assign its value
+   *
+   * @param s
+   */
+  void assign_string(const string &s) {
     type = TokenType::LITERAL_STRING;
-    value.string = s;
+    value.str = s;
   }
 
-  void assign_keyword(const std::string &k) {
+  /**
+   * @brief Define the Token as a keyword and assign its value
+   *
+   * @param k
+   */
+  void assign_keyword(const string &k) {
     type = TokenType::KEYWORD;
     value.keyword = k;
   }
 
-  void assign_symbol(const char &s) {
+  /**
+   * @brief Define the Token as a symbol and assign its value
+   *
+   * @param c
+   */
+  void assign_symbol(const char &c) {
     type = TokenType::SYMBOL;
-    value.symbol = s;
+    value.symbol = c;
   }
 
-  void assign_identifier(const std::string &id) {
+  /**
+   * @brief Define the Token as an identifier and assign its value
+   *
+   * @param id
+   */
+  void assign_identifier(const string &id) {
     type = TokenType::IDENTIFIER;
     value.identifier = id;
   }
 };
 
 struct InputStream {
+public:
   istream stream;
   SourceLocation location;
+  SourceLocation saved_location;
+  Token saved_token;
   char saved_char;
   int tabulation;
-  Token saved_token;
 
-  /*InputStream(ifstream &_stream, string file_name = "", int _tabulation = 8) {
-    stream = _stream;
+  InputStream(istream &_stream, string file_name = "", int _tabulation = 8)
+      : stream(_stream) {
     location = SourceLocation(file_name, 1, 1);
+    saved_location = location;
     saved_char = ' ';
-    SourceLocation saved_location = location;
     tabulation = _tabulation;
+  }
 
-    // saved_token:
-    // Union[Token, None] = None
-  }*/
+  char read_char();
+  void unread_char(char);
+  void skip_whitespaces_and_comments();
+  Token read_token();
+  void unread_token(Token);
+
+private:
+  void _update_pos(char);
+  Token _parse_string_token(SourceLocation);
+  Token _parse_float_token(char, SourceLocation);
+  Token _parse_keyword_or_identifier_token(char, SourceLocation);
 };
 #endif
