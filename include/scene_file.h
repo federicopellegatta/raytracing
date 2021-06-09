@@ -15,8 +15,8 @@ using namespace std;
  * @brief A specific position in a source file
  *
  * This class has the following fields:
- * @param file_name: the name of the file, or the empty string if there is no
- * file associated with this location (e.g., because the source code was
+ * @param file_name: the name of the file, or the empty string if there is
+ * no file associated with this location (e.g., because the source code was
  * provided as a memory stream, or through a network connection)
  * @param line_num: number of the line (starting from 1)
  * @param col_num: number of the column (starting from 1)
@@ -50,6 +50,8 @@ enum class TokenType {
   KEYWORD,
   IDENTIFIER,
 };
+
+string WHITESPACE = " #\t\n\r";
 
 // The sum type.
 union TokenValue {
@@ -146,21 +148,49 @@ struct Token {
 };
 
 struct InputStream {
-  istream stream;
+public:
+  istream &stream;
   SourceLocation location;
-  char saved_char;
-  int tabulation;
-  Token saved_token;
+  SourceLocation saved_location;
+  int tabulations;
+  char saved_char = '\0'; // '\0' is the null char
 
-  /*InputStream(ifstream &_stream, string file_name = "", int _tabulation = 8) {
-    stream = _stream;
-    location = SourceLocation(file_name, 1, 1);
-    saved_char = ' ';
-    SourceLocation saved_location = location;
-    tabulation = _tabulation;
+  /**
+   * @brief Construct a new Input Stream object
+   *
+   * @param stream
+   * @param location
+   * @param tabulations
+   */
+  InputStream(istream &_stream, SourceLocation _location, int _tabulations = 4)
+      : stream{_stream}, location{_location}, tabulations{_tabulations} {}
 
-    // saved_token:
-    // Union[Token, None] = None
-  }*/
+  /**
+   * @brief Read a new character from the stream
+   *
+   * @return string
+   */
+  char read_char();
+  /**
+   * @brief Push a character back to the stream
+   *
+   * @param ch `Char` to push back
+   */
+  void unread_char(char ch);
+
+  /**
+   * @brief Keep reading characters until a non-whitespace character is found
+   *
+   */
+  void skip_whitespaces_and_comments();
+
+private:
+  /**
+   * @brief Update `location` after having read `ch` from the stream
+   *
+   * @param A `char`
+   */
+  void update_pos(char ch);
 };
+
 #endif
