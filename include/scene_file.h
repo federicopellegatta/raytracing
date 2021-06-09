@@ -17,8 +17,8 @@ using namespace std;
  * @brief A specific position in a source file
  *
  * This class has the following fields:
- * @param file_name: the name of the file, or the empty string if there is no
- * file associated with this location (e.g., because the source code was
+ * @param file_name: the name of the file, or the empty string if there is
+ * no file associated with this location (e.g., because the source code was
  * provided as a memory stream, or through a network connection)
  * @param line_num: number of the line (starting from 1)
  * @param col_num: number of the column (starting from 1)
@@ -80,6 +80,8 @@ enum class TokenType {
   KEYWORD,
   IDENTIFIER
 };
+
+string WHITESPACE = " #\t\n\r";
 
 /**
  * @brief Union representing the values of each TokenType
@@ -226,31 +228,53 @@ struct Token {
 
 struct InputStream {
 public:
-  istream stream;
+  istream &stream;
   SourceLocation location;
   SourceLocation saved_location;
-  Token saved_token;
-  char saved_char;
-  int tabulation;
+  int tabulations;
+  char saved_char = '\0'; // '\0' is the null char
 
-  InputStream(istream &_stream, string file_name = "", int _tabulation = 8)
-      : stream(_stream) {
-    location = SourceLocation(file_name, 1, 1);
-    saved_location = location;
-    saved_char = ' ';
-    tabulation = _tabulation;
-  }
+  /**
+   * @brief Construct a new Input Stream object
+   *
+   * @param stream
+   * @param location
+   * @param tabulations
+   */
+  InputStream(istream &_stream, SourceLocation _location, int _tabulations = 4)
+      : stream{_stream}, location{_location}, tabulations{_tabulations} {}
 
+  /**
+   * @brief Read a new character from the stream
+   *
+   * @return char
+   */
   char read_char();
-  void unread_char(char);
+  /**
+   * @brief Push a character back to the stream
+   *
+   * @param ch `Char` to push back
+   */
+  void unread_char(char ch);
+
+  /**
+   * @brief Keep reading characters until a non-whitespace character is found
+   *
+   */
   void skip_whitespaces_and_comments();
   Token read_token();
   void unread_token(Token);
 
 private:
-  void _update_pos(char);
+  /**
+   * @brief Update `location` after having read `ch` from the stream
+   *
+   * @param ch `char`
+   */
+  void _update_pos(char ch);
   Token _parse_string_token(SourceLocation);
   Token _parse_float_token(char, SourceLocation);
   Token _parse_keyword_or_identifier_token(char, SourceLocation);
 };
+
 #endif
