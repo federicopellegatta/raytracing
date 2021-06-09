@@ -68,6 +68,10 @@ add_executable(pcgTest
   test/pcg.cpp
 )
 
+add_executable(scatter_10000_rays
+  test/scatter_10000_rays.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
@@ -111,6 +115,7 @@ target_link_libraries(shapesTest PUBLIC trace)
 target_link_libraries(materialsTest PUBLIC trace)
 target_link_libraries(renderTest PUBLIC trace)
 target_link_libraries(pcgTest PUBLIC trace)
+target_link_libraries(scatter_10000_rays PUBLIC trace)
 
 
 add_test(NAME colorTest 
