@@ -96,7 +96,7 @@ struct BRDF {
    * @param depth
    * @return Ray
    */
-  virtual Ray scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
+  virtual Ray scatter_ray(PCG &pcg, Vec inc_dir, Point interaction_point,
                           Normal normal, int depth) = 0;
 };
 
@@ -128,7 +128,7 @@ struct DiffusiveBRDF : public BRDF {
    * @param depth
    * @return Ray
    */
-  Ray scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point, Normal normal,
+  Ray scatter_ray(PCG &pcg, Vec inc_dir, Point interaction_point, Normal normal,
                   int depth);
 };
 /**
@@ -155,7 +155,7 @@ struct SpecularBRDF : public BRDF {
       return BLACK;
     }
   }
-  Ray scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point, Normal normal,
+  Ray scatter_ray(PCG &pcg, Vec inc_dir, Point interaction_point, Normal normal,
                   int depth);
 };
 

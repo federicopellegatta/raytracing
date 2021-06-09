@@ -20,7 +20,7 @@ Color ImagePigment::operator()(Vec2d uv) {
   return image.get_pixel(col, row);
 }
 
-Ray DiffusiveBRDF::scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
+Ray DiffusiveBRDF::scatter_ray(PCG &pcg, Vec inc_dir, Point interaction_point,
                                Normal normal, int depth) {
   ONB orthonormal_base(normal);
   float cos_theta_sq = pcg.random_float();
@@ -43,7 +43,7 @@ Ray DiffusiveBRDF::scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
  * @param depth
  * @return Ray
  */
-Ray SpecularBRDF::scatter_ray(PCG pcg, Vec inc_dir, Point interaction_point,
+Ray SpecularBRDF::scatter_ray(PCG &pcg, Vec inc_dir, Point interaction_point,
                               Normal normal, int depth) {
 
   inc_dir.normalize();
