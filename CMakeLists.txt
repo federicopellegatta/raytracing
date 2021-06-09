@@ -56,6 +56,22 @@ add_executable(shapesTest
   test/shapes.cpp
 )
 
+add_executable(materialsTest
+  test/materials.cpp
+)
+
+add_executable(renderTest
+  test/render.cpp
+)
+
+add_executable(pcgTest
+  test/pcg.cpp
+)
+
+add_executable(scatter_10000_rays
+  test/scatter_10000_rays.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
@@ -63,7 +79,11 @@ add_library(trace
     src/format.cc
     src/geometry.cpp
     src/shapes.cpp
+    src/imagetracer.cpp
     src/world.cpp
+    src/materials.cpp
+    src/render.cpp
+    src/pcg.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
@@ -92,6 +112,10 @@ target_link_libraries(rayTest PUBLIC trace)
 target_link_libraries(cameraTest PUBLIC trace)
 target_link_libraries(imagetracerTest PUBLIC trace)
 target_link_libraries(shapesTest PUBLIC trace)
+target_link_libraries(materialsTest PUBLIC trace)
+target_link_libraries(renderTest PUBLIC trace)
+target_link_libraries(pcgTest PUBLIC trace)
+target_link_libraries(scatter_10000_rays PUBLIC trace)
 
 
 add_test(NAME colorTest 
@@ -115,6 +139,15 @@ add_test(NAME imagetracerTest
 add_test(NAME shapesTest
     COMMAND shapesTest 
 )
-# Force the compiler to use the C++17 standard
+add_test(NAME materialsTest
+    COMMAND materialsTest 
+)
+add_test(NAME renderTest
+    COMMAND renderTest 
+)
+add_test(NAME pcgTest
+    COMMAND pcgTest 
+)
+
 # Force the compiler to use the C++17 standard
 target_compile_features(raytracer PUBLIC cxx_std_17)

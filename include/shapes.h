@@ -2,6 +2,7 @@
 #define SHAPES_H
 
 #include "hitrecord.h"
+#include "materials.h"
 #include "ray.h"
 
 /** Shape class
@@ -12,6 +13,12 @@
  *
  */
 struct Shape {
+
+  Transformation transformation;
+  Material material;
+
+  Shape(Transformation _transformation, Material _material)
+      : transformation{_transformation}, material{_material} {}
   /**
    * @brief Compute the intersection between a ray and this shape
    *
@@ -26,10 +33,10 @@ struct Shape {
  * @param _transformation
  */
 struct Sphere : public Shape {
-  Transformation transformation;
 
-  Sphere(Transformation _transformation = Transformation())
-      : transformation{_transformation} {}
+  Sphere(Transformation transformation = Transformation(),
+         Material material = Material())
+      : Shape{transformation, material} {}
 
   /**
    * @brief Checks if a ray intersects the sphere
@@ -53,10 +60,10 @@ private:
  * @see Point
  */
   inline Vec2d sphere_point_to_uv(Point point) {
-    float u = atan2(point.y, point.x) / (float)(2.0 * M_PI);
+    float u = atan2(point.y, point.x) / (2.0 * M_PI);
     if (u < 0)
       u = u + 1;
-    return Vec2d{u, acos(point.z) / (float)(M_PI)};
+    return Vec2d{u, static_cast<float>(acos(point.z) / M_PI)};
   }
 
   /**
@@ -86,10 +93,9 @@ private:
  * @param _transformation
  */
 struct Plane : public Shape {
-  Transformation transformation;
-
-  Plane(Transformation _transformation = Transformation())
-      : transformation{_transformation} {}
+  Plane(Transformation transformation = Transformation(),
+        Material material = Material())
+      : Shape{transformation, material} {};
 
   /**
    * @brief Checks if a ray intersects the sphere

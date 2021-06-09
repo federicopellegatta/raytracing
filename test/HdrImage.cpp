@@ -22,7 +22,7 @@ void test_pixel_offset(HdrImage img) {
 }
 
 void test_set_get_pixel(HdrImage img, Color color, int x, int y) {
-  assert(color.is_close(img.get_pixel(x, y)));
+  assert(color == img.get_pixel(x, y));
 }
 
 void test_pfm_save(HdrImage img) { // SOLO little_endian
@@ -113,25 +113,25 @@ void test_pfm_read() {
   assert(img_le.width == 3);
   assert(img_le.height == 2);
 
-  assert(img_le.get_pixel(0, 0).is_close(Color(1.0e1, 2.0e1, 3.0e1)));
-  assert(img_le.get_pixel(1, 0).is_close(Color(4.0e1, 5.0e1, 6.0e1)));
-  assert(img_le.get_pixel(2, 0).is_close(Color(7.0e1, 8.0e1, 9.0e1)));
-  assert(img_le.get_pixel(0, 1).is_close(Color(1.0e2, 2.0e2, 3.0e2)));
-  assert(img_le.get_pixel(0, 0).is_close(Color(1.0e1, 2.0e1, 3.0e1)));
-  assert(img_le.get_pixel(1, 1).is_close(Color(4.0e2, 5.0e2, 6.0e2)));
-  assert(img_le.get_pixel(2, 1).is_close(Color(7.0e2, 8.0e2, 9.0e2)));
+  assert(img_le.get_pixel(0, 0) == (Color(1.0e1, 2.0e1, 3.0e1)));
+  assert(img_le.get_pixel(1, 0) == (Color(4.0e1, 5.0e1, 6.0e1)));
+  assert(img_le.get_pixel(2, 0) == (Color(7.0e1, 8.0e1, 9.0e1)));
+  assert(img_le.get_pixel(0, 1) == (Color(1.0e2, 2.0e2, 3.0e2)));
+  assert(img_le.get_pixel(0, 0) == (Color(1.0e1, 2.0e1, 3.0e1)));
+  assert(img_le.get_pixel(1, 1) == (Color(4.0e2, 5.0e2, 6.0e2)));
+  assert(img_le.get_pixel(2, 1) == (Color(7.0e2, 8.0e2, 9.0e2)));
 
   // Big endian image tests
   assert(img_be.width == 3);
   assert(img_be.height == 2);
 
-  assert(img_be.get_pixel(0, 0).is_close(Color(1.0e1, 2.0e1, 3.0e1)));
-  assert(img_be.get_pixel(1, 0).is_close(Color(4.0e1, 5.0e1, 6.0e1)));
-  assert(img_be.get_pixel(2, 0).is_close(Color(7.0e1, 8.0e1, 9.0e1)));
-  assert(img_be.get_pixel(0, 1).is_close(Color(1.0e2, 2.0e2, 3.0e2)));
-  assert(img_be.get_pixel(0, 0).is_close(Color(1.0e1, 2.0e1, 3.0e1)));
-  assert(img_be.get_pixel(1, 1).is_close(Color(4.0e2, 5.0e2, 6.0e2)));
-  assert(img_be.get_pixel(2, 1).is_close(Color(7.0e2, 8.0e2, 9.0e2)));
+  assert(img_be.get_pixel(0, 0) == (Color(1.0e1, 2.0e1, 3.0e1)));
+  assert(img_be.get_pixel(1, 0) == (Color(4.0e1, 5.0e1, 6.0e1)));
+  assert(img_be.get_pixel(2, 0) == (Color(7.0e1, 8.0e1, 9.0e1)));
+  assert(img_be.get_pixel(0, 1) == (Color(1.0e2, 2.0e2, 3.0e2)));
+  assert(img_be.get_pixel(0, 0) == (Color(1.0e1, 2.0e1, 3.0e1)));
+  assert(img_be.get_pixel(1, 1) == (Color(4.0e2, 5.0e2, 6.0e2)));
+  assert(img_be.get_pixel(2, 1) == (Color(7.0e2, 8.0e2, 9.0e2)));
 }
 
 void test_average_luminosity() {
@@ -166,13 +166,13 @@ void test_normalize_image(bool test_overload) {
   // Test NormalizeImage
   if (test_overload == false) {
     img.normalize_image(1000.0);
-    assert(img.get_pixel(0, 0).is_close(Color(0.5e2, 1.0e2, 1.5e2)));
-    assert(img.get_pixel(1, 0).is_close(Color(0.5e4, 1.0e4, 1.5e4)));
+    assert(img.get_pixel(0, 0) == (Color(0.5e2, 1.0e2, 1.5e2)));
+    assert(img.get_pixel(1, 0) == (Color(0.5e4, 1.0e4, 1.5e4)));
   } else {
     // Testing overload of NormalizeImage
     img.normalize_image(1000.0, 100.0);
-    assert(img.get_pixel(0, 0).is_close(Color(0.5e2, 1.0e2, 1.5e2)));
-    assert(img.get_pixel(1, 0).is_close(Color(0.5e4, 1.0e4, 1.5e4)));
+    assert(img.get_pixel(0, 0) == (Color(0.5e2, 1.0e2, 1.5e2)));
+    assert(img.get_pixel(1, 0) == (Color(0.5e4, 1.0e4, 1.5e4)));
   }
 }
 

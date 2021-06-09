@@ -2,7 +2,7 @@
 #include "ray.h"
 
 HitRecord World::ray_intersection(Ray ray) {
-  HitRecord closest{};
+  HitRecord closest{shapes.at(0)};
   for (int i{}; i < shapes.size(); i++) {
     HitRecord intersection = shapes[i]->ray_intersection(ray);
     if (!intersection.hit)

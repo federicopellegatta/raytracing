@@ -3,7 +3,6 @@
 
 #include "colors.h"
 #include "gd.h"
-#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -18,7 +17,40 @@
 
 using namespace std;
 
+/**
+ * @brief Class representing the two possible endian values.
+ *
+ */
 enum class Endianness { little_endian, big_endian };
+
+/**
+ * @brief Parse endianess of a pfm file and return either big or little endian
+ *
+ * @return Endianness
+ */
+Endianness parse_endianness(string);
+/**
+ * @brief Parse ofm file to get image size
+ *
+ * @return vector<int>
+ */
+vector<int> parse_img_size(string);
+
+/**
+ * @brief Clamp the colors of the image
+ *
+ * @param x
+ * @return float
+ */
+inline float clamp(float x) { return x / (1 + x); }
+
+/**
+ * @brief Derived class for error management
+ *
+ */
+class InvalidPfmFileFormat : public runtime_error {
+  using runtime_error::runtime_error;
+};
 
 /** HdrImage class
  * @brief This class represents a HDR (High-Dynamic Range) image
@@ -29,13 +61,27 @@ enum class Endianness { little_endian, big_endian };
  */
 struct HdrImage {
 private:
-  // Read a pfm file
+  /**
+   * @brief Read a pfm file
+   *
+   */
   void read_pfm(istream &);
-  // Allocate an image in memory,
-  // initializing width, height and pixels.size()
-  void allocate_memory(int, int);
-  // Normalize the pixels
-  // Needed for NormalizeImage and its overload
+  /**
+   * @brief Allocate an image in memory, initializing width, height and
+    pixels.size
+   *
+   * @param w
+   * @param h
+   */
+  inline void allocate_memory(int w, int h) {
+    width = w;
+    height = h;
+    pixels.resize(w * h);
+  }
+  /**
+   * @brief Normalize the pixels
+   *
+   */
   void normalize_pixels(float, float);
 
 public:
@@ -43,53 +89,121 @@ public:
   int height;
   vector<Color> pixels;
 
+  /**
+   * @brief Construct a new Hdr Image object from two integers (width and
+   * height)
+   *
+   */
   HdrImage(int, int);
+  /**
+   * @brief Construct a new Hdr Image object using an input file
+   *
+   */
   HdrImage(const string &);
+  /**
+   * @brief Construct a new Hdr Image object from a input stream
+   *
+   */
   HdrImage(istream &);
-  ~HdrImage();
+  /**
+   * @brief Destroy the Hdr Image object
+   *
+   */
+  ~HdrImage(){};
 
-  // Getter and setter methods
-  Color get_pixel(int, int);
+  /**
+   * @brief Converts matrix like position in 1D vector position (needed by
+   * vector<Colors> pixels)
+   * @param x
+   * @param y
+   * @return int
+   */
+  inline int pixel_offset(int x, int y) { return y * width + x; }
+  /**
+   * @brief Get the pixel object
+   *
+   * @param x
+   * @param y
+   * @return Color
+   */
+  inline Color get_pixel(int x, int y) { return pixels[pixel_offset(x, y)]; }
+
+  /**
+   * @brief Assign color to target pixel
+   *
+   */
   void set_pixel(int, int, Color);
 
-  // Misc methods to check integrity
+  /**
+   * @brief Check if x and y are positive integers, and are inside the matrix
+   *
+   * @return true
+   * @return false
+   */
   bool valid_coordinates(int, int);
-  int pixel_offset(int, int);
 
-  // Write a float number as its 4 bytes
+  /**
+   * @brief Write a float number as its 4 bytes
+   *
+   */
   void write_float(ostream &, float, Endianness);
 
-  // Methods to write to file on disk or to file on memory
+  /**
+   * @brief Methods to write to file on disk or to file on memory
+   *
+   */
   void write_pfm(ostream &, Endianness);
 
-  // Read a float number as its 4 bytes
+  /**
+   * @brief Read a float number as its 4 bytes
+   *
+   * @return float
+   */
   float read_float(istream &, Endianness);
 
+  /**
+   * @brief Calculates the average luminosity of the image
+   *
+   * @return float
+   */
   float average_luminosity(float);
-  float average_luminosity();
+  /**
+   * @brief Overload, calls `average_luminosity` with fixed delta = 1e-10
+   *
+   * @return float
+   */
+  inline float average_luminosity() { return average_luminosity(1e-10); }
 
-  // Normalize Image (needed for conversion to LDR)
-  // This accept only the factor, and calculates the luminosity
-  void normalize_image(float);
-  // Overload that accepts a luminosity parameter
-  void normalize_image(float, float);
+  /**
+   * @brief Normalize the image by `factor`. Calculates internally the
+   * luminosity to use.
+   *
+   * @param factor
+   */
+  inline void normalize_image(float factor) {
+    float luminosity = average_luminosity();
+    normalize_pixels(factor, luminosity);
+  }
+  /**
+   * @brief Overload: accepts a luminosity parameter
+   *
+   * @param factor
+   * @param luminosity
+   */
+  inline void normalize_image(float factor, float luminosity) {
+    normalize_pixels(factor, luminosity);
+  }
 
-  // clamp luminosity spot
+  /**
+   * @brief clamp luminosity spot
+   *
+   */
   void clamp_image();
 
-  // Convert PFM to a LDR format
+  /**
+   * @brief Convert PFM to a LDR format
+   *
+   */
   void write_ldr_image(const char *, float);
 };
-
-// classe figlia di std::runtime_error
-class InvalidPfmFileFormat : public runtime_error {
-  using runtime_error::runtime_error;
-};
-
-// Reading pfm files methods
-Endianness parse_endianness(string);
-vector<int> parse_img_size(string);
-
-float clamp(float);
-
 #endif

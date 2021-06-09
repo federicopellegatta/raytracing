@@ -1,11 +1,49 @@
 #include "HdrImage.h"
 
-using namespace std;
+void HdrImage::read_pfm(istream &stream) {
+  if (!stream)
+    throw ios_base::failure("File does not exist");
 
-void HdrImage::allocate_memory(int w, int h) {
-  width = w;
-  height = h;
-  pixels.resize(w * h);
+  // get length of file:
+  stream.seekg(0, stream.end);
+  int file_len = stream.tellg();
+  stream.seekg(0, stream.beg);
+  if (file_len == -1)
+    throw InvalidPfmFileFormat("The file is empty");
+
+  // check file format: is it a PFM file?
+  string magic;
+  getline(stream, magic);
+  if (magic != "PF")
+    throw InvalidPfmFileFormat("Invalid magic in PFM file");
+
+  // read img_size
+  string img_size;
+  getline(stream, img_size);
+  width = parse_img_size(img_size)[0];
+  height = parse_img_size(img_size)[1];
+
+  // read endianness
+  string e;
+  Endianness endianness;
+  getline(stream, e);
+  endianness = parse_endianness(e);
+
+  // check if img pixels are >= width*height
+  int header_len = stream.tellg();
+  if ((file_len - header_len) < (width * height * 3 * 4))
+    throw InvalidPfmFileFormat("Invalid file dimension");
+
+  allocate_memory(width, height);
+  // Read the image
+  for (int y{height - 1}; y >= 0; y--) {
+    for (int x{}; x < width; x++) {
+      float r = read_float(stream, endianness);
+      float g = read_float(stream, endianness);
+      float b = read_float(stream, endianness);
+      set_pixel(x, y, Color(r, g, b));
+    }
+  }
 }
 
 HdrImage::HdrImage(int w, int h) { allocate_memory(w, h); }
@@ -17,11 +55,6 @@ HdrImage::HdrImage(const string &file_name) {
 
 HdrImage::HdrImage(istream &stream) { read_pfm(stream); };
 
-// Default destructor
-HdrImage::~HdrImage(){};
-
-// Valid coordinates implementation
-// Check if x and y are positive integers, and are inside the matrix
 bool HdrImage::valid_coordinates(int x, int y) {
   if (x >= 0 && x < width && y >= 0 && y < height) {
     return true;
@@ -30,11 +63,6 @@ bool HdrImage::valid_coordinates(int x, int y) {
   }
 }
 
-// Converts matrix like position in 1D vector position (needed by vector<Colors>
-// pixels)
-int HdrImage::pixel_offset(int x, int y) { return y * width + x; }
-
-// Assign color to target pixel
 void HdrImage::set_pixel(int x, int y, Color color) {
   if (valid_coordinates(x, y)) {
     pixels[pixel_offset(x, y)] = color;
@@ -42,9 +70,6 @@ void HdrImage::set_pixel(int x, int y, Color color) {
     fmt::print("Couldn't set pixel because coordinates are not valid!\n");
   }
 }
-
-// Getter implementation
-Color HdrImage::get_pixel(int x, int y) { return pixels[pixel_offset(x, y)]; }
 
 void HdrImage::write_float(ostream &stream, float value,
                            Endianness endianness) {
@@ -165,56 +190,6 @@ vector<int> parse_img_size(string str) {
   return dim;
 }
 
-void HdrImage::read_pfm(istream &stream) {
-  if (!stream)
-    throw ios_base::failure("File does not exist");
-
-  // get length of file:
-  stream.seekg(0, stream.end);
-  int file_len = stream.tellg();
-  stream.seekg(0, stream.beg);
-  if (file_len == -1)
-    throw InvalidPfmFileFormat("The file is empty");
-
-  // check file format: is it a PFM file?
-  string magic;
-  getline(stream, magic);
-  if (magic != "PF")
-    throw InvalidPfmFileFormat("Invalid magic in PFM file");
-
-  // read img_size
-  string img_size;
-  getline(stream, img_size);
-  width = parse_img_size(img_size)[0];
-  height = parse_img_size(img_size)[1];
-
-  // read endianness
-  string e;
-  Endianness endianness;
-  getline(stream, e);
-  endianness = parse_endianness(e);
-
-  // check if img pixels are >= width*height
-  int header_len = stream.tellg();
-  if ((file_len - header_len) < (width * height * 3 * 4))
-    throw InvalidPfmFileFormat("Invalid file dimension");
-
-  // HdrImage results = HdrImage(width, height);
-  allocate_memory(width, height);
-  // Read the image
-  for (int y{height - 1}; y >= 0; y--) {
-    for (int x{}; x < width; x++) {
-      float r = read_float(stream, endianness);
-      float g = read_float(stream, endianness);
-      float b = read_float(stream, endianness);
-      // results.set_pixel(x, y, Color{r, g, b});
-      set_pixel(x, y, Color(r, g, b));
-    }
-  }
-
-  // pixels = results.pixels;
-}
-
 float HdrImage::average_luminosity(float delta) {
   float cumsum = 0.f;
   for (int i{}; i < pixels.size(); i++)
@@ -223,8 +198,6 @@ float HdrImage::average_luminosity(float delta) {
   return pow(10, cumsum / pixels.size());
 };
 
-float clamp(float x) { return float(x / (1 + x)); }
-
 void HdrImage::clamp_image() {
   for (int i{}; i < pixels.size(); i++) {
     pixels[i].r = clamp(pixels[i].r);
@@ -232,7 +205,6 @@ void HdrImage::clamp_image() {
     pixels[i].b = clamp(pixels[i].b);
   }
 }
-float HdrImage::average_luminosity() { return average_luminosity(1e-10); }
 
 void HdrImage::normalize_pixels(float factor, float luminosity) {
   if (factor <= 0)
@@ -241,15 +213,6 @@ void HdrImage::normalize_pixels(float factor, float luminosity) {
   for (int i{}; i < pixels.size(); i++) {
     pixels[i] = pixels[i] * (factor / luminosity);
   }
-}
-// Implementation of normalize_image
-void HdrImage::normalize_image(float factor) {
-  float luminosity = average_luminosity();
-  normalize_pixels(factor, luminosity);
-}
-// Overload of normalize_image
-void HdrImage::normalize_image(float factor, float luminosity) {
-  normalize_pixels(factor, luminosity);
 }
 
 // Write LDR image

@@ -4,44 +4,30 @@
 /* VECS, POINT AND NORMAL */
 ////////////////////////////
 
+Normal Vec::to_norm() {
+  this->normalize();
+  return Normal{this->x, this->y, this->z};
+}
+
 Vec VEC_X(1.0, 0.0, 0.0);
 Vec VEC_Y(0.0, 1.0, 0.0);
 Vec VEC_Z(0.0, 0.0, 1.0);
 
-/* // Sum operation between Vecs and Points
-Vec operator+(const Vec &a, const Vec &b) { return _sum<Vec, Vec, Vec>(a, b); }
-Point operator+(const Point &a, const Vec &b) {
-  return _sum<Point, Vec, Point>(a, b);
+///////////////////////////
+/* ORHOGONAL NORMAL BASE */
+///////////////////////////
+
+ONB::ONB(Normal normal) {
+  normal.normalize();
+  float sign = copysign(1.0, normal.z);
+  float a = -1.0 / (sign + normal.z);
+  float b = normal.x * normal.y * a;
+
+  e1 = Vec(1.0 + sign * normal.x * normal.x * a, sign * b, -sign * normal.x);
+  e2 = Vec(b, sign + normal.y * normal.y * a, -normal.y);
+  e3 = normal.to_vec();
 }
 
-// Mul operation between Vecs/Points and a floating point (and viceversa)
-Vec operator*(const float &a, const Vec &b) { return _mul<Vec, Vec>(a, b); }
-Vec operator*(const Vec &a, const float &b) { return b * a; }
-
-Normal operator*(const float &a, const Normal &b) {
-  return _mul<Normal, Normal>(a, b);
-}
-
-Point operator*(const float &a, const Point &b) {
-  return _mul<Point, Point>(a, b);
-}
-Point operator*(const Point &a, const float &b) { return b * a; }
-
-// Minus operation between Vecs and Points
-Vec operator-(const Vec &a, const Vec &b) {
-  return _sum<Vec, Vec, Vec>(a, -1 * b);
-}
-Normal operator-(const Normal &a, const Normal &b) {
-  return _sum<Normal, Normal, Normal>(a, -1 * b);
-}
-
-Vec operator-(const Point &a, const Point &b) {
-  return _sum<Point, Point, Vec>(a, -1 * b);
-}
-Point operator-(const Point &a, const Vec &b) {
-  return _sum<Point, Vec, Point>(a, -1 * b);
-}
-*/
 ////////////////////
 /* TRANSFORMATION */
 ////////////////////
@@ -108,13 +94,6 @@ string Transformation::to_str() {
 
 Transformation Transformation::inverse() { return Transformation{invm, m}; }
 
-// Mul operation overloading
-Vec Transformation::operator*(Vec vec) {
-  return Vec{vec.x * m[0][0] + vec.y * m[0][1] + vec.z * m[0][2],
-             vec.x * m[1][0] + vec.y * m[1][1] + vec.z * m[1][2],
-             vec.x * m[2][0] + vec.y * m[2][1] + vec.z * m[2][2]};
-}
-
 Point Transformation::operator*(Point p) {
   float x = m[0][0] * p.x + m[0][1] * p.y + m[0][2] * p.z + m[0][3];
   float y = m[1][0] * p.x + m[1][1] * p.y + m[1][2] * p.z + m[1][3];
@@ -128,12 +107,6 @@ Point Transformation::operator*(Point p) {
   }
 
   return Point{x, y, z};
-}
-
-Normal Transformation::operator*(Normal n) {
-  return Normal{n.x * invm[0][0] + n.y * invm[1][0] + n.z * invm[2][0],
-                n.x * invm[0][1] + n.y * invm[1][1] + n.z * invm[2][1],
-                n.x * invm[0][2] + n.y * invm[1][2] + n.z * invm[2][2]};
 }
 
 Transformation Transformation::operator*(Transformation t) {

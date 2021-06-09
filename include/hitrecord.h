@@ -1,36 +1,15 @@
 #ifndef HITRECORD_H
 #define HITRECORD_H
-#include "ray.h"
-/**
- * @brief A 2D vector used to represent a point on a surface
- *
- */
-struct Vec2d {
-  /**
-   * @brief The class members are named u and v to distinguish them from x,y,z,
-   * which are used for 3D vectors
-   *
-   */
-  float u, v;
-  /**
-   * @brief Construct a new Vec 2d object
-   *
-   * @param _u
-   * @param _v
-   */
-  Vec2d(float _u = 0.f, float _v = 0.f) : u{_u}, v{_v} {}
 
-  /**
-   * @brief Check whether two 2d vectors are the same
-   *
-   * @param other_vec2d
-   * @return true
-   * @return false
-   */
-  inline bool is_close(Vec2d other_vec2d) {
-    return are_close(u, other_vec2d.u) && are_close(v, other_vec2d.v);
-  }
-};
+#include "geometry.h"
+#include "ray.h"
+
+/**
+ * @brief "Redefining" class Shape in order to avoid circular references
+ * This works because we only use a pointer to Shape
+ */
+class Shape;
+
 /**
  * @brief A class representing an intersection between a ray and a shape
  *
@@ -44,11 +23,13 @@ struct Vec2d {
  the ray where the hit happened
  * @param ray the ray that hit the surface
  * @param hit a bool which says whether the ray hit the surface
+ * @param shape pointer to the shape hit by the ray
  *
  * @see Point
  * @see Normal
  * @see Vec2d
  * @see Ray
+ * @see Shape
  */
 struct HitRecord {
 
@@ -56,9 +37,9 @@ struct HitRecord {
   Normal normal;
   Vec2d surface_point;
   Ray ray;
+  shared_ptr<Shape> shape;
   float t;
   bool hit;
-
   /**
    * @brief Construct a new Hit Record object
    *
@@ -68,12 +49,16 @@ struct HitRecord {
    * @param t
    * @param ray
    * @param hit
+   * @param shape
    */
-  HitRecord(Point _world_point = Point(), Normal _normal = Normal(),
-            Vec2d _surface_point = Vec2d(), float _t = 0.f, Ray _ray = Ray(),
-            bool _hit = false)
-      : world_point{_world_point}, normal{_normal},
-        surface_point{_surface_point}, t{_t}, ray{_ray}, hit{_hit} {}
+  HitRecord(shared_ptr<Shape> _shape, Point _world_point = Point(),
+            Normal _normal = Normal(), Vec2d _surface_point = Vec2d(),
+            float _t = 0.f, Ray _ray = Ray(), bool _hit = false)
+      : shape{_shape}, world_point{_world_point}, normal{_normal},
+        surface_point{_surface_point}, ray{_ray} {
+    t = _t;
+    hit = _hit;
+  }
 
   /**
    * @brief Check if two HitRecords are the same hit event or not

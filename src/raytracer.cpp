@@ -2,7 +2,10 @@
 #include "args.hxx"
 #include "camera.h"
 #include "imagetracer.h"
+#include "materials.h"
+#include "render.h"
 #include "world.h"
+#include <memory>
 
 using namespace std;
 
@@ -15,36 +18,56 @@ struct Demo {
   Demo(int width, int height, float angle_deg, string camera_type,
        string output);
 
-  void run();
+  void run(string, int, int, int, int, int);
 };
 
 Demo::Demo(int width, int height, float angle_deg, string camera_type,
            string output)
     : image(width, height) {
+  // Defining materials
+  Material sky_material(
+      make_shared<DiffusiveBRDF>(make_shared<UniformPigment>(BLACK)),
+      make_shared<UniformPigment>(Color(1.0, 0.9, 0.5)));
+  Material ground_material(
+      make_shared<DiffusiveBRDF>(make_shared<CheckeredPigment>(
+          Color(0.3, 0.5, 0.1), Color(0.1, 0.2, 0.5))));
+  Material sphere_material(make_shared<DiffusiveBRDF>(
+      make_shared<UniformPigment>(Color(0.3, 0.4, 0.8))));
+  Material mirror_material(make_shared<SpecularBRDF>(
+      make_shared<UniformPigment>(Color(0.6, 0.2, 0.3))));
   // Create a world and populate it with a few shapes
-  for (int i{}; i < 2; i++) {
-    for (int j{}; j < 2; j++) {
-      for (int k{}; k < 2; k++) {
-        float x = 0.5 - i;
-        float y = 0.5 - j;
-        float z = 0.5 - k;
-        world.add(make_shared<Sphere>(
-            Sphere{translation(Vec(x, y, z)) * scaling(Vec(0.1, 0.1, 0.1))}));
-      }
-    }
-  }
+  // for (int i{}; i < 2; i++) {
+  //  for (int j{}; j < 2; j++) {
+  //    for (int k{}; k < 2; k++) {
+  //      float x = 0.5 - i;
+  //      float y = 0.5 - j;
+  //      float z = 0.5 - k;
+  //      world.add(make_shared<Sphere>(
+  //          Sphere{translation(Vec(x, y, z)) * scaling(Vec(0.1, 0.1, 0.1)),
+  //                 material1}));
+  //    }
+  //  }
+  //}
 
   // Place two other balls in the bottom / left part of the cube,so that we can
   // check if there are issues with the orientation of the image
+  // world.add(make_shared<Sphere>(
+  //    Sphere{translation(Vec(0.0, 0.0, -0.5)) * scaling(Vec(0.1, 0.1, 0.1)),
+  //           material2}));
+  // world.add(make_shared<Sphere>(
+  //    Sphere{translation(Vec(0.0, 0.5, 0.0)) * scaling(Vec(0.1, 0.1, 0.1)),
+  //           material3}));
+
+  world.add(make_shared<Plane>(Transformation(), ground_material));
   world.add(make_shared<Sphere>(
-      Sphere{translation(Vec(0.0, 0.0, -0.5)) * scaling(Vec(0.1, 0.1, 0.1))}));
-  world.add(make_shared<Sphere>(
-      Sphere{translation(Vec(0.0, 0.5, 0.0)) * scaling(Vec(0.1, 0.1, 0.1))}));
+      translation(Vec(0, 0, 0.4)) * scaling(Vec(200, 200, 200)), sky_material));
+  world.add(make_shared<Sphere>(translation(Vec(0, 0, 1)), sphere_material));
+  world.add(make_shared<Sphere>(translation(Vec(1, 2.5, 0)), mirror_material));
 
   // Initialize camera
   float angle_rad = angle_deg * M_PI / 180;
   Transformation camera_tr =
-      rotation_z(angle_rad) * translation(Vec(-1.0, 0.0, 0.0));
+      rotation_z(angle_rad) * translation(Vec(-1.0, 0.0, 1.0));
 
   if (camera_type == "orthogonal" || camera_type == "orthogonalCamera")
     camera = make_shared<OrthogonalCamera>(OrthogonalCamera(
@@ -70,15 +93,35 @@ Demo::Demo(int width, int height, float angle_deg, string camera_type,
     png_output = output + ".png";
 }
 
-void Demo::run() {
-  ImageTracer tracer(image, camera);
-  tracer.fire_all_rays([&](Ray ray) -> Color {
-    if (world.ray_intersection(ray).hit) {
-      return Color{1.0, 1.0, 1.0};
-    } else {
-      return Color{0.0, 0.0, 0.0};
-    }
-  });
+void Demo::run(string algorithm, int init_state, int init_seq, int num_of_rays,
+               int max_depth, int samples_per_pixel) {
+  shared_ptr<Renderer> renderer;
+  int samples_per_side = static_cast<int>(sqrt(samples_per_pixel));
+  if (pow(samples_per_side, 2) != samples_per_pixel) {
+    fmt::print("ERROR: the number of samples per pixel ({}) must be a perfect "
+               "square.\nExiting.\n",
+               samples_per_pixel);
+    exit(1);
+  }
+
+  ImageTracer tracer(image, camera, samples_per_side);
+
+  if (algorithm == "onoff") {
+    fmt::print("Using on/off renderer\n");
+    renderer = make_shared<OnOffRenderer>(world);
+  } else if (algorithm == "flat") {
+    fmt::print("Using flat renderer\n");
+    renderer = make_shared<FlatRenderer>(world);
+  } else if (algorithm == "pathtracing") {
+    fmt::print("Using a path tracer\n");
+    renderer = make_shared<PathTracer>(world, BLACK, PCG(init_state, init_seq),
+                                       num_of_rays, max_depth);
+  } else {
+    fmt::print("Unknown renderer type.\nExiting.\n");
+    exit(1);
+  }
+
+  tracer.fire_all_rays([&](const Ray &ray) { return (*renderer)(ray); });
 
   ofstream stream(pfm_output);
   tracer.image.write_pfm(stream, Endianness::little_endian);
@@ -94,25 +137,30 @@ void Demo::run() {
 
 struct pfm2png {
   HdrImage image;
-  float factor = 1.0;
-  float gamma = 1.0;
-  string input_pfm_filename = "";
-  string output_filename = "";
+  float factor;
+  float gamma;
+  float luminosity;
+  string input_pfm_filename;
+  string output_filename;
 
-  pfm2png(string input_pfm_filename, string output_filename, float factor,
-          float gamma);
+  pfm2png(string, string, float, float, float);
 };
 
 pfm2png::pfm2png(string input_pfm_filename, string output_filename,
-                 float _factor, float _gamma)
+                 float _factor = 1., float _gamma = 1., float _luminosity = 0.)
     : image(input_pfm_filename) {
 
   factor = _factor;
   gamma = _gamma;
+  luminosity = _luminosity;
   fmt::print("File {} has been read from disk. \n", input_pfm_filename);
 
   // Run Tone-Mapping
-  image.normalize_image(factor);
+  if (luminosity == 0.) {
+    image.normalize_image(factor);
+  } else {
+    image.normalize_image(factor, luminosity);
+  }
   image.clamp_image();
 
   // Open output file
@@ -150,11 +198,37 @@ int interface(int argc, char **argv) {
       demo_arguments, "",
       "Type of camera to use, can be either 'perspective' or 'orthogonal'",
       {"cam", "camera"});
+  args::ValueFlag<string> algorithm(
+      demo_arguments, "",
+      "Type of renderer to use to produce image, "
+      "can either be 'flat', 'onoff' or 'pathtracing'",
+      {"alg", "algorithm"});
   args::ValueFlag<string> output_filename(
       demo_arguments, "",
       "Name of the output file. The program will produce two files: "
       "<outf>.pfm and <outf>.png (or <outf>.jpg)",
       {"outf", "output_filename"});
+  args::ValueFlag<int> num_of_rays(
+      demo_arguments, "",
+      "Number of rays departing from each surface point (only applicable with "
+      "--algorithm=pathtracing).",
+      {"num-of-rays"});
+  args::ValueFlag<int> max_depth(demo_arguments, "",
+                                 "Maximum allowed ray depth (only applicable "
+                                 "with --algorithm=pathtracing).",
+                                 {"max-depth"});
+  args::ValueFlag<int> init_state(
+      demo_arguments, "",
+      "Initial seed for the random number generator (positive number).",
+      {"init-state"});
+  args::ValueFlag<int> init_seq(demo_arguments, "",
+                                "Identifier of the sequence produced by the "
+                                "random number generator (positive number).",
+                                {"init-seq"});
+  args::ValueFlag<int> samples_per_pixel(
+      demo_arguments, "",
+      "Number of samples per pixel (must be a perfect square, e.g., 16).",
+      {"samples-per-pixel"});
   args::ValueFlag<string> input_pfm(
       pfm2png_arguments, "", "Path to input pfm file", {"inpfm", "input_pfm"});
   args::ValueFlag<string> output_png(pfm2png_arguments, "",
@@ -162,6 +236,11 @@ int interface(int argc, char **argv) {
                                      {"outpng", "output_png"});
   args::ValueFlag<float> factor(pfm2png_arguments, "", "Normalization factor",
                                 {'f', "factor"});
+  args::ValueFlag<float> luminosity(
+      pfm2png_arguments, "",
+      "Luminosity. Use 0 and it will be calculated "
+      "internally.",
+      {'l', "luminosity"});
   args::ValueFlag<float> gamma(pfm2png_arguments, "",
                                "Gamma factor of the screen to use",
                                {'g', "gamma"});
@@ -184,11 +263,13 @@ int interface(int argc, char **argv) {
   if (demo) {
     Demo test(args::get(width), args::get(height), args::get(angle_deg),
               args::get(camera), args::get(output_filename));
-    test.run();
+    test.run(args::get(algorithm), args::get(init_state), args::get(init_seq),
+             args::get(num_of_rays), args::get(max_depth),
+             args::get(samples_per_pixel));
   }
   if (convertpfm2png) {
     pfm2png(args::get(input_pfm), args::get(output_png), args::get(factor),
-            args::get(gamma));
+            args::get(gamma), args::get(luminosity));
   }
   return 0;
 }

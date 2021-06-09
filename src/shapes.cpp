@@ -26,7 +26,7 @@ HitRecord Sphere::ray_intersection(Ray ray) {
 
   Point hit_point = inv_ray.at(first_hit_t);
 
-  return HitRecord(transformation * hit_point,
+  return HitRecord(make_shared<Sphere>(*this), transformation * hit_point,
                    transformation * sphere_normal(hit_point, ray.dir),
                    sphere_point_to_uv(hit_point), first_hit_t, ray, hit);
 }
@@ -38,10 +38,14 @@ HitRecord Plane::ray_intersection(Ray ray) {
 
   if (are_close(inv_ray.dir.z, 0.0)) // if ray is parallel to the plane
     hit = false;
+
   float t = -origin_vec.z / inv_ray.dir.z;
 
+  if (t <= inv_ray.tmin || t >= inv_ray.tmax)
+    hit = false;
+
   Point hit_point = inv_ray.at(t);
-  return HitRecord(transformation * hit_point,
+  return HitRecord(make_shared<Plane>(*this), transformation * hit_point,
                    transformation * plane_normal(hit_point, ray.dir),
                    plane_point_to_uv(hit_point), t, ray, hit);
 }
