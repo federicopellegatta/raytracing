@@ -14,8 +14,7 @@
 using namespace std;
 
 string WHITESPACE = " #\t\n\r";
-char symbols[9] = {'(', ')', '<', '>', ',', '"', '[', ']', '*'};
-
+string symbols = {'(', ')', '<', '>', ',', '"', '[', ']', '*'};
 /**
  * @brief A specific position in a source file
  *
@@ -222,6 +221,11 @@ struct Token {
     type = TokenType::IDENTIFIER;
     value.identifier = id;
   }
+};
+
+struct StopToken : public Token {
+
+  StopToken(SourceLocation _location = SourceLocation()) : Token{_location} {}
 };
 
 struct InputStream {

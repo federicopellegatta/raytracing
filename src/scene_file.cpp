@@ -125,5 +125,40 @@ Token InputStream::_parse_keyword_or_identifier_token(
   return token;
 }
 
-Token InputStream::read_token() { return Token(); }
+Token InputStream::read_token() {
+
+  skip_whitespaces_and_comments();
+
+  // At this point we're sure that ch does *not* contain a whitespace character
+  char ch = read_char();
+
+  if (ch == char_traits<char>::eof()) {
+    // No more characters in the file, so return a StopToken
+    return StopToken(location);
+  }
+
+  // At this point we must check what kind of token begins with the "ch"
+  // character (which has been put back in the stream with self.unread_char).
+  // First, we save the position in the stream
+  SourceLocation token_location = location;
+  if (symbols.find(ch) != string::npos) {
+    // One-character symbol, like '(' or ','
+    Token symbolToken(token_location);
+    symbolToken.assign_symbol(ch);
+    return symbolToken;
+  } else if (ch == '"') {
+    // A literal string (used for file names)
+    return _parse_string_token(token_location);
+  } else if (isdigit(ch) || ch == '+' || ch == '-' || ch == '.') {
+    // A floating-point number
+    return _parse_float_token(ch, token_location);
+  } else if (isalpha(ch) || ch == '_') {
+    // Since it begins with an alphabetic character, it must either be a keyword
+    // or a identifier
+    return _parse_keyword_or_identifier_token(ch, token_location);
+  } else {
+    // We got some weird character, like '@` or `&`
+    throw GrammarError(location, ch + ": invalid character");
+  }
+}
 void InputStream::unread_token(Token _token) {}
