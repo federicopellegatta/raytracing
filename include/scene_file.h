@@ -13,6 +13,9 @@
 
 using namespace std;
 
+string WHITESPACE = " #\t\n\r";
+char symbols[9] = {'(', ')', '<', '>', ',', '"', '[', ']', '*'};
+
 /**
  * @brief A specific position in a source file
  *
@@ -70,37 +73,6 @@ struct GrammarError {
 };
 
 /**
- * @brief All possible types of tokens
- *
- */
-enum class TokenType {
-  LITERAL_NUMBER,
-  LITERAL_STRING,
-  SYMBOL,
-  KEYWORD,
-  IDENTIFIER
-};
-
-string WHITESPACE = " #\t\n\r";
-
-/**
- * @brief Union representing the values of each TokenType
- *
- */
-union TokenValue {
-  float number;
-  string str;
-  string keyword;
-  string identifier;
-  char symbol;
-
-  // The default constructor and destructor are *mandatory* for unions to
-  // be used in structs/classes
-  TokenValue() { number = 0.; }
-  ~TokenValue() {}
-};
-
-/**
  * @brief All possible keywords accepted
  *
  */
@@ -153,10 +125,34 @@ map<string, KeywordEnum> KEYWORDS{
 };
 
 /**
- * @brief All symbols recognized as such by the lexer/parser
+ * @brief All possible types of tokens
  *
  */
-char symbols[9] = {'(', ')', '<', '>', ',', '"', '[', ']', '*'};
+enum class TokenType {
+  LITERAL_NUMBER,
+  LITERAL_STRING,
+  SYMBOL,
+  KEYWORD,
+  IDENTIFIER
+};
+
+/**
+ * @brief Union representing the values of each TokenType
+ *
+ */
+union TokenValue {
+  float number;
+  string str;
+  KeywordEnum keyword;
+  string identifier;
+  char symbol;
+
+  // The default constructor and destructor are *mandatory* for unions to
+  // be used in structs/classes
+  TokenValue() : number(0.0) {}
+  TokenValue(const TokenValue &t) : number{t.number} {}
+  ~TokenValue() {}
+};
 
 /**
  * @brief Struct representing a Token, with its type, value and poisition
@@ -174,6 +170,8 @@ struct Token {
    */
   Token(SourceLocation _location = SourceLocation())
       : type(TokenType::LITERAL_NUMBER), location{_location} {}
+
+  Token(const Token &t) : type{t.type}, value{t.value}, location{t.location} {}
 
   /**
    * @brief Define the Token as a number and assign its value
@@ -200,7 +198,7 @@ struct Token {
    *
    * @param k
    */
-  void assign_keyword(const string &k) {
+  void assign_keyword(const KeywordEnum &k) {
     type = TokenType::KEYWORD;
     value.keyword = k;
   }
@@ -242,7 +240,9 @@ public:
    * @param tabulations
    */
   InputStream(istream &_stream, SourceLocation _location, int _tabulations = 4)
-      : stream{_stream}, location{_location}, tabulations{_tabulations} {}
+      : stream{_stream}, location{_location} {
+    tabulations = _tabulations;
+  }
 
   /**
    * @brief Read a new character from the stream
