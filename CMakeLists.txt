@@ -68,6 +68,10 @@ add_executable(pcgTest
   test/pcg.cpp
 )
 
+add_executable(scene_fileTest
+  test/scene_file.cpp
+)
+
 # Our project will be able to build a library
 add_library(trace
     src/colors.cpp
@@ -112,6 +116,7 @@ target_link_libraries(shapesTest PUBLIC trace)
 target_link_libraries(materialsTest PUBLIC trace)
 target_link_libraries(renderTest PUBLIC trace)
 target_link_libraries(pcgTest PUBLIC trace)
+target_link_libraries(scene_fileTest PUBLIC trace)
 
 
 add_test(NAME colorTest 
@@ -143,6 +148,9 @@ add_test(NAME renderTest
 )
 add_test(NAME pcgTest
     COMMAND pcgTest 
+)
+add_test(NAME scene_fileTest
+    COMMAND scene_fileTest 
 )
 
 # Force the compiler to use the C++17 standard
