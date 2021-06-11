@@ -49,7 +49,40 @@ void test_input_file() {
 
   assert(stream.read_char() == '\0');
 }
+
+void test_lexer() {
+  stringstream sstr(
+      "\n# This is a comment\n# This is another comment\nnew material "
+      "sky_material(\ndiffuse(image(\"my file.pfm\")),\n<5.0, 500.0, 300.0>\n) "
+      "# Comment at the end of the line\n");
+
+  InputStream stream(sstr);
+
+  assert(stream.read_token().value.keyword == KeywordEnum::NEW);
+  assert(stream.read_token().value.keyword == KeywordEnum::MATERIAL);
+  assert(stream.read_token().value.identifier == "sky_material");
+  /*
+  assert(stream.read_token().value.symbol == '(');
+  assert(stream.read_token().value.keyword == KeywordEnum::DIFFUSE);
+  assert(stream.read_token().value.symbol == '(');
+  assert(stream.read_token().value.keyword == KeywordEnum::IMAGE);
+  assert(stream.read_token().value.symbol == '(');
+  assert(stream.read_token().value.str == "my file.pfm");
+  assert(stream.read_token().value.symbol == ')');
+  assert(stream.read_token().value.symbol == ')');
+  assert(stream.read_token().value.symbol == ',');
+  assert(stream.read_token().value.symbol == '<');
+  assert(stream.read_token().value.number == 5.0);
+  assert(stream.read_token().value.symbol == ',');
+  assert(stream.read_token().value.number == 500.0);
+  assert(stream.read_token().value.symbol == ',');
+  assert(stream.read_token().value.number == 300.0);
+  assert(stream.read_token().value.symbol == '>');
+  */
+}
+
 int main() {
   test_input_file();
+  test_lexer();
   return 0;
 }
