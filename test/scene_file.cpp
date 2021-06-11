@@ -4,7 +4,7 @@
 
 void test_input_file() {
   stringstream sstr("abc   \nd\nef");
-  InputStream stream(sstr, SourceLocation());
+  InputStream stream(sstr);
 
   assert(stream.location.line_num == 1);
   assert(stream.location.col_num == 1);
@@ -47,7 +47,7 @@ void test_input_file() {
   assert(stream.location.line_num == 3);
   assert(stream.location.col_num == 3);
 
-  assert(stream.read_char() == char_traits<char>::eof());
+  assert(stream.read_char() == '\0');
 }
 int main() {
   test_input_file();
