@@ -68,8 +68,8 @@ void InputStream::skip_whitespaces_and_comments() {
     if (ch == '#') {
       // `#` is a comment! Keep reading until the end of the line (include the
       // case "", the end-of-file)
-      while (read_char() != '\r' && read_char() != '\n' &&
-             read_char() != '\0') {
+      while (ch != '\r' && ch != '\n' && ch != '\0') {
+        ch = read_char();
       }
     }
     ch = read_char();
@@ -105,7 +105,7 @@ Token InputStream::_parse_float_token(char first_ch, SourceLocation _location) {
   float value = 0.;
   while (true) {
     char ch = read_char();
-    if (isdigit(ch) != 0 || ch != '.' || ch != 'e' || ch != 'E') {
+    if (!isdigit(ch) && ch != '.' && ch != 'e' && ch != 'E') {
       unread_char(ch);
       break;
     }
@@ -116,7 +116,7 @@ Token InputStream::_parse_float_token(char first_ch, SourceLocation _location) {
     value = stof(string_token);
   } catch (invalid_argument) {
     throw GrammarError(_location,
-                       string_token + "is an invalid floating point number");
+                       string_token + " is an invalid floating point number");
   } catch (out_of_range &e) {
     throw GrammarError(_location, string_token + ":" + e.what());
   }
@@ -135,14 +135,13 @@ Token InputStream::_parse_keyword_or_identifier_token(
   while (true) {
     char ch = read_char();
 
-    if (!isalnum(ch) || ch != '_') {
+    if (!isalnum(ch) && ch != '_') {
       unread_char(ch);
       break;
     }
 
     string_token.push_back(ch);
   }
-
   Token token;
   try {
     token.assign_keyword(KEYWORDS.at(string_token));
