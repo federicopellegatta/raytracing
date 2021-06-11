@@ -13,8 +13,6 @@
 
 using namespace std;
 
-string WHITESPACE = " #\t\n\r";
-string symbols = {'(', ')', '<', '>', ',', '"', '[', ']', '*'};
 /**
  * @brief A specific position in a source file
  *
@@ -95,32 +93,6 @@ enum class KeywordEnum {
   ORTHOGONAL,
   PERSPECTIVE,
   FLOAT
-};
-
-/**
- * @brief Dictionary used to map strings in file to `KeywordEnum` type
- *
- */
-map<string, KeywordEnum> KEYWORDS{
-    {"new", KeywordEnum::NEW},
-    {"material", KeywordEnum::MATERIAL},
-    {"plane", KeywordEnum::PLANE},
-    {"sphere", KeywordEnum::SPHERE},
-    {"diffuse", KeywordEnum::DIFFUSE},
-    {"specular", KeywordEnum::SPECULAR},
-    {"uniform", KeywordEnum::UNIFORM},
-    {"checkered", KeywordEnum::CHECKERED},
-    {"image", KeywordEnum::IMAGE},
-    {"identity", KeywordEnum::IDENTITY},
-    {"translation", KeywordEnum::TRANSLATION},
-    {"rotation_x", KeywordEnum::ROTATION_X},
-    {"rotation_y", KeywordEnum::ROTATION_Y},
-    {"rotation_z", KeywordEnum::ROTATION_Z},
-    {"scaling", KeywordEnum::SCALING},
-    {"camera", KeywordEnum::CAMERA},
-    {"orthogonal", KeywordEnum::ORTHOGONAL},
-    {"perspective", KeywordEnum::PERSPECTIVE},
-    {"float", KeywordEnum::FLOAT},
 };
 
 /**
@@ -243,8 +215,8 @@ public:
    * @param location
    * @param tabulations
    */
-  InputStream(istream &_stream, SourceLocation _location, int _tabulations = 4)
-      : stream{_stream}, location{_location} {
+  InputStream(istream &_stream, string filename = "", int _tabulations = 4)
+      : stream{_stream}, location{filename, 1, 1} {
     tabulations = _tabulations;
   }
 

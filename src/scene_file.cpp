@@ -1,8 +1,32 @@
 #include "scene_file.h"
 
+string WHITESPACE{" #\t\n\r"};
+string symbols{'(', ')', '<', '>', ',', '"', '[', ']', '*'};
+map<string, KeywordEnum> KEYWORDS{
+    {"new", KeywordEnum::NEW},
+    {"material", KeywordEnum::MATERIAL},
+    {"plane", KeywordEnum::PLANE},
+    {"sphere", KeywordEnum::SPHERE},
+    {"diffuse", KeywordEnum::DIFFUSE},
+    {"specular", KeywordEnum::SPECULAR},
+    {"uniform", KeywordEnum::UNIFORM},
+    {"checkered", KeywordEnum::CHECKERED},
+    {"image", KeywordEnum::IMAGE},
+    {"identity", KeywordEnum::IDENTITY},
+    {"translation", KeywordEnum::TRANSLATION},
+    {"rotation_x", KeywordEnum::ROTATION_X},
+    {"rotation_y", KeywordEnum::ROTATION_Y},
+    {"rotation_z", KeywordEnum::ROTATION_Z},
+    {"scaling", KeywordEnum::SCALING},
+    {"camera", KeywordEnum::CAMERA},
+    {"orthogonal", KeywordEnum::ORTHOGONAL},
+    {"perspective", KeywordEnum::PERSPECTIVE},
+    {"float", KeywordEnum::FLOAT},
+};
+
 void InputStream::_update_pos(char ch) {
   if (ch == '\0') {
-    // Notihing to do
+    // Nothing to do
   } else if (ch == '\n') {
     location.line_num += 1;
     location.col_num = 1;
@@ -22,6 +46,9 @@ char InputStream::read_char() {
   } else {
     // Read a new character from the stream
     stream.get(ch);
+    if (stream.eof()) {
+      ch = '\0';
+    }
   }
 
   saved_location = location;
@@ -42,7 +69,7 @@ void InputStream::skip_whitespaces_and_comments() {
       // `#` is a comment! Keep reading until the end of the line (include the
       // case "", the end-of-file)
       while (read_char() != '\r' && read_char() != '\n' &&
-             read_char() != char_traits<char>::eof()) {
+             read_char() != '\0') {
       }
     }
     ch = read_char();
@@ -60,7 +87,7 @@ Token InputStream::_parse_string_token(SourceLocation _location) {
     if (ch == '"') {
       break;
     }
-    if (ch == char_traits<char>::eof()) {
+    if (ch == '\0') {
       throw GrammarError(_location, "unterminated string");
     }
     string_token.push_back(ch);
@@ -132,7 +159,7 @@ Token InputStream::read_token() {
   // At this point we're sure that ch does *not* contain a whitespace character
   char ch = read_char();
 
-  if (ch == char_traits<char>::eof()) {
+  if (ch == '\0') {
     // No more characters in the file, so return a StopToken
     return StopToken(location);
   }
