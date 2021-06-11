@@ -40,8 +40,8 @@ struct SourceLocation {
    * @param line_num: number of the line (starting from 1)
    * @param col_num: number of the column (starting from 1)
    */
-  SourceLocation(string _file_name = "", int _line_num = 0, int _col_num = 0) {
-    file_name = _file_name;
+  SourceLocation(string _file_name = "", int _line_num = 0, int _col_num = 0)
+      : file_name{_file_name} {
     line_num = _line_num;
     col_num = _col_num;
   }
@@ -52,7 +52,7 @@ struct SourceLocation {
  * scene file
  *
  */
-struct GrammarError {
+struct GrammarError : public exception {
   SourceLocation location;
   string message;
 
@@ -62,11 +62,10 @@ struct GrammarError {
    * @param _location: position of the error
    * @param _message: the error message
    */
-  GrammarError(SourceLocation _location = SourceLocation(),
-               string _message = "")
-      : location{_location} {
-    message = _message;
-  }
+  GrammarError(SourceLocation _location, const string &_message)
+      : location{_location}, message{_message} {}
+
+  const char *what() const throw() { return message.c_str(); }
 };
 
 /**
@@ -120,8 +119,8 @@ union TokenValue {
 
   // The default constructor and destructor are *mandatory* for unions to
   // be used in structs/classes
-  TokenValue() : number(0.0) {}
-  TokenValue(const TokenValue &t) : number{t.number} {}
+  TokenValue() : identifier{""} {}
+  TokenValue(const TokenValue &t) : identifier{t.identifier} {}
   ~TokenValue() {}
 };
 
@@ -196,7 +195,6 @@ struct Token {
 };
 
 struct StopToken : public Token {
-
   StopToken(SourceLocation _location = SourceLocation()) : Token{_location} {}
 };
 
