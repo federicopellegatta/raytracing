@@ -2,6 +2,10 @@
 #include <cassert>
 #include <sstream>
 
+template <typename Base, typename T> inline bool isinstanceof(const T) {
+  return is_base_of<Base, T>::value;
+}
+
 void test_input_file() {
   stringstream sstr("abc   \nd\nef");
   InputStream stream(sstr);
@@ -60,8 +64,7 @@ void test_lexer() {
 
   assert(stream.read_token().value.keyword == KeywordEnum::NEW);
   assert(stream.read_token().value.keyword == KeywordEnum::MATERIAL);
-  assert(stream.read_token().value.identifier == "sky_material");
-  /*
+  assert(stream.read_token().value.str == "sky_material");
   assert(stream.read_token().value.symbol == '(');
   assert(stream.read_token().value.keyword == KeywordEnum::DIFFUSE);
   assert(stream.read_token().value.symbol == '(');
@@ -78,7 +81,10 @@ void test_lexer() {
   assert(stream.read_token().value.symbol == ',');
   assert(stream.read_token().value.number == 300.0);
   assert(stream.read_token().value.symbol == '>');
-  */
+  assert(stream.read_token().value.symbol == ')');
+  stream.skip_whitespaces_and_comments();
+  assert(stream.read_char() == '\0');
+  // assert(isinstanceof<StopToken>(stream.read_token()));
 }
 
 int main() {
