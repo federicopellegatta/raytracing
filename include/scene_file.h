@@ -114,13 +114,12 @@ union TokenValue {
   float number;
   string str;
   KeywordEnum keyword;
-  string identifier;
   char symbol;
 
   // The default constructor and destructor are *mandatory* for unions to
   // be used in structs/classes
-  TokenValue() : identifier{""} {}
-  TokenValue(const TokenValue &t) : identifier{t.identifier} {}
+  TokenValue() : str{""} {}
+  TokenValue(const TokenValue &t) : str{t.str} {}
   ~TokenValue() {}
 };
 
@@ -190,7 +189,7 @@ struct Token {
    */
   void assign_identifier(const string &id) {
     type = TokenType::IDENTIFIER;
-    value.identifier = id;
+    value.str = id;
   }
 };
 
@@ -229,7 +228,7 @@ public:
    *
    * @param ch `Char` to push back
    */
-  void unread_char(char ch);
+  void unread_char(const char &ch);
 
   /**
    * @brief Keep reading characters until a non-whitespace character is found
@@ -245,10 +244,11 @@ private:
    *
    * @param ch `char`
    */
-  void _update_pos(char ch);
+  void _update_pos(const char &ch);
   Token _parse_string_token(SourceLocation);
-  Token _parse_float_token(char, SourceLocation);
-  Token _parse_keyword_or_identifier_token(char, SourceLocation);
+  Token _parse_float_token(const char &, SourceLocation);
+  Token _parse_keyword_or_identifier_token(const char &, SourceLocation);
+  Token _parse_symbol_token(const char &, SourceLocation);
 };
 
 #endif
