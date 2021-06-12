@@ -1,7 +1,7 @@
 #include "scene_file.h"
 
 string WHITESPACE{" #\t\n\r"};
-string symbols{'(', ')', '<', '>', ',', '"', '[', ']', '*'};
+string symbols{'(', ')', '<', '>', ',', '[', ']', '*'};
 map<string, KeywordEnum> KEYWORDS{
     {"new", KeywordEnum::NEW},
     {"material", KeywordEnum::MATERIAL},
@@ -24,7 +24,7 @@ map<string, KeywordEnum> KEYWORDS{
     {"float", KeywordEnum::FLOAT},
 };
 
-void InputStream::_update_pos(char ch) {
+void InputStream::_update_pos(const char &ch) {
   if (ch == '\0') {
     // Nothing to do
   } else if (ch == '\n') {
@@ -57,7 +57,7 @@ char InputStream::read_char() {
   return ch;
 }
 
-void InputStream::unread_char(char ch) {
+void InputStream::unread_char(const char &ch) {
   stream.putback(ch);
   location = saved_location;
 }
@@ -99,7 +99,8 @@ Token InputStream::_parse_string_token(SourceLocation _location) {
   return token;
 }
 
-Token InputStream::_parse_float_token(char first_ch, SourceLocation _location) {
+Token InputStream::_parse_float_token(const char &first_ch,
+                                      SourceLocation _location) {
   string string_token;
   string_token.push_back(first_ch);
   float value = 0.;
@@ -128,7 +129,7 @@ Token InputStream::_parse_float_token(char first_ch, SourceLocation _location) {
 }
 
 Token InputStream::_parse_keyword_or_identifier_token(
-    char first_ch, SourceLocation _location) {
+    const char &first_ch, SourceLocation _location) {
   string string_token;
   string_token.push_back(first_ch);
 
@@ -151,6 +152,13 @@ Token InputStream::_parse_keyword_or_identifier_token(
   return token;
 }
 
+Token InputStream::_parse_symbol_token(const char &first_ch,
+                                       SourceLocation location) {
+  Token token(location);
+  token.assign_symbol(first_ch);
+  return token;
+}
+
 Token InputStream::read_token() {
 
   skip_whitespaces_and_comments();
@@ -169,9 +177,7 @@ Token InputStream::read_token() {
   SourceLocation token_location = location;
   if (symbols.find(ch) != string::npos) {
     // One-character symbol, like '(' or ','
-    Token symbolToken(token_location);
-    symbolToken.assign_symbol(ch);
-    return symbolToken;
+    return _parse_symbol_token(ch, token_location);
   } else if (ch == '"') {
     // A literal string (used for file names)
     return _parse_string_token(token_location);
