@@ -105,7 +105,8 @@ enum class TokenType {
   LITERAL_STRING,
   SYMBOL,
   KEYWORD,
-  IDENTIFIER
+  IDENTIFIER,
+  STOP
 };
 
 /**
@@ -142,7 +143,27 @@ struct Token {
   Token(SourceLocation _location = SourceLocation())
       : type(TokenType::LITERAL_NUMBER), location{_location} {}
 
-  Token(const Token &t) : type{t.type}, value{t.value}, location{t.location} {}
+  Token(const Token &t) : type{t.type}, location{t.location} {
+    switch (t.type) {
+    case TokenType::IDENTIFIER:
+      value.str = t.value.str;
+      break;
+    case TokenType::KEYWORD:
+      value.keyword = t.value.keyword;
+      break;
+    case TokenType::LITERAL_NUMBER:
+      value.number = t.value.number;
+      break;
+    case TokenType::LITERAL_STRING:
+      value.str = t.value.str;
+      break;
+    case TokenType::SYMBOL:
+      value.symbol = t.value.symbol;
+      break;
+    default:
+      break;
+    }
+  }
 
   Token operator=(const Token &t) {
     Token token{t};
@@ -198,10 +219,8 @@ struct Token {
     type = TokenType::IDENTIFIER;
     value.str = id;
   }
-};
 
-struct StopToken : public Token {
-  StopToken(SourceLocation _location = SourceLocation()) : Token{_location} {}
+  void assign_stop() { type = TokenType::STOP; }
 };
 
 struct InputStream {

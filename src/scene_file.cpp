@@ -174,7 +174,9 @@ Token InputStream::read_token() {
 
   if (ch == '\0') {
     // No more characters in the file, so return a StopToken
-    return StopToken(location);
+    Token _stopToken;
+    _stopToken.assign_stop();
+    return _stopToken;
   }
 
   // At this point we must check what kind of token begins with the "ch"
