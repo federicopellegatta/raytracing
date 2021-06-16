@@ -16,20 +16,6 @@
 using namespace std;
 
 /**
- * @brief A scene read from a scene file
- *
- */
-struct Scene {
-  map<string, Material> materials;
-  World world;
-  shared_ptr<Camera> camera;
-  map<string, float> float_variables;
-  vector<string> overridden_variables;
-
-  Scene();
-};
-
-/**
  * @brief A specific position in a source file
  *
  * This class has the following fields:
@@ -297,7 +283,7 @@ public:
    *
    * @param token
    */
-  void unread_token(Token);
+  void unread_token(const Token &);
 
 private:
   /**
@@ -312,33 +298,32 @@ private:
   Token _parse_symbol_token(const char &, SourceLocation);
 
   /**
-   * @brief Read a token from `input_file` and check that it matches `symbol`
+   * @brief Read a token from `stream` and check that it matches `symbol`
    *
-   * @param str
+   * @param ch
    */
-  void expect_symbol(string str);
+  void expect_symbol(const char &ch);
 
   /**
-   * @brief Read a token from `input_file` and check that it is one of the
+   * @brief Read a token from `stream` and check that it is one of the
    * keywords in `keywords
    *
    * @param keywords
    * @return KeywordEnum
    */
-  KeywordEnum expect_keywords(vector<KeywordEnum> keywords);
+  KeywordEnum expect_keywords(const vector<KeywordEnum> &keywords);
 
   /**
-   * @brief Read a token from `input_file` and check that it is either a literal
+   * @brief Read a token from `stream` and check that it is either a literal
    * number or a variable in `scene` and return the number as a `float`
    *
-   * @param input_file
    * @param scene
    * @return float
    */
-  float expect_number(Scene scene);
+  float expect_number(const Scene &scene);
 
   /**
-   * @brief Read a token from `input_file` and check that it is a literal
+   * @brief Read a token from `stream` and check that it is a literal
    string
    *
    * @return Return the value of the string (a ``str``).
@@ -346,14 +331,14 @@ private:
   string expect_string();
 
   /**
-   * @brief ead a token from `input_file` and check that it is an identifier.
+   * @brief ead a token from `stream` and check that it is an identifier.
    *
    * @return Return the name of the identifier.
    */
   string expect_identifier();
-  Vec _parse_vector(Scene);
-  Color _parse_color(Scene);
-  shared_ptr<Pigment> _parse_pigment(Scene);
+  Vec _parse_vector(const Scene &);
+  Color _parse_color(const Scene &);
+  shared_ptr<Pigment> _parse_pigment(const Scene &);
 };
 
 #endif

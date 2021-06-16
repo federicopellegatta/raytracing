@@ -202,20 +202,20 @@ Token InputStream::read_token() {
   }
 }
 
-void InputStream::unread_token(Token _token) {
+void InputStream::unread_token(const Token &_token) {
   assert(saved_token.location.col_num == 0 &&
          saved_token.location.line_num == 0);
   saved_token = _token;
 }
 
-void InputStream::expect_symbol(string str) {
+void InputStream::expect_symbol(const char &ch) {
   Token token = read_token();
   if (token.type == TokenType::SYMBOL)
     throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
-                                           "' instead of '" + str + "'"));
+                                           "' instead of '" + ch + "'"));
 }
 
-KeywordEnum InputStream::expect_keywords(vector<KeywordEnum> keywords) {
+KeywordEnum InputStream::expect_keywords(const vector<KeywordEnum> &keywords) {
   Token token = read_token();
 
   if (token.type != TokenType::KEYWORD) {
@@ -233,7 +233,7 @@ KeywordEnum InputStream::expect_keywords(vector<KeywordEnum> keywords) {
   return token.value.keyword;
 }
 
-float InputStream::expect_number(Scene scene) {
+float InputStream::expect_number(const Scene &scene) {
   Token token = read_token();
   if (token.type == TokenType::LITERAL_NUMBER) {
     return token.value.number;
@@ -267,7 +267,8 @@ string InputStream::expect_identifier() {
 
   return token.value.str;
 }
-Vec InputStream::_parse_vector(Scene _scene) {
+
+Vec InputStream::_parse_vector(const Scene &_scene) {
   expect_symbol('[');
   float x = expect_number(_scene);
   expect_symbol(',');
@@ -279,7 +280,7 @@ Vec InputStream::_parse_vector(Scene _scene) {
   return Vec{x, y, z};
 }
 
-Color InputStream::_parse_color(Scene _scene) {
+Color InputStream::_parse_color(const Scene &_scene) {
   expect_symbol('<');
   float red = expect_number(_scene);
   expect_symbol(',');
@@ -291,22 +292,30 @@ Color InputStream::_parse_color(Scene _scene) {
   return Color{red, green, blue};
 }
 
-shared_ptr<Pigment> InputStream::_parse_pigment(Scene _scene) {
+shared_ptr<Pigment> InputStream::_parse_pigment(const Scene &_scene) {
   vector<KeywordEnum> expected_keys{KeywordEnum::UNIFORM,
                                     KeywordEnum::CHECKERED, KeywordEnum::IMAGE};
-  KeywordEnum keyword = expect_keywords(expect_keys);
+  KeywordEnum keyword = expect_keywords(expected_keys);
+  shared_ptr<Pigment> result;
   expect_symbol('(');
-  switch (keyword) {
-  case KeywordEnum::UNIFORM:
+  if (keyword == KeywordEnum::UNIFORM) {
     Color _color = _parse_color(_scene);
-    return make_shared<UniformPigment>(_color);
-    break;
-  case KeywordEnum::CHECKERED:
+    result = make_shared<UniformPigment>(_color);
+  } else if (keyword == KeywordEnum::CHECKERED) {
     Color _color1 = _parse_color(_scene);
     expect_symbol(',');
     Color _color2 = _parse_color(_scene);
-
-  default:
-    break;
+    expect_symbol(',');
+    int num_of_steps = static_cast<int>(expect_number(_scene));
+    result = make_shared<CheckeredPigment>(_color1, _color2, num_of_steps);
+  } else if (keyword == KeywordEnum::IMAGE) {
+    string filename = expect_string();
+    HdrImage image{filename};
+    result = make_shared<ImagePigment>(image);
+  } else {
+    fmt::print("ERROR: {} is not a valid pigment type!", keyword);
+    assert(false);
   }
+  expect_symbol(')');
+  return result;
 }
