@@ -7,6 +7,7 @@
 #include "geometry.h"
 #include "materials.h"
 #include "shapes.h"
+#include <cassert>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -163,6 +164,11 @@ struct Token {
     }
   }
 
+  Token operator=(const Token &t) {
+    Token token{t};
+    return token;
+  }
+
   /**
    * @brief Define the Token as a number and assign its value
    *
@@ -223,6 +229,7 @@ public:
   SourceLocation saved_location;
   int tabulations;
   char saved_char = '\0'; // '\0' is the null char
+  Token saved_token;
 
   /**
    * @brief Construct a new Input Stream object
@@ -232,7 +239,7 @@ public:
    * @param tabulations
    */
   InputStream(istream &_stream, string filename = "", int _tabulations = 4)
-      : stream{_stream}, location{filename, 1, 1} {
+      : stream{_stream}, location{filename, 1, 1}, saved_token{} {
     tabulations = _tabulations;
   }
 
