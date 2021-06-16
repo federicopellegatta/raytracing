@@ -16,6 +16,20 @@
 using namespace std;
 
 /**
+ * @brief A scene read from a scene file
+ *
+ */
+struct Scene {
+  map<string, Material> materials;
+  World world;
+  shared_ptr<Camera> camera;
+  map<string, float> float_variables;
+  vector<string> overridden_variables;
+
+  Scene();
+};
+
+/**
  * @brief A specific position in a source file
  *
  * This class has the following fields:
@@ -312,6 +326,31 @@ private:
    * @return KeywordEnum
    */
   KeywordEnum expect_keywords(vector<KeywordEnum> keywords);
+
+  /**
+   * @brief Read a token from `input_file` and check that it is either a literal
+   * number or a variable in `scene` and return the number as a `float`
+   *
+   * @param input_file
+   * @param scene
+   * @return float
+   */
+  float expect_number(Scene scene);
+
+  /**
+   * @brief Read a token from `input_file` and check that it is a literal
+   string
+   *
+   * @return Return the value of the string (a ``str``).
+   */
+  string expect_string();
+
+  /**
+   * @brief ead a token from `input_file` and check that it is an identifier.
+   *
+   * @return Return the name of the identifier.
+   */
+  string expect_identifier();
   Vec _parse_vector(Scene);
   Color _parse_color(Scene);
   shared_ptr<Pigment> _parse_pigment(Scene);
