@@ -7,6 +7,7 @@
 #include "geometry.h"
 #include "materials.h"
 #include "shapes.h"
+#include "world.h"
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -277,4 +278,30 @@ private:
   Token _parse_symbol_token(const char &, SourceLocation);
 };
 
+/**
+ * @brief A scene read from a scene file
+ *
+ */
+struct Scene {
+  map<string, Material> materials;
+  World world;
+  shared_ptr<Camera> camera;
+  map<string, float> float_variables;
+  vector<string> overridden_variables;
+
+  Scene();
+
+  /**
+   * @brief Read a token from `input_file` and check that it matches `symbol`
+   *
+   * @param input_file
+   * @param str
+   */
+  void expect_symbol(InputStream input_file, string str) {
+    Token token = input_file.read_token();
+    if (token.type == TokenType::SYMBOL)
+      throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
+                                             "' instead of '" + str + "'"));
+  }
+};
 #endif
