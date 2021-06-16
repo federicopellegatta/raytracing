@@ -263,6 +263,12 @@ public:
    */
   void skip_whitespaces_and_comments();
   Token read_token();
+
+  /**
+   * @brief Make as if `token` were never read from `input_file
+   *
+   * @param token
+   */
   void unread_token(Token);
 
 private:
@@ -276,6 +282,25 @@ private:
   Token _parse_float_token(const char &, SourceLocation);
   Token _parse_keyword_or_identifier_token(const char &, SourceLocation);
   Token _parse_symbol_token(const char &, SourceLocation);
+
+  /**
+   * @brief Read a token from `input_file` and check that it matches `symbol`
+   *
+   * @param input_file
+   * @param str
+   */
+  void expect_symbol(InputStream input_file, string str);
+
+  /**
+   * @brief Read a token from `input_file` and check that it is one of the
+   * keywords in `keywords
+   *
+   * @param input_file
+   * @param keywords
+   * @return KeywordEnum
+   */
+  KeywordEnum expect_keywords(InputStream input_file,
+                              vector<KeywordEnum> keywords);
 };
 
 /**
@@ -290,18 +315,6 @@ struct Scene {
   vector<string> overridden_variables;
 
   Scene();
-
-  /**
-   * @brief Read a token from `input_file` and check that it matches `symbol`
-   *
-   * @param input_file
-   * @param str
-   */
-  void expect_symbol(InputStream input_file, string str) {
-    Token token = input_file.read_token();
-    if (token.type == TokenType::SYMBOL)
-      throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
-                                             "' instead of '" + str + "'"));
-  }
 };
+
 #endif

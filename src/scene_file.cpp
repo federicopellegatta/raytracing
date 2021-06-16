@@ -202,14 +202,34 @@ Token InputStream::read_token() {
   }
 }
 
-/**
- * @brief Make as if `token` were never read from `input_file
-  ""
- *
- * @param token
- */
 void InputStream::unread_token(Token _token) {
   assert(saved_token.location.col_num != 0 ||
          saved_token.location.col_num != 0);
   saved_token = _token;
+}
+
+void InputStream::expect_symbol(InputStream input_file, string str) {
+  Token token = input_file.read_token();
+  if (token.type == TokenType::SYMBOL)
+    throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
+                                           "' instead of '" + str + "'"));
+}
+
+KeywordEnum InputStream::expect_keywords(InputStream input_file,
+                                         vector<KeywordEnum> keywords) {
+  Token token = input_file.read_token();
+
+  if (token.type != TokenType::KEYWORD) {
+    throw(GrammarError(token.location, "expected a keyword instead of " +
+                                           string{token.value.symbol}));
+  }
+
+  if (find(keywords.begin(), keywords.end(), token.value.keyword) ==
+      keywords.end()) {
+    throw(GrammarError(
+        token.location,
+        "expected one of the keywords in `keywords` instead of '"));
+    //+ string{token.value.keyword} + "'"));
+  }
+  return token.value.keyword;
 }
