@@ -161,6 +161,12 @@ Token InputStream::_parse_symbol_token(const char &first_ch,
 
 Token InputStream::read_token() {
 
+  if (saved_token.location.col_num != 0 || saved_token.location.col_num != 0) {
+    Token result = saved_token;
+    saved_token = Token();
+    return saved_token;
+  }
+
   skip_whitespaces_and_comments();
 
   // At this point we're sure that ch does *not* contain a whitespace character
@@ -193,4 +199,15 @@ Token InputStream::read_token() {
     throw GrammarError(location, ch + ": invalid character");
   }
 }
-void InputStream::unread_token(Token _token) {}
+
+/**
+ * @brief Make as if `token` were never read from `input_file
+  ""
+ *
+ * @param token
+ */
+void InputStream::unread_token(Token _token) {
+  assert(saved_token.location.col_num != 0 ||
+         saved_token.location.col_num != 0);
+  saved_token = _token;
+}
