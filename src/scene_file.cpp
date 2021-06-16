@@ -203,8 +203,8 @@ Token InputStream::read_token() {
 }
 
 void InputStream::unread_token(Token _token) {
-  assert(saved_token.location.col_num != 0 ||
-         saved_token.location.col_num != 0);
+  assert(saved_token.location.col_num == 0 &&
+         saved_token.location.line_num == 0);
   saved_token = _token;
 }
 
