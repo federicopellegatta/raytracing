@@ -208,16 +208,15 @@ void InputStream::unread_token(Token _token) {
   saved_token = _token;
 }
 
-void InputStream::expect_symbol(InputStream input_file, string str) {
-  Token token = input_file.read_token();
+void InputStream::expect_symbol(string str) {
+  Token token = read_token();
   if (token.type == TokenType::SYMBOL)
     throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
                                            "' instead of '" + str + "'"));
 }
 
-KeywordEnum InputStream::expect_keywords(InputStream input_file,
-                                         vector<KeywordEnum> keywords) {
-  Token token = input_file.read_token();
+KeywordEnum InputStream::expect_keywords(vector<KeywordEnum> keywords) {
+  Token token = read_token();
 
   if (token.type != TokenType::KEYWORD) {
     throw(GrammarError(token.location, "expected a keyword instead of " +
@@ -232,4 +231,39 @@ KeywordEnum InputStream::expect_keywords(InputStream input_file,
     //+ string{token.value.keyword} + "'"));
   }
   return token.value.keyword;
+}
+
+float InputStream::expect_number(Scene scene) {
+  Token token = read_token();
+  if (token.type == TokenType::LITERAL_NUMBER) {
+    return token.value.number;
+  } else if (token.type == TokenType::IDENTIFIER) {
+    string variable_name = token.value.str;
+    if (scene.float_variables.find(variable_name) ==
+        scene.float_variables.end()) {
+      throw(GrammarError(token.location,
+                         "unknown variable '" + token.value.str + "'"));
+    }
+    return scene.float_variables.at(variable_name);
+  }
+  throw(GrammarError(token.location,
+                     "got '" + token.value.str + "' instead of a number"));
+}
+
+string InputStream::expect_string() {
+  Token token = read_token();
+  if (token.type == TokenType::LITERAL_STRING) {
+    throw(GrammarError(token.location,
+                       "got '" + token.value.str + "' instead of a string"));
+  }
+  return token.value.str;
+}
+
+string InputStream::expect_identifier() {
+  Token token = read_token();
+  if (token.type == TokenType::IDENTIFIER)
+    throw(GrammarError(token.location, "got '" + token.value.str +
+                                           "' instead of an identifier"));
+
+  return token.value.str;
 }
