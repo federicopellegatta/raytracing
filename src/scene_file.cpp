@@ -208,16 +208,15 @@ void InputStream::unread_token(Token _token) {
   saved_token = _token;
 }
 
-void InputStream::expect_symbol(InputStream input_file, string str) {
-  Token token = input_file.read_token();
+void InputStream::expect_symbol(string str) {
+  Token token = read_token();
   if (token.type == TokenType::SYMBOL)
     throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
                                            "' instead of '" + str + "'"));
 }
 
-KeywordEnum InputStream::expect_keywords(InputStream input_file,
-                                         vector<KeywordEnum> keywords) {
-  Token token = input_file.read_token();
+KeywordEnum InputStream::expect_keywords(vector<KeywordEnum> keywords) {
+  Token token = read_token();
 
   if (token.type != TokenType::KEYWORD) {
     throw(GrammarError(token.location, "expected a keyword instead of " +
@@ -232,4 +231,48 @@ KeywordEnum InputStream::expect_keywords(InputStream input_file,
     //+ string{token.value.keyword} + "'"));
   }
   return token.value.keyword;
+}
+
+Vec InputStream::_parse_vector(Scene _scene) {
+  expect_symbol('[');
+  float x = expect_number(_scene);
+  expect_symbol(',');
+  float y = expect_number(_scene);
+  expect_symbol(',');
+  float z = expect_number(_scene);
+  expect_symbol(']');
+
+  return Vec{x, y, z};
+}
+
+Color InputStream::_parse_color(Scene _scene) {
+  expect_symbol('<');
+  float red = expect_number(_scene);
+  expect_symbol(',');
+  float green = expect_number(_scene);
+  expect_symbol(',');
+  float blue = expect_number(_scene);
+  expect_symbol('>');
+
+  return Color{red, green, blue};
+}
+
+shared_ptr<Pigment> InputStream::_parse_pigment(Scene _scene) {
+  vector<KeywordEnum> expected_keys{KeywordEnum::UNIFORM,
+                                    KeywordEnum::CHECKERED, KeywordEnum::IMAGE};
+  KeywordEnum keyword = expect_keywords(expect_keys);
+  expect_symbol('(');
+  switch (keyword) {
+  case KeywordEnum::UNIFORM:
+    Color _color = _parse_color(_scene);
+    return make_shared<UniformPigment>(_color);
+    break;
+  case KeywordEnum::CHECKERED:
+    Color _color1 = _parse_color(_scene);
+    expect_symbol(',');
+    Color _color2 = _parse_color(_scene);
+
+  default:
+    break;
+  }
 }

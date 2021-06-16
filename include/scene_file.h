@@ -223,6 +223,20 @@ struct Token {
   void assign_stop() { type = TokenType::STOP; }
 };
 
+/**
+ * @brief A scene read from a scene file
+ *
+ */
+struct Scene {
+  map<string, Material> materials;
+  World world;
+  shared_ptr<Camera> camera;
+  map<string, float> float_variables;
+  vector<string> overridden_variables;
+
+  Scene();
+};
+
 struct InputStream {
 public:
   istream &stream;
@@ -286,35 +300,21 @@ private:
   /**
    * @brief Read a token from `input_file` and check that it matches `symbol`
    *
-   * @param input_file
    * @param str
    */
-  void expect_symbol(InputStream input_file, string str);
+  void expect_symbol(string str);
 
   /**
    * @brief Read a token from `input_file` and check that it is one of the
    * keywords in `keywords
    *
-   * @param input_file
    * @param keywords
    * @return KeywordEnum
    */
-  KeywordEnum expect_keywords(InputStream input_file,
-                              vector<KeywordEnum> keywords);
-};
-
-/**
- * @brief A scene read from a scene file
- *
- */
-struct Scene {
-  map<string, Material> materials;
-  World world;
-  shared_ptr<Camera> camera;
-  map<string, float> float_variables;
-  vector<string> overridden_variables;
-
-  Scene();
+  KeywordEnum expect_keywords(vector<KeywordEnum> keywords);
+  Vec _parse_vector(Scene);
+  Color _parse_color(Scene);
+  shared_ptr<Pigment> _parse_pigment(Scene);
 };
 
 #endif
