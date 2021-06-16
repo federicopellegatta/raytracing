@@ -82,9 +82,7 @@ void test_lexer() {
   assert(stream.read_token().value.number == 300.0);
   assert(stream.read_token().value.symbol == '>');
   assert(stream.read_token().value.symbol == ')');
-  stream.skip_whitespaces_and_comments();
-  assert(stream.read_char() == '\0');
-  // assert(isinstanceof<StopToken>(stream.read_token()));
+  assert(stream.read_token().type == TokenType::STOP);
 }
 
 int main() {
