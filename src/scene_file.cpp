@@ -319,3 +319,89 @@ shared_ptr<Pigment> InputStream::_parse_pigment(const Scene &_scene) {
   expect_symbol(')');
   return result;
 }
+
+shared_ptr<BRDF> InputStream::_parse_brdf(const Scene &scene) {
+  vector<KeywordEnum> brdf_keyword{KeywordEnum::DIFFUSE, KeywordEnum::SPECULAR};
+  KeywordEnum keyword = expect_keywords(brdf_keyword);
+
+  shared_ptr<BRDF> result;
+  expect_symbol('(');
+  shared_ptr<Pigment> pigment = _parse_pigment(scene);
+  expect_symbol(')');
+
+  if (keyword == KeywordEnum::DIFFUSE)
+    result = make_shared<DiffusiveBRDF>(pigment);
+  else if (keyword == KeywordEnum::SPECULAR)
+    result = make_shared<SpecularBRDF>(pigment);
+
+  return result;
+}
+
+tuple<string, Material> InputStream::_parse_material(const Scene &scene) {
+  string name = expect_identifier();
+  expect_symbol('(');
+  shared_ptr<BRDF> brdf = _parse_brdf(scene);
+  expect_symbol(',');
+  shared_ptr<Pigment> emitted_radiance = _parse_pigment(scene);
+  expect_symbol(')');
+
+  return tuple<string, Material>{name, Material{brdf, emitted_radiance}};
+}
+
+Transformation InputStream::_parse_transformation(const Scene &scene) {
+  Transformation result;
+
+  while (true) {
+    vector<KeywordEnum> transformation_keyword{
+        KeywordEnum::IDENTITY,   KeywordEnum::TRANSLATION,
+        KeywordEnum::ROTATION_X, KeywordEnum::ROTATION_Y,
+        KeywordEnum::ROTATION_Z, KeywordEnum::SCALING,
+    };
+    KeywordEnum keyword = expect_keywords(transformation_keyword);
+
+    switch (keyword) {
+    case KeywordEnum::IDENTITY:
+      break; // Do nothing (this is a primitive form of optimization!)
+
+    case KeywordEnum::TRANSLATION:
+      expect_symbol('(');
+      result = result * translation(_parse_vector(scene));
+      expect_symbol(')');
+      break;
+
+    case KeywordEnum::ROTATION_X:
+      expect_symbol('(');
+      result = result * rotation_x(expect_number(scene));
+      expect_symbol(')');
+      break;
+
+    case KeywordEnum::ROTATION_Y:
+      expect_symbol('(');
+      result = result * rotation_y(expect_number(scene));
+      expect_symbol(')');
+      break;
+
+    case KeywordEnum::ROTATION_Z:
+      expect_symbol('(');
+      result = result * rotation_z(expect_number(scene));
+      expect_symbol(')');
+      break;
+
+    case KeywordEnum::SCALING:
+      expect_symbol('(');
+      result = result * scaling(_parse_vector(scene));
+      expect_symbol(')');
+      break;
+    }
+
+    Token next_keyword = read_token();
+
+    if (next_keyword.type == TokenType::SYMBOL ||
+        next_keyword.value.symbol != '*') {
+      unread_token(next_keyword);
+      break;
+    }
+  }
+
+  return result;
+}
