@@ -491,11 +491,10 @@ shared_ptr<Camera> InputStream::_parse_camera(const Scene &_scene) {
 
   shared_ptr<Camera> result;
   if (type_keyword == KeywordEnum::PERSPECTIVE)
-    result = make_shared<PerspectiveCamera>(
-        PerspectiveCamera(distance, aspect_ratio, transformation));
+    result =
+        make_shared<PerspectiveCamera>(distance, aspect_ratio, transformation);
   else if (type_keyword == KeywordEnum::ORTHOGONAL)
-    result = make_shared<OrthogonalCamera>(
-        OrthogonalCamera(aspect_ratio, transformation));
+    result = make_shared<OrthogonalCamera>(aspect_ratio, transformation);
 
   return result;
 }
