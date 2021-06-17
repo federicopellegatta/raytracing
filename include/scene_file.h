@@ -339,9 +339,18 @@ private:
   Vec _parse_vector(const Scene &);
   Color _parse_color(const Scene &);
   shared_ptr<Pigment> _parse_pigment(const Scene &);
+<<<<<<< HEAD
   shared_ptr<BRDF> _parse_brdf(const Scene &);
   tuple<string, Material> _parse_material(const Scene &);
   Transformation _parse_transformation(const Scene &);
+=======
+  shared_ptr<BRDF> _parse_brdf(const Scene &scene);
+  tuple<string, Material> _parse_material(const Scene &scene);
+  Transformation _parse_transformation(const Scene &scene);
+  Sphere _parse_sphere(const Scene &scene);
+  Plane _parse_plane(const Scene &scene);
+  shared_ptr<Camera> _parse_camera(const Scene &scene);
+>>>>>>> f635544f24ce1b827319a5d4a402b0bebf02ff97
 };
 
 #endif
