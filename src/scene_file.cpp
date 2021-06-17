@@ -442,54 +442,51 @@ Transformation InputStream::_parse_transformation(const Scene &_scene) {
     }
   }
   return result;
-<<<<<<< HEAD
-}
-=======
 }
 
-Sphere InputStream::_parse_sphere(const Scene &scene) {
+Sphere InputStream::_parse_sphere(const Scene &_scene) {
   expect_symbol('(');
   string material_name = expect_identifier();
 
-  if (scene.materials.find(material_name) == scene.materials.end()) {
+  if (_scene.materials.find(material_name) == _scene.materials.end()) {
     // We raise the exception here because input_file is pointing to the end of
     // the wrong identifier
     throw(GrammarError(location, "unknown material '" + material_name + "'"));
   }
   expect_symbol(',');
-  Transformation transformation = _parse_transformation(scene);
+  Transformation transformation = _parse_transformation(_scene);
   expect_symbol(')');
 
-  return Sphere(transformation, scene.materials.at(material_name));
+  return Sphere(transformation, _scene.materials.at(material_name));
 }
 
-Plane InputStream::_parse_plane(const Scene &scene) {
+Plane InputStream::_parse_plane(const Scene &_scene) {
   expect_symbol('(');
   string material_name = expect_identifier();
 
-  if (scene.materials.find(material_name) == scene.materials.end()) {
+  if (_scene.materials.find(material_name) == _scene.materials.end()) {
     // We raise the exception here because input_file is pointing to the end of
     // the wrong identifier
     throw(GrammarError(location, "unknown material '" + material_name + "'"));
   }
   expect_symbol(',');
-  Transformation transformation = _parse_transformation(scene);
+  Transformation transformation = _parse_transformation(_scene);
   expect_symbol(')');
 
-  return Plane(transformation, scene.materials.at(material_name));
+  return Plane(transformation, _scene.materials.at(material_name));
 }
 
-shared_ptr<Camera> InputStream::_parse_camera(const Scene &scene) {
+shared_ptr<Camera> InputStream::_parse_camera(const Scene &_scene) {
   expect_symbol('(');
   vector<KeywordEnum> camera_keyword{KeywordEnum::PERSPECTIVE,
                                      KeywordEnum::ORTHOGONAL};
   KeywordEnum type_keyword = expect_keywords(camera_keyword);
   expect_symbol(',');
-  Transformation transformation = _parse_transformation(scene);
+  Transformation transformation = _parse_transformation(_scene);
   expect_symbol(',');
-  float aspect_ratio = expect_number(scene);
+  float aspect_ratio = expect_number(_scene);
   expect_symbol(',');
-  float distance = expect_number(scene);
+  float distance = expect_number(_scene);
   expect_symbol(')');
 
   shared_ptr<Camera> result;
@@ -502,4 +499,3 @@ shared_ptr<Camera> InputStream::_parse_camera(const Scene &scene) {
 
   return result;
 }
->>>>>>> f635544f24ce1b827319a5d4a402b0bebf02ff97
