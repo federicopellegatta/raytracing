@@ -234,7 +234,7 @@ struct Scene {
   map<string, float> float_variables;
   vector<string> overridden_variables;
 
-  Scene();
+  // Scene();
 };
 
 struct InputStream {
@@ -345,6 +345,13 @@ private:
   Sphere _parse_sphere(const Scene &);
   Plane _parse_plane(const Scene &);
   shared_ptr<Camera> _parse_camera(const Scene &);
+  /**
+   * @brief Read a scene description from an input file and return a `scene`
+   * object
+   *
+   * @return Scene
+   */
+  Scene _parse_scene(const map<string, float> &);
 };
 
 #endif

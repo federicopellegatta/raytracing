@@ -498,3 +498,63 @@ shared_ptr<Camera> InputStream::_parse_camera(const Scene &_scene) {
 
   return result;
 }
+
+Scene InputStream::_parse_scene(const map<string, float> &variables) {
+  Scene _scene;
+  _scene.float_variables = variables;
+  for (auto const &key : variables) {
+    _scene.overridden_variables.push_back(key.first);
+  }
+
+  while (true) {
+    Token what = read_token();
+
+    if (what.type == TokenType::STOP) {
+      break;
+    }
+    if (what.type != TokenType::KEYWORD) {
+      throw GrammarError(what.location, "ERROR: expected keyword, not found.");
+    }
+
+    switch (what.value.keyword) {
+    case KeywordEnum::FLOAT: {
+      string variable_name = expect_identifier();
+      SourceLocation variable_loc = location;
+
+      expect_symbol('(');
+      float variable_value = expect_number(_scene);
+      expect_symbol(')');
+
+      auto it = find(_scene.overridden_variables.begin(),
+                     _scene.overridden_variables.end(), variable_name);
+      if (_scene.float_variables.find(variable_name) !=
+              _scene.float_variables.end() &&
+          it == _scene.overridden_variables.end()) {
+        throw GrammarError(variable_loc, "variable '" + variable_name +
+                                             "' cannot be redefined");
+      }
+      if (it == _scene.overridden_variables.end()) {
+        _scene.float_variables[variable_name] = variable_value;
+      }
+    } break;
+    case KeywordEnum::SPHERE:
+      _scene.world.add(make_shared<Sphere>(_parse_sphere(_scene)));
+      break;
+    case KeywordEnum::PLANE:
+      _scene.world.add(make_shared<Plane>(_parse_plane(_scene)));
+      break;
+    case KeywordEnum::CAMERA:
+      if (_scene.camera) {
+        throw GrammarError(what.location, "Cannot define more than one camera");
+      } else {
+        _scene.camera = _parse_camera(_scene);
+      }
+      break;
+    case KeywordEnum::MATERIAL: {
+      tuple<string, Material> material = _parse_material(_scene);
+      _scene.materials[get<string>(material)] = get<Material>(material);
+    } break;
+    }
+  }
+  return _scene;
+}
