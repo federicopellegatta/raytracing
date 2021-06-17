@@ -210,9 +210,10 @@ void InputStream::unread_token(const Token &_token) {
 
 void InputStream::expect_symbol(const char &ch) {
   Token token = read_token();
-  if (token.type == TokenType::SYMBOL)
+  if (token.type == TokenType::SYMBOL) {
     throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
                                            "' instead of '" + ch + "'"));
+  }
 }
 
 KeywordEnum InputStream::expect_keywords(const vector<KeywordEnum> &keywords) {
@@ -225,46 +226,84 @@ KeywordEnum InputStream::expect_keywords(const vector<KeywordEnum> &keywords) {
 
   if (find(keywords.begin(), keywords.end(), token.value.keyword) ==
       keywords.end()) {
-    throw(GrammarError(
-        token.location,
-        "expected one of the keywords in `keywords` instead of '"));
-    //+ string{token.value.keyword} + "'"));
+    throw(GrammarError(token.location,
+                       "expected one of the keywords in `keywords`'"));
   }
   return token.value.keyword;
 }
 
-float InputStream::expect_number(const Scene &scene) {
+float InputStream::expect_number(const Scene &_scene) {
   Token token = read_token();
   if (token.type == TokenType::LITERAL_NUMBER) {
     return token.value.number;
   } else if (token.type == TokenType::IDENTIFIER) {
     string variable_name = token.value.str;
-    if (scene.float_variables.find(variable_name) ==
-        scene.float_variables.end()) {
+    if (_scene.float_variables.find(variable_name) ==
+        _scene.float_variables.end()) {
       throw(GrammarError(token.location,
                          "unknown variable '" + token.value.str + "'"));
     }
-    return scene.float_variables.at(variable_name);
+    return _scene.float_variables.at(variable_name);
+  } else {
+    throw(GrammarError(token.location,
+                       "got '" + token.value.str + "' instead of a number"));
   }
-  throw(GrammarError(token.location,
-                     "got '" + token.value.str + "' instead of a number"));
 }
 
 string InputStream::expect_string() {
   Token token = read_token();
-  if (token.type == TokenType::LITERAL_STRING) {
+  // if (token.type != TokenType::LITERAL_STRING) {
+  //  throw(GrammarError(token.location,
+  //                     "got '" + token.value.str + "' instead of a string"));
+  //}
+  switch (token.type) {
+  case TokenType::IDENTIFIER:
     throw(GrammarError(token.location,
-                       "got '" + token.value.str + "' instead of a string"));
+                       "Got '" + token.value.str + "' instead of a string"));
+    break;
+  case TokenType::KEYWORD:
+    throw(GrammarError(token.location, "Got a keyword instead of a string."));
+    break;
+  case TokenType::LITERAL_NUMBER:
+    throw(GrammarError(token.location, "Got a number instead of a string"));
+    break;
+  case TokenType::STOP:
+    throw(GrammarError(token.location, "Got a STOP token instead of a string"));
+    break;
+  case TokenType::SYMBOL:
+    throw(GrammarError(token.location, "Got '" + string{token.value.symbol} +
+                                           "' instead of a string"));
+    break;
   }
   return token.value.str;
 }
 
 string InputStream::expect_identifier() {
   Token token = read_token();
-  if (token.type == TokenType::IDENTIFIER)
-    throw(GrammarError(token.location, "got '" + token.value.str +
-                                           "' instead of an identifier"));
-
+  // if (token.type != TokenType::IDENTIFIER)
+  //  throw(GrammarError(token.location, "got '" + token.value.str +
+  //                                         "' instead of an identifier"));
+  switch (token.type) {
+  case TokenType::LITERAL_STRING:
+    throw(GrammarError(token.location, "Got '" + token.value.str +
+                                           "' instead of a identifier"));
+    break;
+  case TokenType::KEYWORD:
+    throw(
+        GrammarError(token.location, "Got a keyword instead of a identifier"));
+    break;
+  case TokenType::LITERAL_NUMBER:
+    throw(GrammarError(token.location, "Got a number instead of a identifier"));
+    break;
+  case TokenType::STOP:
+    throw(GrammarError(token.location,
+                       "Got a STOP token instead of a identifier"));
+    break;
+  case TokenType::SYMBOL:
+    throw(GrammarError(token.location, "Got '" + string{token.value.symbol} +
+                                           "' instead of a identifier"));
+    break;
+  }
   return token.value.str;
 }
 
@@ -320,13 +359,13 @@ shared_ptr<Pigment> InputStream::_parse_pigment(const Scene &_scene) {
   return result;
 }
 
-shared_ptr<BRDF> InputStream::_parse_brdf(const Scene &scene) {
+shared_ptr<BRDF> InputStream::_parse_brdf(const Scene &_scene) {
   vector<KeywordEnum> brdf_keyword{KeywordEnum::DIFFUSE, KeywordEnum::SPECULAR};
   KeywordEnum keyword = expect_keywords(brdf_keyword);
 
   shared_ptr<BRDF> result;
   expect_symbol('(');
-  shared_ptr<Pigment> pigment = _parse_pigment(scene);
+  shared_ptr<Pigment> pigment = _parse_pigment(_scene);
   expect_symbol(')');
 
   if (keyword == KeywordEnum::DIFFUSE)
@@ -337,26 +376,26 @@ shared_ptr<BRDF> InputStream::_parse_brdf(const Scene &scene) {
   return result;
 }
 
-tuple<string, Material> InputStream::_parse_material(const Scene &scene) {
+tuple<string, Material> InputStream::_parse_material(const Scene &_scene) {
   string name = expect_identifier();
   expect_symbol('(');
-  shared_ptr<BRDF> brdf = _parse_brdf(scene);
+  shared_ptr<BRDF> brdf = _parse_brdf(_scene);
   expect_symbol(',');
-  shared_ptr<Pigment> emitted_radiance = _parse_pigment(scene);
+  shared_ptr<Pigment> emitted_radiance = _parse_pigment(_scene);
   expect_symbol(')');
 
   return tuple<string, Material>{name, Material{brdf, emitted_radiance}};
 }
 
-Transformation InputStream::_parse_transformation(const Scene &scene) {
+Transformation InputStream::_parse_transformation(const Scene &_scene) {
   Transformation result;
+  vector<KeywordEnum> transformation_keyword{
+      KeywordEnum::IDENTITY,   KeywordEnum::TRANSLATION,
+      KeywordEnum::ROTATION_X, KeywordEnum::ROTATION_Y,
+      KeywordEnum::ROTATION_Z, KeywordEnum::SCALING,
+  };
 
   while (true) {
-    vector<KeywordEnum> transformation_keyword{
-        KeywordEnum::IDENTITY,   KeywordEnum::TRANSLATION,
-        KeywordEnum::ROTATION_X, KeywordEnum::ROTATION_Y,
-        KeywordEnum::ROTATION_Z, KeywordEnum::SCALING,
-    };
     KeywordEnum keyword = expect_keywords(transformation_keyword);
 
     switch (keyword) {
@@ -365,31 +404,31 @@ Transformation InputStream::_parse_transformation(const Scene &scene) {
 
     case KeywordEnum::TRANSLATION:
       expect_symbol('(');
-      result = result * translation(_parse_vector(scene));
+      result = result * translation(_parse_vector(_scene));
       expect_symbol(')');
       break;
 
     case KeywordEnum::ROTATION_X:
       expect_symbol('(');
-      result = result * rotation_x(expect_number(scene));
+      result = result * rotation_x(expect_number(_scene));
       expect_symbol(')');
       break;
 
     case KeywordEnum::ROTATION_Y:
       expect_symbol('(');
-      result = result * rotation_y(expect_number(scene));
+      result = result * rotation_y(expect_number(_scene));
       expect_symbol(')');
       break;
 
     case KeywordEnum::ROTATION_Z:
       expect_symbol('(');
-      result = result * rotation_z(expect_number(scene));
+      result = result * rotation_z(expect_number(_scene));
       expect_symbol(')');
       break;
 
     case KeywordEnum::SCALING:
       expect_symbol('(');
-      result = result * scaling(_parse_vector(scene));
+      result = result * scaling(_parse_vector(_scene));
       expect_symbol(')');
       break;
     }
@@ -402,6 +441,5 @@ Transformation InputStream::_parse_transformation(const Scene &scene) {
       break;
     }
   }
-
   return result;
 }

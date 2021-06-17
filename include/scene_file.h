@@ -339,9 +339,9 @@ private:
   Vec _parse_vector(const Scene &);
   Color _parse_color(const Scene &);
   shared_ptr<Pigment> _parse_pigment(const Scene &);
-  shared_ptr<BRDF> _parse_brdf(const Scene &scene);
-  tuple<string, Material> _parse_material(const Scene &scene);
-  Transformation _parse_transformation(const Scene &scene);
+  shared_ptr<BRDF> _parse_brdf(const Scene &);
+  tuple<string, Material> _parse_material(const Scene &);
+  Transformation _parse_transformation(const Scene &);
 };
 
 #endif
