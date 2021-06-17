@@ -405,3 +405,59 @@ Transformation InputStream::_parse_transformation(const Scene &scene) {
 
   return result;
 }
+
+Sphere InputStream::_parse_sphere(const Scene &scene) {
+  expect_symbol('(');
+  string material_name = expect_identifier();
+
+  if (scene.materials.find(material_name) == scene.materials.end()) {
+    // We raise the exception here because input_file is pointing to the end of
+    // the wrong identifier
+    throw(GrammarError(location, "unknown material '" + material_name + "'"));
+  }
+  expect_symbol(',');
+  Transformation transformation = _parse_transformation(scene);
+  expect_symbol(')');
+
+  return Sphere(transformation, scene.materials.at(material_name));
+}
+
+Plane InputStream::_parse_plane(const Scene &scene) {
+  expect_symbol('(');
+  string material_name = expect_identifier();
+
+  if (scene.materials.find(material_name) == scene.materials.end()) {
+    // We raise the exception here because input_file is pointing to the end of
+    // the wrong identifier
+    throw(GrammarError(location, "unknown material '" + material_name + "'"));
+  }
+  expect_symbol(',');
+  Transformation transformation = _parse_transformation(scene);
+  expect_symbol(')');
+
+  return Plane(transformation, scene.materials.at(material_name));
+}
+
+shared_ptr<Camera> InputStream::_parse_camera(const Scene &scene) {
+  expect_symbol('(');
+  vector<KeywordEnum> camera_keyword{KeywordEnum::PERSPECTIVE,
+                                     KeywordEnum::ORTHOGONAL};
+  KeywordEnum type_keyword = expect_keywords(camera_keyword);
+  expect_symbol(',');
+  Transformation transformation = _parse_transformation(scene);
+  expect_symbol(',');
+  float aspect_ratio = expect_number(scene);
+  expect_symbol(',');
+  float distance = expect_number(scene);
+  expect_symbol(')');
+
+  shared_ptr<Camera> result;
+  if (type_keyword == KeywordEnum::PERSPECTIVE)
+    result = make_shared<PerspectiveCamera>(
+        PerspectiveCamera(distance, aspect_ratio, transformation));
+  else if (type_keyword == KeywordEnum::ORTHOGONAL)
+    result = make_shared<OrthogonalCamera>(
+        OrthogonalCamera(aspect_ratio, transformation));
+
+  return result;
+}

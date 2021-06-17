@@ -342,6 +342,9 @@ private:
   shared_ptr<BRDF> _parse_brdf(const Scene &scene);
   tuple<string, Material> _parse_material(const Scene &scene);
   Transformation _parse_transformation(const Scene &scene);
+  Sphere _parse_sphere(const Scene &scene);
+  Plane _parse_plane(const Scene &scene);
+  shared_ptr<Camera> _parse_camera(const Scene &scene);
 };
 
 #endif
