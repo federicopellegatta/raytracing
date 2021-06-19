@@ -55,17 +55,17 @@ struct SourceLocation {
  *
  */
 struct GrammarError : public exception {
-  SourceLocation location;
   string message;
 
   /**
    * @brief Construct a new Grammar Error object
    *
-   * @param _location: position of the error
    * @param _message: the error message
    */
-  GrammarError(SourceLocation _location, const string &_message)
-      : location{_location}, message{_message} {}
+  GrammarError(SourceLocation _location, const string &_message) {
+    message = fmt::format("{}:{}:{}:{}", _location.file_name,
+                          _location.line_num, _location.col_num, _message);
+  }
 
   const char *what() const throw() { return message.c_str(); }
 };
@@ -160,14 +160,30 @@ struct Token {
     case TokenType::SYMBOL:
       value.symbol = t.value.symbol;
       break;
-    default:
-      break;
     }
   }
 
-  Token operator=(const Token &t) {
-    Token token{t};
-    return token;
+  Token &operator=(const Token &t) {
+    type = t.type;
+    location = t.location;
+    switch (type) {
+    case TokenType::IDENTIFIER:
+      value.str = t.value.str;
+      break;
+    case TokenType::KEYWORD:
+      value.keyword = t.value.keyword;
+      break;
+    case TokenType::LITERAL_NUMBER:
+      value.number = t.value.number;
+      break;
+    case TokenType::LITERAL_STRING:
+      value.str = t.value.str;
+      break;
+    case TokenType::SYMBOL:
+      value.symbol = t.value.symbol;
+      break;
+    }
+    return *this;
   }
 
   /**
@@ -284,6 +300,13 @@ public:
    * @param token
    */
   void unread_token(const Token &);
+  /**
+   * @brief Read a scene description from an input file and return a `scene`
+   * object
+   *
+   * @return Scene
+   */
+  Scene _parse_scene(const map<string, float> &);
 
 private:
   /**
@@ -345,13 +368,6 @@ private:
   Sphere _parse_sphere(const Scene &);
   Plane _parse_plane(const Scene &);
   shared_ptr<Camera> _parse_camera(const Scene &);
-  /**
-   * @brief Read a scene description from an input file and return a `scene`
-   * object
-   *
-   * @return Scene
-   */
-  Scene _parse_scene(const map<string, float> &);
 };
 
 #endif
