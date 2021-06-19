@@ -122,7 +122,7 @@ Token InputStream::_parse_float_token(const char &first_ch,
     throw GrammarError(_location, string_token + ":" + e.what());
   }
 
-  Token token;
+  Token token(_location);
   token.assign_number(value);
 
   return token;
@@ -143,7 +143,7 @@ Token InputStream::_parse_keyword_or_identifier_token(
 
     string_token.push_back(ch);
   }
-  Token token;
+  Token token(_location);
   try {
     token.assign_keyword(KEYWORDS.at(string_token));
   } catch (out_of_range) {
@@ -153,18 +153,18 @@ Token InputStream::_parse_keyword_or_identifier_token(
 }
 
 Token InputStream::_parse_symbol_token(const char &first_ch,
-                                       SourceLocation location) {
-  Token token(location);
+                                       SourceLocation _location) {
+  Token token(_location);
   token.assign_symbol(first_ch);
   return token;
 }
 
 Token InputStream::read_token() {
 
-  if (saved_token.location.col_num != 0 || saved_token.location.col_num != 0) {
+  if (saved_token.location.line_num != 0 || saved_token.location.col_num != 0) {
     Token result = saved_token;
     saved_token = Token();
-    return saved_token;
+    return result;
   }
 
   skip_whitespaces_and_comments();
@@ -198,7 +198,7 @@ Token InputStream::read_token() {
     return _parse_keyword_or_identifier_token(ch, token_location);
   } else {
     // We got some weird character, like '@` or `&`
-    throw GrammarError(location, ch + ": invalid character");
+    throw GrammarError(token_location, "got invalid character");
   }
 }
 
@@ -210,7 +210,7 @@ void InputStream::unread_token(const Token &_token) {
 
 void InputStream::expect_symbol(const char &ch) {
   Token token = read_token();
-  if (token.type == TokenType::SYMBOL) {
+  if (token.type != TokenType::SYMBOL) {
     throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
                                            "' instead of '" + ch + "'"));
   }
@@ -435,7 +435,7 @@ Transformation InputStream::_parse_transformation(const Scene &_scene) {
 
     Token next_keyword = read_token();
 
-    if (next_keyword.type == TokenType::SYMBOL ||
+    if (next_keyword.type == TokenType::SYMBOL &&
         next_keyword.value.symbol != '*') {
       unread_token(next_keyword);
       break;
