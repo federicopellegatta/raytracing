@@ -102,7 +102,7 @@ void test_parser() {
   // fmt::print(sstr.str());
   InputStream stream(sstr);
   map<string, float> vars;
-  Scene scene = stream._parse_scene(vars);
+  Scene scene = stream.parse_scene(vars);
 
   // Check that the float variables are ok
 

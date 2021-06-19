@@ -306,14 +306,6 @@ public:
    *
    * @return Scene
    */
-  Scene _parse_scene(const map<string, float> &);
-
-  /**
-   * @brief Read a scene description from an input file and return a `scene`
-   * object
-   *
-   * @return Scene
-   */
   Scene parse_scene(const map<string, float> &);
 
 private:
