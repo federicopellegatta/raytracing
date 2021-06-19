@@ -285,6 +285,14 @@ public:
    */
   void unread_token(const Token &);
 
+  /**
+   * @brief Read a scene description from an input file and return a `scene`
+   * object
+   *
+   * @return Scene
+   */
+  Scene parse_scene(const map<string, float> &);
+
 private:
   /**
    * @brief Update `location` after having read `ch` from the stream
@@ -345,13 +353,6 @@ private:
   Sphere _parse_sphere(const Scene &);
   Plane _parse_plane(const Scene &);
   shared_ptr<Camera> _parse_camera(const Scene &);
-  /**
-   * @brief Read a scene description from an input file and return a `scene`
-   * object
-   *
-   * @return Scene
-   */
-  Scene _parse_scene(const map<string, float> &);
 };
 
 #endif
