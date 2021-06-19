@@ -499,7 +499,7 @@ shared_ptr<Camera> InputStream::_parse_camera(const Scene &_scene) {
   return result;
 }
 
-Scene InputStream::_parse_scene(const map<string, float> &variables) {
+Scene InputStream::parse_scene(const map<string, float> &variables) {
   Scene _scene;
   _scene.float_variables = variables;
   for (auto const &key : variables) {
