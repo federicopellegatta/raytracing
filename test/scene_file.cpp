@@ -99,13 +99,12 @@ void test_parser() {
       "1]))\n\ncamera(perspective, rotation_z(30) * translation([-4, 0, 1]), "
       "1.0, 2.0)\n");
 
-  // fmt::print(sstr.str());
+  fmt::print(sstr.str());
   InputStream stream(sstr);
   map<string, float> vars;
   Scene scene = stream.parse_scene(vars);
 
   // Check that the float variables are ok
-
   assert(scene.float_variables.size() == 1);
   assert(scene.float_variables.find("clock") != scene.float_variables.end());
   assert(scene.float_variables.at("clock") == 150.0);
@@ -115,11 +114,56 @@ void test_parser() {
   assert(scene.materials.find("sphere_material") != scene.materials.end());
   assert(scene.materials.find("sky_material") != scene.materials.end());
   assert(scene.materials.find("ground_material") != scene.materials.end());
+
+  // Check if the shapes are ok
+  assert(scene.world.shapes.size() == 3);
+  assert(scene.world.shapes.at(0)->transformation.is_close(
+      translation(Vec(0, 0, 100)) * rotation_y(150.0)));
+  assert(scene.world.shapes.at(1)->transformation.is_close(Transformation()));
+  assert(scene.world.shapes.at(2)->transformation.is_close(
+      translation(Vec(0, 0, 1))));
+
+  // Check if the camera is ok
+  assert(scene.camera->transformation.is_close(rotation_z(30) *
+                                               translation(Vec(-4, 0, 1))));
+  assert(are_close(scene.camera->aspect_ratio, 1.0));
+}
+
+void test_parser_undefined_material() {
+  stringstream sstr("\nplane(this_material_does_not_exist, identity)\n");
+  InputStream stream(sstr);
+  map<string, float> vars;
+  try {
+    stream.parse_scene(vars);
+    fmt::print("The code did not throw an exception");
+    assert(false);
+  } catch (GrammarError &e) {
+    fmt::print("{}\n", e.what());
+    assert(true);
+  }
+}
+
+void test_parser_double_camera() {
+  stringstream sstr(
+      "\ncamera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, "
+      "1.0)\ncamera(orthogonal, identity, 1.0, 1.0)\n");
+  InputStream stream(sstr);
+  map<string, float> vars;
+  try {
+    stream.parse_scene(vars);
+    fmt::print("The code did not throw an exception");
+    assert(false);
+  } catch (GrammarError &e) {
+    fmt::print("{}\n", e.what());
+    assert(true);
+  }
 }
 
 int main() {
   test_input_file();
   test_lexer();
   test_parser();
+  test_parser_undefined_material();
+  test_parser_double_camera();
   return 0;
 }
