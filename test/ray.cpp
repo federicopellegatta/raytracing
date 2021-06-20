@@ -23,7 +23,7 @@ void test_at() {
 void test_transformation() {
   Ray ray(Point(1.0, 2.0, 3.0), Vec(6.0, 5.0, 4.0));
   Transformation transformation =
-      translation(Vec(10.0, 11.0, 12.0)) * rotation_x(M_PI / 2.0);
+      translation(Vec(10.0, 11.0, 12.0)) * rotation_x(90);
   Ray transformed = ray.transform(transformation);
 
   assert(transformed.origin == Point(11.0, 8.0, 14.0));

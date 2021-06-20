@@ -105,9 +105,9 @@ void test_transformation_rotations() {
   assert(rotation_y(0.1).is_consistent());
   assert(rotation_z(0.1).is_consistent());
 
-  assert((rotation_x(M_PI / 2) * Vec(0., 1., 0.)) == Vec(0., 0., 1.));
-  assert((rotation_y(M_PI / 2) * Vec(0., 0., 1.)) == Vec(1., 0., 0.));
-  assert((rotation_z(M_PI / 2) * Vec(1., 0., 0.)) == Vec(0., 1., 0.));
+  assert((rotation_x(90) * Vec(0., 1., 0.)) == Vec(0., 0., 1.));
+  assert((rotation_y(90) * Vec(0., 0., 1.)) == Vec(1., 0., 0.));
+  assert((rotation_z(90) * Vec(1., 0., 0.)) == Vec(0., 1., 0.));
 }
 
 void test_transformation_scaling() {

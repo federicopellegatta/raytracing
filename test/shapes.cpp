@@ -126,7 +126,7 @@ void test_plane_hit() {
 }
 
 void test_plane_transformation() {
-  Plane plane1(rotation_x(M_PI_2));
+  Plane plane1(rotation_x(90));
   Ray ray1(Point(0., 2., 0.), -VEC_Y);
   HitRecord intersection1{plane1.ray_intersection(ray1)};
   assert(intersection1.hit);
