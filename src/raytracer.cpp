@@ -10,10 +10,66 @@
 
 using namespace std;
 
+/**
+ * @brief Split a string (using boost would be better, but for only one function
+ * it would have been overkill). Method found here:
+ * https://stackoverflow.com/questions/289347/using-strtok-with-a-stdstring
+ *
+ * @param str
+ * @param delim
+ * @param parts
+ */
+void split(const string &str, const string &delim, vector<string> &parts) {
+  size_t start, end = 0;
+  while (end < str.size()) {
+    start = end;
+    while (start < str.size() && (delim.find(str[start]) != string::npos)) {
+      start++; // skip initial whitespace
+    }
+    end = start;
+    while (end < str.size() && (delim.find(str[end]) == string::npos)) {
+      end++; // skip to end of word
+    }
+    if (end - start != 0) { // just ignore zero-length strings.
+      parts.push_back(string(str, start, end - start));
+    }
+  }
+}
+/**
+ * @brief Parse the list of `-d` switches and return a map associating
+ * variable names with their values
+ *
+ * @param definitions
+ * @return map<string,float>
+ */
+map<string, float> build_vars_table(vector<string> &definitions) {
+  map<string, float> vars;
+  for (const auto &el : definitions) {
+    vector<string> parts;
+    split(el, ":", parts);
+    if (parts.size() != 2) {
+      fmt::print(
+          "ERROR: the definition {} does not follow the pattern NAME:VALUE\n",
+          el);
+      exit(1);
+    }
+    string name = parts.at(0), value = parts.at(1);
+    float f_value = 0.;
+    try {
+      f_value = stof(value);
+    } catch (invalid_argument &e) {
+      fmt::print("invalid floating point value {} in definition {}\n", value,
+                 el);
+    }
+    vars[name] = f_value;
+  }
+
+  return vars;
+}
 void imagerender(int width, int height, string algorithm, int init_state,
                  int init_seq, int num_of_rays, int max_depth,
-                 int samples_per_pixel, string output_file,
-                 string input_scene) {
+                 int samples_per_pixel, string output_file, string input_scene,
+                 vector<string> &cli_vars) {
 
   // Checking if antialiasing feature is on, and propersly set
   int samples_per_side = static_cast<int>(sqrt(samples_per_pixel));
@@ -49,7 +105,7 @@ void imagerender(int width, int height, string algorithm, int init_state,
     exit(1);
   }
   InputStream stream(scene_file, input_scene);
-  map<string, float> vars;
+  map<string, float> vars = build_vars_table(cli_vars);
   Scene scene;
   try {
     scene = stream.parse_scene(vars);
@@ -189,6 +245,11 @@ int interface(int argc, char **argv) {
   args::ValueFlag<string> scene_file(render_arguments, "",
                                      "Input file defining the scene.",
                                      {'i', "input-scene"});
+  args::ValueFlagList<string> declare_float(
+      render_arguments, "",
+      "Declare a variable. The syntax is «--declare-float=VAR:VALUE». Example: "
+      "--declare-float=clock:150",
+      {'d', "declare-float"});
   args::ValueFlag<string> input_pfm(
       pfm2png_arguments, "", "Path to input pfm file", {"inpfm", "input_pfm"});
   args::ValueFlag<string> output_png(pfm2png_arguments, "",
@@ -221,11 +282,17 @@ int interface(int argc, char **argv) {
   }
 
   if (render) {
+    vector<string> cli_vars;
+    if (declare_float) {
+      for (const auto &str : args::get(declare_float)) {
+        cli_vars.push_back(str);
+      }
+    }
     imagerender(args::get(width), args::get(height), args::get(algorithm),
                 args::get(init_state), args::get(init_seq),
                 args::get(num_of_rays), args::get(max_depth),
                 args::get(samples_per_pixel), args::get(output_filename),
-                args::get(scene_file));
+                args::get(scene_file), cli_vars);
   }
   if (convertpfm2png) {
     pfm2png(args::get(input_pfm), args::get(output_png), args::get(factor),
