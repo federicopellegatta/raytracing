@@ -7,11 +7,26 @@
  * @brief Abstract class representing an observer.
  * Base class for OrtogonalCamera and PerspectiveCamera
  *
+ * @param transformation The transformation to be applied to the camera (default
+ * identity).
+ * @param aspect_ratio A float number representing the aspect ratio of the
+ * screen (usually 16:9)
  * @see OrthogonalCamera
  * @see PerspectiveCamera
  */
 struct Camera {
-
+  Transformation transformation;
+  float aspect_ratio;
+  /**
+   * @brief Construct a new Camera object
+   *
+   * @param _transformation
+   */
+  Camera(float _aspect_ratio = 1.f,
+         Transformation _transformation = Transformation())
+      : transformation{_transformation} {
+    aspect_ratio = _aspect_ratio;
+  }
   /**
    * @brief Fire a ray (or all of them) through a camera
    * Implementation is to be provided by OrtogonalCamera and PerspectiveCamera
@@ -24,15 +39,8 @@ struct Camera {
  * This class implements an observer seeing the world through an orthogonal
  * projection.
  *
- * @param transformation The transformation to be applied to the camera (default
- * identity).
- * @param aspect_ratio A float number representing the aspect ratio of the
- * screen (usually 16:9)
  */
 struct OrthogonalCamera : public Camera {
-  Transformation transformation;
-  float aspect_ratio;
-
   /**
    * @brief Construct a new Orthogonal Camera object
    *
@@ -45,9 +53,7 @@ struct OrthogonalCamera : public Camera {
    */
   OrthogonalCamera(float _aspect_ratio = 1.f,
                    Transformation _transformation = Transformation())
-      : transformation{_transformation} {
-    aspect_ratio = _aspect_ratio;
-  }
+      : Camera{_aspect_ratio, _transformation} {}
 
   /**
    * @brief Shoots a ray through the camera screen
@@ -79,16 +85,11 @@ struct OrthogonalCamera : public Camera {
  * @param _screen_distance A float number which indicate how much the eye of the
  * observer is distant from the screen, and it influences the "aperture" (field
  * of view angle along the horizontal direction)
- * @param aspect_ratio A float number representing the aspect ratio of the
- * screen (usually 16:9)
- * @param transformation The transformation to be applied to the camera
- * (default identity)
  *
  * @see Transformation
  */
 struct PerspectiveCamera : public Camera {
-  Transformation transformation;
-  float aspect_ratio, screen_distance;
+  float screen_distance;
 
   /**
    * @brief Construct a new Perspective Camera object
@@ -103,9 +104,8 @@ struct PerspectiveCamera : public Camera {
    */
   PerspectiveCamera(float _screen_distance = 1.f, float _aspect_ratio = 1.f,
                     Transformation _transformation = Transformation())
-      : transformation{_transformation} {
+      : Camera{_aspect_ratio, _transformation} {
     screen_distance = _screen_distance;
-    aspect_ratio = _aspect_ratio;
   }
 
   /**
