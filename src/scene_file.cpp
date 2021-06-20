@@ -210,9 +210,9 @@ void InputStream::unread_token(const Token &_token) {
 
 void InputStream::expect_symbol(const char &ch) {
   Token token = read_token();
-  if (token.type != TokenType::SYMBOL) {
-    throw(GrammarError(token.location, "got '" + string{token.value.symbol} +
-                                           "' instead of '" + ch + "'"));
+  if (token.type != TokenType::SYMBOL || token.value.symbol != ch) {
+    throw(GrammarError(token.location, fmt::format("got '{}' instead of '{}'",
+                                                   token.value.symbol, ch)));
   }
 }
 
@@ -220,14 +220,14 @@ KeywordEnum InputStream::expect_keywords(const vector<KeywordEnum> &keywords) {
   Token token = read_token();
 
   if (token.type != TokenType::KEYWORD) {
-    throw(GrammarError(token.location, "expected a keyword instead of " +
-                                           string{token.value.symbol}));
+    throw(GrammarError(
+        token.location,
+        fmt::format("expected a keyword instead of '{}'", token.value.symbol)));
   }
 
   if (find(keywords.begin(), keywords.end(), token.value.keyword) ==
       keywords.end()) {
-    throw(GrammarError(token.location,
-                       "expected one of the keywords in `keywords`'"));
+    throw(GrammarError(token.location, "expected a keyword, none found"));
   }
   return token.value.keyword;
 }
@@ -252,27 +252,24 @@ float InputStream::expect_number(const Scene &_scene) {
 
 string InputStream::expect_string() {
   Token token = read_token();
-  // if (token.type != TokenType::LITERAL_STRING) {
-  //  throw(GrammarError(token.location,
-  //                     "got '" + token.value.str + "' instead of a string"));
-  //}
   switch (token.type) {
   case TokenType::IDENTIFIER:
     throw(GrammarError(token.location,
-                       "Got '" + token.value.str + "' instead of a string"));
+                       "got '" + token.value.str + "' instead of a string"));
     break;
   case TokenType::KEYWORD:
-    throw(GrammarError(token.location, "Got a keyword instead of a string."));
+    throw(GrammarError(token.location, "got a keyword instead of a string."));
     break;
   case TokenType::LITERAL_NUMBER:
-    throw(GrammarError(token.location, "Got a number instead of a string"));
+    throw(GrammarError(token.location, "got a number instead of a string"));
     break;
   case TokenType::STOP:
-    throw(GrammarError(token.location, "Got a STOP token instead of a string"));
+    throw(GrammarError(token.location, "got a STOP token instead of a string"));
     break;
   case TokenType::SYMBOL:
-    throw(GrammarError(token.location, "Got '" + string{token.value.symbol} +
-                                           "' instead of a string"));
+    throw(
+        GrammarError(token.location, fmt::format("got '{}' instead of a string",
+                                                 token.value.symbol)));
     break;
   }
   return token.value.str;
@@ -280,28 +277,26 @@ string InputStream::expect_string() {
 
 string InputStream::expect_identifier() {
   Token token = read_token();
-  // if (token.type != TokenType::IDENTIFIER)
-  //  throw(GrammarError(token.location, "got '" + token.value.str +
-  //                                         "' instead of an identifier"));
   switch (token.type) {
   case TokenType::LITERAL_STRING:
-    throw(GrammarError(token.location, "Got '" + token.value.str +
+    throw(GrammarError(token.location, "got '" + token.value.str +
                                            "' instead of a identifier"));
     break;
   case TokenType::KEYWORD:
     throw(
-        GrammarError(token.location, "Got a keyword instead of a identifier"));
+        GrammarError(token.location, "got a keyword instead of a identifier"));
     break;
   case TokenType::LITERAL_NUMBER:
-    throw(GrammarError(token.location, "Got a number instead of a identifier"));
+    throw(GrammarError(token.location, "got a number instead of a identifier"));
     break;
   case TokenType::STOP:
     throw(GrammarError(token.location,
-                       "Got a STOP token instead of a identifier"));
+                       "got a STOP token instead of a identifier"));
     break;
   case TokenType::SYMBOL:
-    throw(GrammarError(token.location, "Got '" + string{token.value.symbol} +
-                                           "' instead of a identifier"));
+    throw(
+        GrammarError(token.location, fmt::format("got '{}' instead of a string",
+                                                 token.value.symbol)));
     break;
   }
   return token.value.str;
@@ -545,7 +540,7 @@ Scene InputStream::parse_scene(const map<string, float> &variables) {
       break;
     case KeywordEnum::CAMERA:
       if (_scene.camera) {
-        throw GrammarError(what.location, "Cannot define more than one camera");
+        throw GrammarError(what.location, "cannot define more than one camera");
       } else {
         _scene.camera = _parse_camera(_scene);
       }
