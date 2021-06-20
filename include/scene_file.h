@@ -249,8 +249,6 @@ struct Scene {
   shared_ptr<Camera> camera;
   map<string, float> float_variables;
   vector<string> overridden_variables;
-
-  // Scene();
 };
 
 struct InputStream {
