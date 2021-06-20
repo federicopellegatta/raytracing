@@ -24,6 +24,7 @@ sphere(sky_material, translation([0, 0, 0.4]) * scaling([200, 200, 200]))
 sphere(sphere_material, translation([0, 0, 1]))
 sphere(mirror_material, translation([1, 2.5, 0]))
 
+float angle(10)
 float aspect_ratio(1.7777)
 float screen_distance(1.0)
-camera(perspective, rotation_z(0.17) * translation([-1, 0, 1]), aspect_ratio, screen_distance)
+camera(perspective, rotation_z(angle) * translation([-1, 0, 1]), aspect_ratio, screen_distance)
