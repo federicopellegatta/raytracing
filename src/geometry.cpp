@@ -145,10 +145,10 @@ Transformation scaling(Vec vec) {
   return Transformation(_m, _invm);
 }
 
-Transformation rotation_x(float ang) { // angolo in rad
-  // float ang = ang * M_PI / 180;
-  float cosang = cos(ang);
-  float sinang = sin(ang);
+Transformation rotation_x(float angle_deg) {
+  float angle_rad = (angle_deg * M_PI) / 180;
+  float cosang = cos(angle_rad);
+  float sinang = sin(angle_rad);
 
   float _m[4][4] = {{1.0, 0.0, 0.0, 0.0},
                     {0.0, cosang, -sinang, 0.0},
@@ -162,10 +162,10 @@ Transformation rotation_x(float ang) { // angolo in rad
   return Transformation(_m, _invm);
 }
 
-Transformation rotation_y(float ang) { // angolo in rad
-  // float ang = ang * M_PI / 180;
-  float cosang = cos(ang);
-  float sinang = sin(ang);
+Transformation rotation_y(float angle_deg) {
+  float angle_rad = (angle_deg * M_PI) / 180;
+  float cosang = cos(angle_rad);
+  float sinang = sin(angle_rad);
 
   float _m[4][4] = {{cosang, 0.0, sinang, 0.0},
                     {0.0, 1.0, 0.0, 0.0},
@@ -179,10 +179,10 @@ Transformation rotation_y(float ang) { // angolo in rad
   return Transformation(_m, _invm);
 }
 
-Transformation rotation_z(float ang) { // angolo in rad
-  // float ang = ang * M_PI / 180;
-  float cosang = cos(ang);
-  float sinang = sin(ang);
+Transformation rotation_z(float angle_deg) {
+  float angle_rad = (angle_deg * M_PI) / 180;
+  float cosang = cos(angle_rad);
+  float sinang = sin(angle_rad);
 
   float _m[4][4] = {{cosang, -sinang, 0.0, 0.0},
                     {sinang, cosang, 0.0, 0.0},
