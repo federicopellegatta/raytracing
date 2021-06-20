@@ -87,7 +87,7 @@ add_library(trace
     src/world.cpp
     src/materials.cpp
     src/render.cpp
-    src/pcg.cp
+    src/pcg.cpp
     src/scene_file.cpp
 )
 
@@ -123,7 +123,6 @@ target_link_libraries(pcgTest PUBLIC trace)
 target_link_libraries(scene_fileTest PUBLIC trace)
 target_link_libraries(scatter_10000_rays PUBLIC trace)
 
-
 add_test(NAME colorTest 
     COMMAND colorTest
 )
@@ -157,7 +156,6 @@ add_test(NAME pcgTest
 add_test(NAME scene_fileTest
     COMMAND scene_fileTest 
 )
-
 
 # Force the compiler to use the C++17 standard
 target_compile_features(raytracer PUBLIC cxx_std_17)
