@@ -55,6 +55,7 @@ struct OrthogonalCamera : public Camera {
                    Transformation _transformation = Transformation())
       : Camera{_aspect_ratio, _transformation} {}
 
+
   /**
    * @brief Shoots a ray through the camera screen
    * The coordinates (u, v) specify the point on the screen where the ray
