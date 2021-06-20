@@ -29,10 +29,11 @@ Color PathTracer::operator()(Ray ray) {
 
   // Russian Roulette
   if (ray.depth >= russian_roulette_limit) {
-    if (pcg.random_float() > hit_color_lum)
+    float q = max(0.5f, 1 - hit_color_lum);
+    if (pcg.random_float() > q)
       // Keep the recursion going, but compensate for other potentially
       // discarded rays
-      hit_color = hit_color * (1.0 / (1.0 - hit_color_lum));
+      hit_color = hit_color * (1.0 / (1.0 - q));
     else {
       // Terminate prematurely
       return emitted_radiance;
