@@ -4,98 +4,18 @@
 #include "imagetracer.h"
 #include "materials.h"
 #include "render.h"
+#include "scene_file.h"
 #include "world.h"
 #include <memory>
 
 using namespace std;
 
-struct Demo {
-  HdrImage image;
-  World world;
-  shared_ptr<Camera> camera;
-  string pfm_output, png_output;
+void imagerender(int width, int height, string algorithm, int init_state,
+                 int init_seq, int num_of_rays, int max_depth,
+                 int samples_per_pixel, string output_file,
+                 string input_scene) {
 
-  Demo(int width, int height, float angle_deg, string camera_type,
-       string output);
-
-  void run(string, int, int, int, int, int);
-};
-
-Demo::Demo(int width, int height, float angle_deg, string camera_type,
-           string output)
-    : image(width, height) {
-  // Defining materials
-  Material sky_material(
-      make_shared<DiffusiveBRDF>(make_shared<UniformPigment>(BLACK)),
-      make_shared<UniformPigment>(Color(1.0, 0.9, 0.5)));
-  Material ground_material(
-      make_shared<DiffusiveBRDF>(make_shared<CheckeredPigment>(
-          Color(0.3, 0.5, 0.1), Color(0.1, 0.2, 0.5))));
-  Material sphere_material(make_shared<DiffusiveBRDF>(
-      make_shared<UniformPigment>(Color(0.3, 0.4, 0.8))));
-  Material mirror_material(make_shared<SpecularBRDF>(
-      make_shared<UniformPigment>(Color(0.6, 0.2, 0.3))));
-  // Create a world and populate it with a few shapes
-  // for (int i{}; i < 2; i++) {
-  //  for (int j{}; j < 2; j++) {
-  //    for (int k{}; k < 2; k++) {
-  //      float x = 0.5 - i;
-  //      float y = 0.5 - j;
-  //      float z = 0.5 - k;
-  //      world.add(make_shared<Sphere>(
-  //          Sphere{translation(Vec(x, y, z)) * scaling(Vec(0.1, 0.1, 0.1)),
-  //                 material1}));
-  //    }
-  //  }
-  //}
-
-  // Place two other balls in the bottom / left part of the cube,so that we can
-  // check if there are issues with the orientation of the image
-  // world.add(make_shared<Sphere>(
-  //    Sphere{translation(Vec(0.0, 0.0, -0.5)) * scaling(Vec(0.1, 0.1, 0.1)),
-  //           material2}));
-  // world.add(make_shared<Sphere>(
-  //    Sphere{translation(Vec(0.0, 0.5, 0.0)) * scaling(Vec(0.1, 0.1, 0.1)),
-  //           material3}));
-
-  world.add(make_shared<Plane>(Transformation(), ground_material));
-  world.add(make_shared<Sphere>(
-      translation(Vec(0, 0, 0.4)) * scaling(Vec(200, 200, 200)), sky_material));
-  world.add(make_shared<Sphere>(translation(Vec(0, 0, 1)), sphere_material));
-  world.add(make_shared<Sphere>(translation(Vec(1, 2.5, 0)), mirror_material));
-
-  // Initialize camera
-  float angle_rad = angle_deg * M_PI / 180;
-  Transformation camera_tr =
-      rotation_z(angle_rad) * translation(Vec(-1.0, 0.0, 1.0));
-
-  if (camera_type == "orthogonal" || camera_type == "orthogonalCamera")
-    camera = make_shared<OrthogonalCamera>(OrthogonalCamera(
-        static_cast<float>(width) / static_cast<float>(height), camera_tr));
-  else
-    camera = make_shared<PerspectiveCamera>(PerspectiveCamera(
-        1., static_cast<float>(width) / static_cast<float>(height), camera_tr));
-
-  if (output == "") // if user have not specify the output
-    throw invalid_argument("You must specify the output filename");
-
-  string format = static_cast<string>(output).erase(
-      0, static_cast<string>(output).find(".") + 1);
-  string name = static_cast<string>(output).substr(
-      0, static_cast<string>(output).find("."));
-  if (format != output) // if user have specified a format
-    output = name;
-
-  pfm_output = output + ".pfm";
-  if (format == "jpeg" || format == "jpg" || format == "JPEG")
-    png_output = output + ".jpg";
-  else
-    png_output = output + ".png";
-}
-
-void Demo::run(string algorithm, int init_state, int init_seq, int num_of_rays,
-               int max_depth, int samples_per_pixel) {
-  shared_ptr<Renderer> renderer;
+  // Checking if antialiasing feature is on, and propersly set
   int samples_per_side = static_cast<int>(sqrt(samples_per_pixel));
   if (pow(samples_per_side, 2) != samples_per_pixel) {
     fmt::print("ERROR: the number of samples per pixel ({}) must be a perfect "
@@ -104,33 +24,76 @@ void Demo::run(string algorithm, int init_state, int init_seq, int num_of_rays,
     exit(1);
   }
 
-  ImageTracer tracer(image, camera, samples_per_side);
+  // Checking if user defined an output file
+  if (output_file == "")
+    throw invalid_argument("You must specify the output filename");
 
+  string format = static_cast<string>(output_file)
+                      .erase(0, static_cast<string>(output_file).find(".") + 1);
+  string name = static_cast<string>(output_file)
+                    .substr(0, static_cast<string>(output_file).find("."));
+  if (format != output_file) // if user have specified a format
+    output_file = name;
+
+  string pfm_output = output_file + ".pfm";
+  string png_output;
+  if (format == "jpeg" || format == "jpg" || format == "JPEG")
+    png_output = output_file + ".jpg";
+  else
+    png_output = output_file + ".png";
+
+  // Parsing the input file defining the scene
+  ifstream scene_file(input_scene);
+  if (scene_file.fail()) {
+    fmt::print("ERROR: unable to open {} file\n", input_scene);
+    exit(1);
+  }
+  InputStream stream(scene_file, input_scene);
+  map<string, float> vars;
+  Scene scene;
+  try {
+    scene = stream.parse_scene(vars);
+  } catch (GrammarError &e) {
+    fmt::print(e.what());
+    exit(1);
+  }
+
+  // Allocating the image
+  HdrImage image(width, height);
+
+  // Allocating the tracer
+  ImageTracer tracer(image, scene.camera, samples_per_side);
+
+  // Allocating the user-chosen renderer
+  shared_ptr<Renderer> renderer;
   if (algorithm == "onoff") {
     fmt::print("Using on/off renderer\n");
-    renderer = make_shared<OnOffRenderer>(world);
+    renderer = make_shared<OnOffRenderer>(scene.world);
   } else if (algorithm == "flat") {
     fmt::print("Using flat renderer\n");
-    renderer = make_shared<FlatRenderer>(world);
+    renderer = make_shared<FlatRenderer>(scene.world);
   } else if (algorithm == "pathtracing") {
     fmt::print("Using a path tracer\n");
-    renderer = make_shared<PathTracer>(world, BLACK, PCG(init_state, init_seq),
-                                       num_of_rays, max_depth);
+    renderer = make_shared<PathTracer>(
+        scene.world, BLACK, PCG(init_state, init_seq), num_of_rays, max_depth);
   } else {
     fmt::print("Unknown renderer type.\nExiting.\n");
     exit(1);
   }
 
+  // Rendering the image (time-consuming process, where the "magic" happens)
   tracer.fire_all_rays([&](const Ray &ray) { return (*renderer)(ray); });
 
-  ofstream stream(pfm_output);
-  tracer.image.write_pfm(stream, Endianness::little_endian);
+  // Writing pfm file
+  ofstream pfm_stream(pfm_output);
+  tracer.image.write_pfm(pfm_stream, Endianness::little_endian);
   fmt::print("File {} has been written to disk\n", pfm_output);
 
   // Apply tone - mapping to the image
   tracer.image.normalize_image(1.0);
   tracer.image.clamp_image();
 
+  // Writing image in ldr format (for now png)
   tracer.image.write_ldr_image(png_output.c_str(), 1.0);
   fmt::print("File {} has been written to disk. \n", png_output);
 }
@@ -173,62 +136,59 @@ int interface(int argc, char **argv) {
       "Raytracing is a program that can generate photorealistic images.");
   args::Group commands(parser, "commands");
 
-  args::Command demo(commands, "demo", "Use this command to produce an image");
+  args::Command render(commands, "render",
+                       "Use this command to produce an image");
   args::Command convertpfm2png(
       commands, "convertpfm2png",
       "Use this option to convert a HDR image to PNG format");
 
   args::Group arguments(parser, "help", args::Group::Validators::DontCare,
                         args::Options::Global);
-  args::Group demo_arguments(parser, "demo arguments",
-                             args::Group::Validators::DontCare,
-                             args::Options::Global);
+  args::Group render_arguments(parser, "render_arguments",
+                               args::Group::Validators::DontCare,
+                               args::Options::Global);
   args::Group pfm2png_arguments(parser, "pfm2png arguments",
                                 args::Group::Validators::DontCare,
                                 args::Options::Global);
   args::HelpFlag help(arguments, "help", "Display this help menu", {"help"});
-  args::ValueFlag<int> width(demo_arguments, "",
+  args::ValueFlag<int> width(render_arguments, "",
                              "Width of the image to produce", {'w', "width"});
   args::ValueFlag<int> height(
-      demo_arguments, "", "Height of the image to produce", {'h', "height"});
-  args::ValueFlag<float> angle_deg(
-      demo_arguments, "", "Angle in degrees of the pov of the image to produce",
-      {"deg", "degrees"});
-  args::ValueFlag<string> camera(
-      demo_arguments, "",
-      "Type of camera to use, can be either 'perspective' or 'orthogonal'",
-      {"cam", "camera"});
+      render_arguments, "", "Height of the image to produce", {'h', "height"});
   args::ValueFlag<string> algorithm(
-      demo_arguments, "",
+      render_arguments, "",
       "Type of renderer to use to produce image, "
       "can either be 'flat', 'onoff' or 'pathtracing'",
       {"alg", "algorithm"});
   args::ValueFlag<string> output_filename(
-      demo_arguments, "",
+      render_arguments, "",
       "Name of the output file. The program will produce two files: "
       "<outf>.pfm and <outf>.png (or <outf>.jpg)",
       {"outf", "output_filename"});
   args::ValueFlag<int> num_of_rays(
-      demo_arguments, "",
+      render_arguments, "",
       "Number of rays departing from each surface point (only applicable with "
       "--algorithm=pathtracing).",
       {"num-of-rays"});
-  args::ValueFlag<int> max_depth(demo_arguments, "",
+  args::ValueFlag<int> max_depth(render_arguments, "",
                                  "Maximum allowed ray depth (only applicable "
                                  "with --algorithm=pathtracing).",
                                  {"max-depth"});
   args::ValueFlag<int> init_state(
-      demo_arguments, "",
+      render_arguments, "",
       "Initial seed for the random number generator (positive number).",
       {"init-state"});
-  args::ValueFlag<int> init_seq(demo_arguments, "",
+  args::ValueFlag<int> init_seq(render_arguments, "",
                                 "Identifier of the sequence produced by the "
                                 "random number generator (positive number).",
                                 {"init-seq"});
   args::ValueFlag<int> samples_per_pixel(
-      demo_arguments, "",
+      render_arguments, "",
       "Number of samples per pixel (must be a perfect square, e.g., 16).",
       {"samples-per-pixel"});
+  args::ValueFlag<string> scene_file(render_arguments, "",
+                                     "Input file defining the scene.",
+                                     {'i', "input-scene"});
   args::ValueFlag<string> input_pfm(
       pfm2png_arguments, "", "Path to input pfm file", {"inpfm", "input_pfm"});
   args::ValueFlag<string> output_png(pfm2png_arguments, "",
@@ -260,12 +220,12 @@ int interface(int argc, char **argv) {
     return 1;
   }
 
-  if (demo) {
-    Demo test(args::get(width), args::get(height), args::get(angle_deg),
-              args::get(camera), args::get(output_filename));
-    test.run(args::get(algorithm), args::get(init_state), args::get(init_seq),
-             args::get(num_of_rays), args::get(max_depth),
-             args::get(samples_per_pixel));
+  if (render) {
+    imagerender(args::get(width), args::get(height), args::get(algorithm),
+                args::get(init_state), args::get(init_seq),
+                args::get(num_of_rays), args::get(max_depth),
+                args::get(samples_per_pixel), args::get(output_filename),
+                args::get(scene_file));
   }
   if (convertpfm2png) {
     pfm2png(args::get(input_pfm), args::get(output_png), args::get(factor),
