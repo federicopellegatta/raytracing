@@ -9,10 +9,12 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 cd "build/"
 cmake --build .
-if [ -d "demo_animation/" ]
+if [ ! -d "demo_animation/" ]
 then 
-    rm -rf "demo_animation/"
 	mkdir "demo_animation/"
+else 
+    rm -rf "demo_animation/"
+    mkdir "demo_animation/"
 fi
 cd "demo_animation/"
 
