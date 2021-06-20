@@ -1,0 +1,29 @@
+material sky_material(
+    diffuse(uniform(<0, 0, 0>)),
+    uniform(<1.0, 0.9, 0.5>) 
+)
+
+material ground_material(
+    diffuse(checkered(<0.3, 0.5, 0.1>,
+                      <0.1, 0.2, 0.5>, 10)),
+    uniform(<0, 0, 0>)
+)
+
+material sphere_material(
+    diffuse(uniform(<0.3,0.4,0.8>)),
+    uniform(<0, 0, 0>)
+)
+
+material mirror_material(
+    specular(uniform(<0.6, 0.2, 0.3>)),
+    uniform(<0, 0, 0>)
+)
+
+plane(ground_material, identity)
+sphere(sky_material, translation([0, 0, 0.4]) * scaling([200, 200, 200]))
+sphere(sphere_material, translation([0, 0, 1]))
+sphere(mirror_material, translation([1, 2.5, 0]))
+
+float aspect_ratio(1.7777)
+float screen_distance(1.0)
+camera(perspective, rotation_z(0.17) * translation([-1, 0, 1]), aspect_ratio, screen_distance)
