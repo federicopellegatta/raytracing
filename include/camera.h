@@ -55,7 +55,6 @@ struct OrthogonalCamera : public Camera {
                    Transformation _transformation = Transformation())
       : Camera{_aspect_ratio, _transformation} {}
 
-
   /**
    * @brief Shoots a ray through the camera screen
    * The coordinates (u, v) specify the point on the screen where the ray
@@ -68,8 +67,8 @@ struct OrthogonalCamera : public Camera {
           |                              |
           +------------------------------+
        (0, 0)                          (1, 0)
-   * @param u `u` coordiante in screen frame
-   * @param v `v` coordiante in screen frame
+   * @param u `u` coordinate in screen frame
+   * @param v `v` coordinate in screen frame
    * @return Ray generated passing through (u, v)
    */
   inline Ray fire_ray(float u, float v) {
