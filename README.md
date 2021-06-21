@@ -50,7 +50,7 @@ A help menu will be displayed by typing (the command-line interface is built usi
 $ ./raytracer --help
 ```
 ### Render
-Ray-Tracing can generate images using 3 algorithms.\n
+Ray-Tracing can generate images using 3 algorithms.
 Inside the `example` directory there are input files defining different scenes. 
 
 >Note that the file `example/demo.txt` contains instruction on how to write a correct input file.
