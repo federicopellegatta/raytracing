@@ -44,7 +44,7 @@ All the options available can be displayed using `--help` command.
 
 Enjoy the following demo animation running `./demo_animation.sh`
 
-![Demo animation](https://i.imgur.com/thXAn05.gif)
+![Demo animation](./examples/demo.gif)
 
 ### Convert images from HDR to LDR format
 Ray-Tracing can also convert images from HDR to LDR format (only `png` and `jpeg` are supported):  use the `convertpfm2png` command as in the following example:
