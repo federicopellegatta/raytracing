@@ -1,10 +1,10 @@
 
-# Ray-Tracing
+# raytracer
 ![Operating Systems](https://img.shields.io/badge/os-Linux-lightgrey)
 [![CI](https://img.shields.io/github/workflow/status/federicopellegatta/raytracing/CMake)](https://github.com/federicopellegatta/raytracing/actions)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
-Ray-Tracing is a C++ code that you can use to generate photorealistic images.
+raytracer is a C++ code that you can use to generate photorealistic images.
 
 ## Installation
 ### Dependencies
@@ -24,7 +24,7 @@ $ conda env create -n <envname> -f requirements.yml
 Or you can your distribution package manager to install them.
   
 ### Download and building
-If all the dependencies have been met, follow the instructions below in order to clone and compile Ray-Tracing in your own directory.
+If all the dependencies have been met, follow the instructions below in order to clone and compile raytracer in your own directory.
 ```
 $ git clone https://github.com/federicopellegatta/raytracing.git
 $ cd raytracing 
@@ -50,7 +50,7 @@ A help menu will be displayed by typing (the command-line interface is built usi
 $ ./raytracer --help
 ```
 ### Render
-Ray-Tracing can generate images using 3 algorithms.
+raytracer can generate images using 3 algorithms.
 Inside the `example` directory there are input files defining different scenes. 
 
 >Note that the file `example/demo.txt` contains instruction on how to write a correct input file.
@@ -72,7 +72,7 @@ will produce
 ![Demo animation](./examples/demo.gif)
 
 ### Convert images from HDR to LDR format
-Ray-Tracing can also convert images from HDR to LDR format (only `png` and `jpeg` are supported):  use the `convertpfm2png` command as in the following example:
+raytracer can also convert images from HDR to LDR format (only `png` and `jpeg` are supported):  use the `convertpfm2png` command as in the following example:
 ```
 $ ./raytracer convertpfm2png --inpfm=/path/to/pfm-file --outpng=/path/to/output-file -f 1.0 -g 1.0
 ```
@@ -81,4 +81,4 @@ $ ./raytracer convertpfm2png --inpfm=/path/to/pfm-file --outpng=/path/to/output-
 If you wish to contribute or you have just found any bug, please open an issue or a pull request on our GitHub repository. Thank you!
 
 ## Licence
-Ray-Tracing is licensed under the terms of the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) and is available for free. See the file [LICENCE.md](https://github.com/federicopellegatta/raytracing/blob/master/LICENCE.md).
+raytracer is licensed under the terms of the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) and is available for free. See the file [LICENCE.md](https://github.com/federicopellegatta/raytracing/blob/master/LICENCE.md).
