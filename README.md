@@ -63,14 +63,18 @@ generate the following image (which is defined in the input file `example/demo.t
 
 ![Demo image](./examples/demo-5.png)
 
-Enjoy the following demo animation running `./demo_animation.sh`
+Thanks to `ffmpeg` and a couple of cli options it is possibile to generate simple animations; for instance the command
+```
+$ ./demo_animation -j <NUM_OF_CORES>
+```
+will produce
 
 ![Demo animation](./examples/demo.gif)
 
 ### Convert images from HDR to LDR format
 Ray-Tracing can also convert images from HDR to LDR format (only `png` and `jpeg` are supported):  use the `convertpfm2png` command as in the following example:
-```sh
-./raytracer convertpfm2png --inpfm="memorial.pfm" --outpng="memorial.png" -f 1.0 -g 1.0
+```
+$ ./raytracer convertpfm2png --inpfm=/path/to/pfm-file --outpng=/path/to/output-file -f 1.0 -g 1.0
 ```
 
 ## Contributing
