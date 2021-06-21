@@ -8,7 +8,7 @@ fi
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 cd "build/"
-cmake --build .
+cmake --build . -j $1
 if [ ! -d "demo_animation/" ]
 then 
 	mkdir "demo_animation/"
