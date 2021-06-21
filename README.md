@@ -21,7 +21,7 @@ If you're willing to use [`conda`](https://docs.conda.io/en/latest/), or if you 
 ```
 $ conda env create -n <envname> -f requirements.yml
 ```
-Or you can your distribution package manager to install them.
+Or you can use your distribution package manager to install them.
   
 ### Download and building
 If all the dependencies have been met, follow the instructions below in order to clone and compile raytracer in your own directory.
