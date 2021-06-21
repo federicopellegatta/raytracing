@@ -1,8 +1,45 @@
+# Sample input file
+
+# TL;DR
+# - float definition: float name(value)
+# - color definition: <float, float, float>
+# - vector definition: [float, float, float]
+# - transformation definition: 
+#	- traslation(vector)
+#	- scaling(vector)
+#	- rotation_(x or y or z)(angle in degrees)
+#	- transformation can be chained via * (see below for example)
+# - pigment definition: 
+#	- uniform(color)
+#	- checkered(color1, color2, num_of_steps)
+#	- image("path/to/pfm-image")
+# - brdf definition:
+#	- diffuse(pigment,pigment)
+#	- specular(pigment,pigment)
+# - material definition: material name(brdf,pigment)
+# - shape definition:
+#	- plane(material, transformation)
+#	- sphere(material, transformation)
+# - camera definition: 
+#	- camera(perspective, transformation, float, float)
+#	- camera(orthogonal, transformation, float)
+
+# see below for a full example with more descriptive documentation
+
+# This is a definition of a `Material` object
+# The identifier goes first ("material") followed by the variable name (in this case "sky_material")
+# Then, between round brackets the elements needed for a material are present: 
+# - a brdf: in this case it is `Diffusive` (identified by "diffuse")
+#	- note that between round brackets is defined a `Pigment` object (in this case "uniform"), along with a 
+#	  `Color` object, identified by angled brackets, and it's 3 float components
+# - a pigment, representing the emitted radiance of the material
 material sky_material(
     diffuse(uniform(<0, 0, 0>)),
     uniform(<1.0, 0.9, 0.5>) 
 )
 
+# Same as before, but the pigment of the brdf is "checkered": 
+# 	- this type of Pigment is defined by two colors and the number of repetions
 material ground_material(
     diffuse(checkered(<0.3, 0.5, 0.1>,
                       <0.1, 0.2, 0.5>, 10)),
@@ -14,17 +51,36 @@ material sphere_material(
     uniform(<0, 0, 0>)
 )
 
+# Here the brdf of the material is of type `Specular`, reprenting a mirroring surface
 material mirror_material(
     specular(uniform(<0.6, 0.2, 0.3>)),
     uniform(<0, 0, 0>)
 )
 
+# This is a definition of a surface
+# First must be the type of surface (either a plane or a sphere) and between round brackets:
+#	- a material
+#	- a trasformation, or a composition of them (see below)
 plane(ground_material, identity)
+
+# Here the transformation is composition of
+#	- a traslation: inside the round brackets, between the square brackets, is defined 
+#			the vector of the transformation
+#	- a scaling
 sphere(sky_material, translation([0, 0, 0.4]) * scaling([200, 200, 200]))
 sphere(sphere_material, translation([0, 0, 1]))
 sphere(mirror_material, translation([1, 2.5, 0]))
 
+# Here we define some float variables, with the identifier ("float") first, 
+# then the name and between round brackets the value
 float angle(10)
 float aspect_ratio(1.7777)
 float screen_distance(1.0)
+
+# Here we define a camera
+#	- first the type of camera, in this case perspective
+#	- a transformation: in this case a composition of a rotation around the z axis and a 
+#			    traslation
+#	- the aspect ratio
+#	- the screen distance
 camera(perspective, rotation_z(angle) * translation([-1, 0, 1]), aspect_ratio, screen_distance)
