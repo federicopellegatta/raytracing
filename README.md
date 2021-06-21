@@ -55,7 +55,7 @@ Inside the `example` directory there are input files defining different scenes.
 
 >Note that the file `example/demo.txt` contains instruction on how to write a correct input file.
 
-The following command generate 
+The following command
 ```
 ./raytracer render -w 640 -h 360 --alg pathtracing --num-of-rays 5 --max-depth 4 --samples-per-pixel 25 --outf demo-5 -i ../examples/demo.txt
 ```
