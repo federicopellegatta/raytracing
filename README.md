@@ -61,7 +61,7 @@ The following command generate
 ```
 generate the following image (which is defined in the input file `example/demo.txt`)
 
-![Demo image](./example/demo-5.png)
+![Demo image](./examples/demo-5.png)
 
 Enjoy the following demo animation running `./demo_animation.sh`
 
