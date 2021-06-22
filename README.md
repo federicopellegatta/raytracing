@@ -4,7 +4,7 @@
 [![CI](https://img.shields.io/github/workflow/status/federicopellegatta/raytracing/CMake)](https://github.com/federicopellegatta/raytracing/actions)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
-raytracer is a C++ code that you can use to generate photorealistic images. Secondly, it can be also used to convert a image from `pfm` to `png` or `jpeg` format. 
+raytracer is a C++ code that you can use to generate simple photorealistic images using spheres and planes. Secondly, it can be also used to convert a image from `pfm` to `png` or `jpeg` format. 
 
 
 ## Installation
