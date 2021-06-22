@@ -13,7 +13,7 @@ raytracer is a C++ code that you can use to generate photorealistic images.
    - [GD library](https://libgd.github.io/) (at least version 2.5.5)
    - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (at least version 0.29)
 
-If you want to generate animation, we recommend also:
+If you want to generate animation, we also recommend:
    - [ffmpeg](https://www.ffmpeg.org/) (at least version 4.2.4)
    - [GNU parallel](https://www.gnu.org/software/parallel/) 
 
@@ -51,25 +51,27 @@ $ ./raytracer --help
 ```
 ### Render
 raytracer can generate images using 3 algorithms.
-Inside the `example` directory there are input files defining different scenes. 
+Inside the `examples` directory there are input files defining different scenes. 
 
->Note that the file `example/demo.txt` contains instruction on how to write a correct input file.
+>Note that the file `examples/demo.txt` contains instruction on how to write a correct input file.
 
 The following command
 ```
 ./raytracer render -w 640 -h 360 --alg pathtracing --num-of-rays 5 --max-depth 4 --samples-per-pixel 25 --outf demo-5 -i ../examples/demo.txt
 ```
-generate the following image (which is defined in the input file `example/demo.txt`)
+generate the following image (which is defined in the input file `examples/demo.txt`)
 
 ![Demo image](./examples/demo-5.png)
 
-Thanks to `ffmpeg` and a couple of cli options it is possibile to generate simple animations; for instance the command
+Thanks to `ffmpeg` and a couple of cli options it is possibile to generate simple animations; the scripts `demo_animation.sh` and `generate-image.sh` facilitates this, and by launching
 ```
-$ ./demo_animation -j <NUM_OF_CORES>
+$ ./demo_animation.sh -j <NUM_OF_CORES>
 ```
 will produce
 
 ![Demo animation](./examples/demo.gif)
+
+Feel free to tweak the scripts to your own liking.
 
 ### Convert images from HDR to LDR format
 raytracer can also convert images from HDR to LDR format (only `png` and `jpeg` are supported):  use the `convertpfm2png` command as in the following example:
