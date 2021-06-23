@@ -1,0 +1,70 @@
+material sky_material(
+    diffuse(uniform(<0, 0, 0>)),
+    uniform(<1.0, 0.9, 0.5>) 
+)
+
+
+material ground_material(
+    diffuse(checkered(<0.01, 0.01, 0.01>,
+                      <0.99, 0.99, 0.99>, 2)),
+    uniform(<0.1, 0.1, 0.1>)
+)
+
+#material ground_material(
+ #   diffuse(checkered(<0.3, 0.5, 0.1>,
+  #                    <0.1, 0.2, 0.5>, 2)),
+   # uniform(<0, 0, 0>)
+#)
+
+material earth_material(
+    diffuse(image("../examples/texture/earth.pfm")),
+    image("../examples/texture/earth.pfm")
+)
+
+material moon_material(
+    diffuse(image("../examples/texture/moon.pfm")),
+    image("../examples/texture/moon.pfm")
+)
+
+material mars_material(
+    diffuse(image("../examples/texture/mars.pfm")),
+    image("../examples/texture/mars.pfm")
+)
+
+material mercury_material(
+    diffuse(image("../examples/texture/mercury.pfm")),
+    image("../examples/texture/mercury.pfm")
+)
+
+material venus_material(
+    diffuse(image("../examples/texture/venus.pfm")),
+    image("../examples/texture/venus.pfm")
+)
+
+material jupiter_material(
+    diffuse(image("../examples/texture/jupiter.pfm")),
+    image("../examples/texture/jupiter.pfm")
+)
+
+# background
+plane(ground_material, identity)
+sphere(sky_material, translation([0, 0, 0.4]) * scaling([200, 200, 200]))
+
+# planets
+
+sphere(mercury_material, translation([-4.5, 0, 0.38299]) * scaling([0.38299, 0.38299, 0.38299]))
+sphere(venus_material, translation([-2.2, 0, 0.94993]) * scaling([0.94993, 0.94993, 0.94993]))
+sphere(earth_material, translation([0.5, 0, 1]))
+sphere(moon_material, translation([1.75, 0, 0.27266]) * scaling([0.27266, 0.27266, 0.27266]))
+sphere(mars_material, translation([3.8, 0, 0.53202]) * scaling([0.53202, 0.53202, 0.53202]) )
+sphere(jupiter_material, translation([0, 10, 10.97347]) * scaling([10.97347, 10.97347, 10.97347]) )
+
+
+
+
+float angle(90)
+float aspect_ratio(1.7777)
+float screen_distance(2)
+
+camera(perspective, rotation_x(-20) * rotation_z(angle) * translation([-5, 0, 3]) , aspect_ratio, screen_distance)
+
