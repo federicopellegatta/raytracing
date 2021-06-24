@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 Simone Pirota, Federico Pellegatta
+ *
+ * This file is part of raytracer.
+ *
+ * raytracer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * raytracer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with raytracer.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "render.h"
 
 Color FlatRenderer::operator()(Ray ray) {
@@ -29,10 +48,11 @@ Color PathTracer::operator()(Ray ray) {
 
   // Russian Roulette
   if (ray.depth >= russian_roulette_limit) {
-    if (pcg.random_float() > hit_color_lum)
+    float q = max(0.5f, 1 - hit_color_lum);
+    if (pcg.random_float() > q)
       // Keep the recursion going, but compensate for other potentially
       // discarded rays
-      hit_color = hit_color * (1.0 / (1.0 - hit_color_lum));
+      hit_color = hit_color * (1.0 / (1.0 - q));
     else {
       // Terminate prematurely
       return emitted_radiance;

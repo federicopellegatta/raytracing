@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 Simone Pirota, Federico Pellegatta
+ *
+ * This file is part of raytracer.
+ *
+ * raytracer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * raytracer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with raytracer.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "geometry.h"
 
 ////////////////////////////
@@ -145,10 +164,10 @@ Transformation scaling(Vec vec) {
   return Transformation(_m, _invm);
 }
 
-Transformation rotation_x(float ang) { // angolo in rad
-  // float ang = ang * M_PI / 180;
-  float cosang = cos(ang);
-  float sinang = sin(ang);
+Transformation rotation_x(float angle_deg) {
+  float angle_rad = (angle_deg * M_PI) / 180;
+  float cosang = cos(angle_rad);
+  float sinang = sin(angle_rad);
 
   float _m[4][4] = {{1.0, 0.0, 0.0, 0.0},
                     {0.0, cosang, -sinang, 0.0},
@@ -162,10 +181,10 @@ Transformation rotation_x(float ang) { // angolo in rad
   return Transformation(_m, _invm);
 }
 
-Transformation rotation_y(float ang) { // angolo in rad
-  // float ang = ang * M_PI / 180;
-  float cosang = cos(ang);
-  float sinang = sin(ang);
+Transformation rotation_y(float angle_deg) {
+  float angle_rad = (angle_deg * M_PI) / 180;
+  float cosang = cos(angle_rad);
+  float sinang = sin(angle_rad);
 
   float _m[4][4] = {{cosang, 0.0, sinang, 0.0},
                     {0.0, 1.0, 0.0, 0.0},
@@ -179,10 +198,10 @@ Transformation rotation_y(float ang) { // angolo in rad
   return Transformation(_m, _invm);
 }
 
-Transformation rotation_z(float ang) { // angolo in rad
-  // float ang = ang * M_PI / 180;
-  float cosang = cos(ang);
-  float sinang = sin(ang);
+Transformation rotation_z(float angle_deg) {
+  float angle_rad = (angle_deg * M_PI) / 180;
+  float cosang = cos(angle_rad);
+  float sinang = sin(angle_rad);
 
   float _m[4][4] = {{cosang, -sinang, 0.0, 0.0},
                     {sinang, cosang, 0.0, 0.0},

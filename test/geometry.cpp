@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 Simone Pirota, Federico Pellegatta
+ *
+ * This file is part of raytracer.
+ *
+ * raytracer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * raytracer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with raytracer.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "geometry.h"
 #include "pcg.h"
 #include <cassert>
@@ -105,9 +124,9 @@ void test_transformation_rotations() {
   assert(rotation_y(0.1).is_consistent());
   assert(rotation_z(0.1).is_consistent());
 
-  assert((rotation_x(M_PI / 2) * Vec(0., 1., 0.)) == Vec(0., 0., 1.));
-  assert((rotation_y(M_PI / 2) * Vec(0., 0., 1.)) == Vec(1., 0., 0.));
-  assert((rotation_z(M_PI / 2) * Vec(1., 0., 0.)) == Vec(0., 1., 0.));
+  assert((rotation_x(90) * Vec(0., 1., 0.)) == Vec(0., 0., 1.));
+  assert((rotation_y(90) * Vec(0., 0., 1.)) == Vec(1., 0., 0.));
+  assert((rotation_z(90) * Vec(1., 0., 0.)) == Vec(0., 1., 0.));
 }
 
 void test_transformation_scaling() {

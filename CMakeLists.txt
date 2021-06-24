@@ -68,6 +68,10 @@ add_executable(pcgTest
   test/pcg.cpp
 )
 
+add_executable(scene_fileTest
+  test/scene_file.cpp
+)
+
 add_executable(scatter_10000_rays
   test/scatter_10000_rays.cpp
 )
@@ -84,6 +88,7 @@ add_library(trace
     src/materials.cpp
     src/render.cpp
     src/pcg.cpp
+    src/scene_file.cpp
 )
 
 # This is needed if we keep .h files in the "include" directory
@@ -115,8 +120,8 @@ target_link_libraries(shapesTest PUBLIC trace)
 target_link_libraries(materialsTest PUBLIC trace)
 target_link_libraries(renderTest PUBLIC trace)
 target_link_libraries(pcgTest PUBLIC trace)
+target_link_libraries(scene_fileTest PUBLIC trace)
 target_link_libraries(scatter_10000_rays PUBLIC trace)
-
 
 add_test(NAME colorTest 
     COMMAND colorTest
@@ -147,6 +152,9 @@ add_test(NAME renderTest
 )
 add_test(NAME pcgTest
     COMMAND pcgTest 
+)
+add_test(NAME scene_fileTest
+    COMMAND scene_fileTest 
 )
 
 # Force the compiler to use the C++17 standard

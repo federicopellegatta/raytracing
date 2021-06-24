@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2021 Simone Pirota, Federico Pellegatta
+ *
+ * This file is part of raytracer.
+ *
+ * raytracer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * raytracer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with raytracer.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #ifndef CAMERA_H
 #define CAMERA_H
 
@@ -7,11 +26,26 @@
  * @brief Abstract class representing an observer.
  * Base class for OrtogonalCamera and PerspectiveCamera
  *
+ * @param transformation The transformation to be applied to the camera (default
+ * identity).
+ * @param aspect_ratio A float number representing the aspect ratio of the
+ * screen (usually 16:9)
  * @see OrthogonalCamera
  * @see PerspectiveCamera
  */
 struct Camera {
-
+  Transformation transformation;
+  float aspect_ratio;
+  /**
+   * @brief Construct a new Camera object
+   *
+   * @param _transformation
+   */
+  Camera(float _aspect_ratio = 1.f,
+         Transformation _transformation = Transformation())
+      : transformation{_transformation} {
+    aspect_ratio = _aspect_ratio;
+  }
   /**
    * @brief Fire a ray (or all of them) through a camera
    * Implementation is to be provided by OrtogonalCamera and PerspectiveCamera
@@ -24,15 +58,8 @@ struct Camera {
  * This class implements an observer seeing the world through an orthogonal
  * projection.
  *
- * @param transformation The transformation to be applied to the camera (default
- * identity).
- * @param aspect_ratio A float number representing the aspect ratio of the
- * screen (usually 16:9)
  */
 struct OrthogonalCamera : public Camera {
-  Transformation transformation;
-  float aspect_ratio;
-
   /**
    * @brief Construct a new Orthogonal Camera object
    *
@@ -45,9 +72,7 @@ struct OrthogonalCamera : public Camera {
    */
   OrthogonalCamera(float _aspect_ratio = 1.f,
                    Transformation _transformation = Transformation())
-      : transformation{_transformation} {
-    aspect_ratio = _aspect_ratio;
-  }
+      : Camera{_aspect_ratio, _transformation} {}
 
   /**
    * @brief Shoots a ray through the camera screen
@@ -61,8 +86,8 @@ struct OrthogonalCamera : public Camera {
           |                              |
           +------------------------------+
        (0, 0)                          (1, 0)
-   * @param u `u` coordiante in screen frame
-   * @param v `v` coordiante in screen frame
+   * @param u `u` coordinate in screen frame
+   * @param v `v` coordinate in screen frame
    * @return Ray generated passing through (u, v)
    */
   inline Ray fire_ray(float u, float v) {
@@ -79,16 +104,11 @@ struct OrthogonalCamera : public Camera {
  * @param _screen_distance A float number which indicate how much the eye of the
  * observer is distant from the screen, and it influences the "aperture" (field
  * of view angle along the horizontal direction)
- * @param aspect_ratio A float number representing the aspect ratio of the
- * screen (usually 16:9)
- * @param transformation The transformation to be applied to the camera
- * (default identity)
  *
  * @see Transformation
  */
 struct PerspectiveCamera : public Camera {
-  Transformation transformation;
-  float aspect_ratio, screen_distance;
+  float screen_distance;
 
   /**
    * @brief Construct a new Perspective Camera object
@@ -103,9 +123,8 @@ struct PerspectiveCamera : public Camera {
    */
   PerspectiveCamera(float _screen_distance = 1.f, float _aspect_ratio = 1.f,
                     Transformation _transformation = Transformation())
-      : transformation{_transformation} {
+      : Camera{_aspect_ratio, _transformation} {
     screen_distance = _screen_distance;
-    aspect_ratio = _aspect_ratio;
   }
 
   /**

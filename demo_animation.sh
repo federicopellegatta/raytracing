@@ -5,24 +5,23 @@ if [ "$1" == "" ]; then
     exit 1
 fi
 
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 cd "build/"
-cmake --build .
+cmake --build . -j $1
 if [ ! -d "demo_animation/" ]
 then 
 	mkdir "demo_animation/"
+else 
+    rm -rf "demo_animation/"
+    mkdir "demo_animation/"
 fi
 cd "demo_animation/"
 
 parallel -j $1 ../../generate-image.sh '{}' ::: $(seq 0 359)
-#for angle in $(seq 0 359); do
-#    # Angle with three digits, e.g. angle="1" → angleNNN="001"
-#    angleNNN=$(printf "%03d" $angle)
-#    ../raytracer demo --width=480 --height=480 --deg=$angle --outf=img$angleNNN
-#done
 
 # -r 25: Number of frames per second
-ffmpeg -r 25 -f image2 -s 480x480 -i image%03d.png \
+ffmpeg -r 25 -f image2 -s 640x360 -i image%03d.png \
     -vcodec libx264 -pix_fmt yuv420p \
     demo_animation.mp4
 
