@@ -25,13 +25,50 @@
 #include "render.h"
 #include "scene_file.h"
 #include "world.h"
+#include <chrono>
 #include <memory>
 
 using namespace std;
 
 /**
- * @brief Split a string (using boost would be better, but for only one function
- * it would have been overkill). Method found here:
+ * @brief Timer class to easily time code execution
+ * Highly inspired (if not entirely copied) from
+ * https://www.learncpp.com/cpp-tutorial/timing-your-code/
+ *
+ */
+struct Timer {
+private:
+  // Type aliases to make accessing nested type easier
+  using clock_t = chrono::high_resolution_clock;
+  using second_t = chrono::duration<double, ratio<1>>;
+
+  chrono::time_point<clock_t> m_beg;
+
+public:
+  /**
+   * @brief Construct a new Timer object with the time of calling
+   *
+   */
+  Timer() : m_beg{clock_t::now()} {}
+  /**
+   * @brief Resets the timer
+   *
+   */
+  void reset() { m_beg = clock_t::now(); }
+
+  /**
+   * @brief Returns the elapsed time in proper units
+   *
+   * @return double
+   */
+  double elapsed() const {
+    return chrono::duration_cast<second_t>(clock_t::now() - m_beg).count();
+  }
+};
+
+/**
+ * @brief Split a string (using boost would be better, but for only one
+ * function it would have been overkill). Method found here:
  * https://stackoverflow.com/questions/289347/using-strtok-with-a-stdstring
  *
  * @param str
@@ -54,6 +91,7 @@ void split(const string &str, const string &delim, vector<string> &parts) {
     }
   }
 }
+
 /**
  * @brief Parse the list of `-d` switches and return a map associating
  * variable names with their values
@@ -85,12 +123,13 @@ map<string, float> build_vars_table(vector<string> &definitions) {
 
   return vars;
 }
+
 void imagerender(int width, int height, string algorithm, int init_state,
                  int init_seq, int num_of_rays, int max_depth,
                  int samples_per_pixel, string output_file, string input_scene,
                  vector<string> &cli_vars) {
 
-  // Checking if antialiasing feature is on, and propersly set
+  // Checking if antialiasing feature is on, and properly set
   int samples_per_side = static_cast<int>(sqrt(samples_per_pixel));
   if (pow(samples_per_side, 2) != samples_per_pixel) {
     fmt::print("ERROR: the number of samples per pixel ({}) must be a perfect "
@@ -156,8 +195,10 @@ void imagerender(int width, int height, string algorithm, int init_state,
     exit(1);
   }
 
+  Timer t;
   // Rendering the image (time-consuming process, where the "magic" happens)
   tracer.fire_all_rays([&](const Ray &ray) { return (*renderer)(ray); });
+  fmt::print("Rendering completed in {} s\n", t.elapsed());
 
   // Writing pfm file
   ofstream pfm_stream(pfm_output);
