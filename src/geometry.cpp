@@ -156,9 +156,9 @@ Transformation scaling(Vec vec) {
                     {0.0, vec.y, 0.0, 0.0},
                     {0.0, 0.0, vec.z, 0.0},
                     {0.0, 0.0, 0.0, 1.0}};
-  float _invm[4][4] = {{1 / vec.x, 0.0, 0.0, 0.0},
-                       {0.0, 1 / vec.y, 0.0, 0.0},
-                       {0.0, 0.0, 1 / vec.z, 0.0},
+  float _invm[4][4] = {{1.f / vec.x, 0.0, 0.0, 0.0},
+                       {0.0, 1.f / vec.y, 0.0, 0.0},
+                       {0.0, 0.0, 1.f / vec.z, 0.0},
                        {0.0, 0.0, 0.0, 1.0}};
 
   return Transformation(_m, _invm);
