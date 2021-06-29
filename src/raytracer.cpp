@@ -172,6 +172,32 @@ void imagerender(int width, int height, string algorithm, int init_state,
     exit(1);
   }
 
+  /* Warn the user if the aspect_ratio specified by CLI or in input file is
+   * different from width/height */
+  float _expected_aspect_ratio = static_cast<float>(width) / height;
+  // fmt::print("_expected_aspect_ratio = {}\n", _expected_aspect_ratio);
+  if (!are_close(scene.camera->aspect_ratio, _expected_aspect_ratio, 1e-3)) {
+    fmt::print(
+        "The aspect ratio you defined ({}) is not the ideal one ({}) for this "
+        "dimensions\nNote that the aspect ratio should be width:height\n",
+        scene.camera->aspect_ratio, _expected_aspect_ratio);
+    string answer;
+    fmt::print("Do you want to change it? [Y|N] ");
+    cin >> answer;
+    if (answer == "Y" || answer == "yes" || answer == "Yes" || answer == "y") {
+      float new_aspect_ratio;
+      fmt::print("Insert new value for aspect ratio: ");
+      cin >> new_aspect_ratio;
+      scene.camera->aspect_ratio = new_aspect_ratio;
+    } else if (answer == "N" || answer == "no" || answer == "No" ||
+               answer == "n") {
+      fmt::print("Okay, your image your choice, don't blame me if it'll come "
+                 "out strange\n");
+    } else {
+      fmt::print("Answer not recognized. Exiting\n");
+      exit(1);
+    }
+  }
   // Allocating the image
   HdrImage image(width, height);
 
