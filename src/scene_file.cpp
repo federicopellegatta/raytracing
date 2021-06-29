@@ -499,9 +499,14 @@ shared_ptr<Camera> InputStream::_parse_camera(const Scene &_scene) {
   Transformation transformation = _parse_transformation(_scene);
   expect_symbol(',');
   float aspect_ratio = expect_number(_scene);
-  expect_symbol(',');
-  float distance = expect_number(_scene);
-  expect_symbol(')');
+  float distance = 0.f;
+  if (type_keyword == KeywordEnum::ORTHOGONAL) {
+    expect_symbol(')');
+  } else {
+    expect_symbol(',');
+    distance = expect_number(_scene);
+    expect_symbol(')');
+  }
 
   shared_ptr<Camera> result;
   if (type_keyword == KeywordEnum::PERSPECTIVE)
