@@ -175,7 +175,6 @@ void imagerender(int width, int height, string algorithm, int init_state,
   /* Warn the user if the aspect_ratio specified by CLI or in input file is
    * different from width/height */
   float _expected_aspect_ratio = static_cast<float>(width) / height;
-  // fmt::print("_expected_aspect_ratio = {}\n", _expected_aspect_ratio);
   if (!are_close(scene.camera->aspect_ratio, _expected_aspect_ratio, 1e-3)) {
     fmt::print(
         "The aspect ratio you defined ({}) is not the ideal one ({}) for this "
