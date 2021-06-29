@@ -84,3 +84,4 @@ float screen_distance(1.0)
 #	- the aspect ratio
 #	- the screen distance
 camera(perspective, rotation_z(angle) * translation([-1, 0, 1]), aspect_ratio, screen_distance)
+#camera(orthogonal, rotation_z(angle) * translation([-1, 0, 1]), aspect_ratio)
