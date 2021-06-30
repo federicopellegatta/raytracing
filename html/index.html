@@ -111,7 +111,7 @@ Render</h2>
 <p >raytracer can generate images using 3 algorithms:</p><ul>
 <li><em>on-off renderer</em>: it produces black and white image. We recommed to use this algorithm in order to debug, because it is really fast;</li>
 <li><em>flat renderer</em>: it estimates the solution of the rendering equation by neglecting any contribution of the light. It just uses the pigment of each surface to determine how to compute the final radiance;</li>
-<li><em>pathtracing</em>: it allows the caller to tune number of rays thrown at each iteration, as well as the maximum depth. It implements Russian roulette, so in principle it will take a finite time to complete the calculation. Inside the <a href="https://github.com/federicopellegatta/raytracing/tree/master/examples"><code>examples</code></a> directory there are input files defining different scenes.</li>
+<li><em>pathtracing</em>: it allows the caller to tune number of rays thrown at each iteration, as well as the maximum depth. It implements Russian roulette, so in principle it will take a finite time to complete the calculation. Inside the <a href="./examples"><code>examples</code></a> directory there are input files defining different scenes.</li>
 </ul>
 <p >&gt;Note that the file <a href="./examples/demo.txt"><code>examples/demo.txt</code></a> contains instructions on how to write a correct input file.</p>
 <p >The following command </p><div class="fragment"><div class="line">$ ./raytracer render -w 640 -h 360 --alg pathtracing --num-of-rays 5 --max-depth 4 --samples-per-pixel 25 --outf demo-5 -i ../examples/demo.txt</div>
