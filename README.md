@@ -8,13 +8,14 @@ raytracer is a C++ code that you can use to generate simple photorealistic image
 
 
 ## Installation
+Note that raytracer since v1.0.0 works only on Linux machines.
 ### Dependencies
    - C++ Compiler (at least C++17)
    - [CMake](https://cmake.org/) (at least version 3.16)
    - [GD library](https://libgd.github.io/) (at least version 2.5.5)
    - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (at least version 0.29)
 
-If you want to generate animation, we also recommend:
+If you want to generate animations, we also recommend:
    - [ffmpeg](https://www.ffmpeg.org/) (at least version 4.2.4)
    - [GNU parallel](https://www.gnu.org/software/parallel/) 
 
@@ -25,19 +26,17 @@ $ conda env create -n <envname> -f requirements.yml
 Or you can use your distribution package manager to install them.
   
 ### Download and building
-If all the dependencies have been met, you can download the latest stable release [here](https://github.com/federicopellegatta/raytracing/releases), and unpack it
+If all the dependencies have been met,
+ - you can download the latest stable release [here](https://github.com/federicopellegatta/raytracing/releases), and unpack it
+   ``` sh
+   $ tar -xvf /path/to/tar #or zip file -C /path/to/your/directory
+   ```
+ - if you want to stay up to date with the latest changes (note that they might not work as intended), clone this repository
+   ``` sh
+   $ git clone https://github.com/federicopellegatta/raytracing.git
+   ```
 
-``` sh
-$ tar -xvf /path/to/tar or zip file -C /path/to/your/directory
-```
-
-or, if you want to stay up to date with the latest changes (note that they might not work as intended), clone this repository
-
-``` sh
-$ git clone https://github.com/federicopellegatta/raytracing.git
-```
-
-follow the instructions below in order to compile raytracer in your own directory.
+Next, follow the instructions below in order to compile raytracer in your own directory.
 ``` sh
 $ cd /path/to/your/directory  
 $ # (if you're using conda -> conda activate <envname>)
