@@ -25,10 +25,21 @@ $ conda env create -n <envname> -f requirements.yml
 Or you can use your distribution package manager to install them.
   
 ### Download and building
-If all the dependencies have been met, follow the instructions below in order to clone and compile raytracer in your own directory.
+If all the dependencies have been met, you can download the latest stable release [here](https://github.com/federicopellegatta/raytracing/releases), and unpack it
+
+``` sh
+$ tar -xvf /path/to/tar or zip file -C /path/to/your/directory
+```
+
+or, if you want to stay up to date with the latest changes (note that they might not work as intended), clone this repository
+
 ``` sh
 $ git clone https://github.com/federicopellegatta/raytracing.git
-$ cd raytracing 
+```
+
+follow the instructions below in order to compile raytracer in your own directory.
+``` sh
+$ cd /path/to/your/directory  
 $ # (if you're using conda -> conda activate <envname>)
 $ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release 
 $ cd build/
@@ -37,7 +48,7 @@ $ cmake --build . -j <NUM_OF_CORES> # We advise at least 2 cores, as the compila
 You will find tests and executable files in `build` directory. Note that the executable main file is `raytracer`.
 
 ## Usage
-To check if tests are passing do (inside `build` directory)
+To check if tests are passing do
 ``` sh
 $ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug 
 $ cd build
