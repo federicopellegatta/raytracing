@@ -76,7 +76,7 @@ $ ./raytracer render -w 640 -h 360 --alg pathtracing --num-of-rays 5 --max-depth
 ```
 will generate the image below (which is defined in the input file [`examples/demo.txt`](./examples/demo.txt))
 
-![Demo image](./examples/demo-5.png)
+![Demo image](https://raw.githubusercontent.com/federicopellegatta/raytracing/master/examples/demo-5.png)
 
 
 Thanks to `ffmpeg` and a couple of cli options it is possibile to generate simple animations; the scripts [`demo_animation.sh`](demo_animation.sh) and [`generate-image.sh`](generate-image.sh) facilitates this, and by launching
@@ -85,7 +85,7 @@ $ ./demo_animation.sh -j <NUM_OF_CORES>
 ```
 will produce
 
-![Demo animation](./examples/demo.gif)
+![Demo animation](https://github.com/federicopellegatta/raytracing/blob/master/examples/demo.gif)
 
 Feel free to tweak the scripts to your own liking.
 
