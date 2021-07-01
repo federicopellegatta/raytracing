@@ -6,6 +6,8 @@
 
 raytracer is a C++ code that you can use to generate simple photorealistic images using spheres and planes. Secondly, it can be also used to convert a image from `pfm` to `png` or `jpeg` format. 
 
+Documentation is available online at https://federicopellegatta.github.io/raytracing/html/index.html
+
 
 ## Installation
 Note that raytracer since v1.0.0 works only on Linux machines.
